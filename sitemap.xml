@@ -2,23 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://xixiliguo.github.io/about/</loc>
+    <loc>https://xixiliguo.github.io/about/</loc>
     <lastmod>2017-03-05T11:46:32+08:00</lastmod>
   </url>
   
   <url>
-    <loc>http://xixiliguo.github.io/post/atop/</loc>
+    <loc>https://xixiliguo.github.io/post/atop/</loc>
     <lastmod>2017-03-05T11:40:11+08:00</lastmod>
   </url>
   
   <url>
-    <loc>http://xixiliguo.github.io/post/</loc>
+    <loc>https://xixiliguo.github.io/post/</loc>
     <lastmod>2017-03-05T11:40:11+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://xixiliguo.github.io/</loc>
+    <loc>https://xixiliguo.github.io/</loc>
     <lastmod>2017-03-05T11:46:32+08:00</lastmod>
     <priority>0</priority>
   </url>

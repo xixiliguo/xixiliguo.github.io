@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on 个人网站</title>
-    <link>http://xixiliguo.github.io/post/index.xml</link>
+    <link>https://xixiliguo.github.io/post/index.xml</link>
     <description>Recent content in Posts on 个人网站</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 05 Mar 2017 11:40:11 +0800</lastBuildDate>
-    <atom:link href="http://xixiliguo.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xixiliguo.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ATOP工作原理总结</title>
-      <link>http://xixiliguo.github.io/post/atop/</link>
+      <link>https://xixiliguo.github.io/post/atop/</link>
       <pubDate>Sun, 05 Mar 2017 11:40:11 +0800</pubDate>
       
-      <guid>http://xixiliguo.github.io/post/atop/</guid>
+      <guid>https://xixiliguo.github.io/post/atop/</guid>
       <description>
 
 &lt;p&gt;ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 &lt;code&gt;CPU，Memory，Disk，Network&lt;/code&gt; 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。&lt;/p&gt;
@@ -22,7 +22,7 @@
 &lt;h1 id=&#34;运行方式&#34;&gt;运行方式&lt;/h1&gt;
 
 &lt;p&gt;&lt;code&gt;atop 3&lt;/code&gt;可以按每3秒刷新一次的频率在ASCII屏幕上显示即时性能信息，结果如下图。 可以实时了解当前系统的负载情况，同时具有很强的交互性。比如按键盘上的&lt;code&gt;c&lt;/code&gt;可显示运行进程的完整名称（包括参数）。按键&lt;code&gt;m&lt;/code&gt;可以按内存利用率降序排序当前进程列表，称之为内存视图。
-&lt;img src=&#34;http://xixiliguo.github.io/media/atop.png&#34; alt=&#34;abc&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;https://xixiliguo.github.io/media/atop.png&#34; alt=&#34;abc&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;atop -a -w /var/log/atop/atop_AAA_20151123 30&lt;/code&gt;则每30秒记录一次数据并持久化到atop_AAA_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用&lt;code&gt;atop -r FileName&lt;/code&gt;读取文件并查看里面的性能数据。这里列出文件的一些默认设置&lt;/p&gt;
 
