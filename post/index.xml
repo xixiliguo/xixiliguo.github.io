@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on 个人网站</title>
+    <link>https://xixiliguo.github.io/post/</link>
+    <description>Recent content in Posts on 个人网站</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License，please give source if you likes to quote or reproduce.</copyright>
+    <lastBuildDate>Sun, 05 Mar 2017 11:40:11 +0800</lastBuildDate>
+    
+	<atom:link href="https://xixiliguo.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ATOP工作原理总结</title>
+      <link>https://xixiliguo.github.io/post/atop/</link>
+      <pubDate>Sun, 05 Mar 2017 11:40:11 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/atop/</guid>
+      <description>ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。
+运行方式 atop 3可以按每3秒刷新一次的频率在ASCII屏幕上显示即时性能信息，结果如下图。 可以实时了解当前系统的负载情况，同时具有很强的交互性。比如按键盘上的c可显示运行进程的完整名称（包括参数）。按键m可以按内存利用率降序排序当前进程列表，称之为内存视图。 atop -a -w /var/log/atop/atop_AAA_20151123 30则每30秒记录一次数据并持久化到atop_AAA_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用atop -r FileName读取文件并查看里面的性能数据。这里列出文件的一些默认设置
+ 性能收集时间间隔：30s 文件名：atop_HOSTNAME_CURDAY 文件保存天数：7days 文件保存目录：/var/log/atop 执行ATOP的定时任务脚本：/etc/cron.d/atop  目前ATAE机上每天都会产生对应的atop文件，但我们执行crontab -l却找不到与atop相关的定时任务，其实它在/etc/cron.d下面。
+AAA:~ # cat /etc/cron.d/atop # start atop daily at midnight 0 0 * * * root /etc/atop/atop.daily  cron进程先在/var/spool/cron/tabs目录下搜索以用户名命名的文件，找到就读到内存中，其内容就是crontab -l的输出。接着继续搜索/etc/crontab和 /etc/cron.d目录下的所有文件并读取之。其格式和tabs下的略有不同，主要区别是指定了脚本的执行用户。
+原始信息收集 /proc是Linux下一种虚拟文件系统，存储的是当前内核运行状态的一系列特殊文件，用户可以通过查看这些文件了解系统硬件及当前正在运行进程的信息。ATOP正是从/proc下各种文件中读取原始信息，通过采样来计算周期内的即时数据。比如A时间点记录下消耗在用户态的cpu时间和总的CPU时间为M，X。在B时间点记录下此两项对应的值为N，Y。则当前的用户态CPU使用率为(N-M)/(Y-X)。等所有的性能信息都计算加工完毕后,使用libncurses库提供的函数将最终信息打印在字符界面上。
+/proc里记录的统计信息（除内存）都是自设备启动以来或者进程启动以来的累积值。如果没具体说明，则本文所讲到的各字段的值默认都是差值(即当前时间点采样值减去先前时间点的采样值)。
+本文所有示例在Suse11环境下通过，atop版本为1.27。示例中数据仅为说明，一些影响阅读且与本文无关的内容会删除。如果想要全面了解/proc文件系统里文件含义，可以man 5 proc
+CPU 读取/proc/stat获取CPU的统计信息，包括每个CPU和总的CPU信息。
+AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 0 0 cpu0 1903376 11614 1577768 70138672 1000644 81353 12021 0 0 cpu1 1966740 11763 1655527 69653824 1050882 78597 17626 0 0 .</description>
+    </item>
+    
+  </channel>
+</rss>
