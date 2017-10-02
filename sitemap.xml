@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/strings-algorithm-golang/</loc>
+    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/atop/</loc>
     <lastmod>2017-03-05T13:15:27+08:00</lastmod>
   </url>
@@ -19,13 +24,37 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/bm/</loc>
+    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/golang/</loc>
+    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/hash/</loc>
+    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/kmp/</loc>
+    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2017-03-05T13:15:27+08:00</lastmod>
+    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
     <priority>0</priority>
   </url>
   

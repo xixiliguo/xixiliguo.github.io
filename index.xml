@@ -23,6 +23,17 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>从Go标准库看字符串匹配算法</title>
+      <link>https://xixiliguo.github.io/post/strings-algorithm-golang/</link>
+      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/strings-algorithm-golang/</guid>
+      <description>&lt;p&gt;Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配的具体实现&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>ATOP工作原理总结</title>
       <link>https://xixiliguo.github.io/post/atop/</link>
       <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
