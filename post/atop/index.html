@@ -15,30 +15,14 @@
 
   
   <meta name="author" content="Peter Wang" />
-  <meta name="description" content="ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。
-运行方式 atop 3可以按每3秒刷新一次的频率在ASCII屏幕上显示即时性能信息，结果如下图。 可以实时了解当前系统的负载情况，同时具有很强的交互性。比如按键盘上的c可显示运行进程的完整名称（包括参数）。按键m可以按内存利用率降序排序当前进程列表，称之为内存视图。 atop -a -w /var/log/atop/atop_AAA_20151123 30则每30秒记录一次数据并持久化到atop_AAA_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用atop -r FileName读取文件并查看里面的性能数据。这里列出文件的一些默认设置
- 性能收集时间间隔：30s 文件名：atop_HOSTNAME_CURDAY 文件保存天数：7days 文件保存目录：/var/log/atop 执行ATOP的定时任务脚本：/etc/cron.d/atop  目前ATAE机上每天都会产生对应的atop文件，但我们执行crontab -l却找不到与atop相关的定时任务，其实它在/etc/cron.d下面。
-AAA:~ # cat /etc/cron.d/atop # start atop daily at midnight 0 0 * * * root /etc/atop/atop.daily  cron进程先在/var/spool/cron/tabs目录下搜索以用户名命名的文件，找到就读到内存中，其内容就是crontab -l的输出。接着继续搜索/etc/crontab和 /etc/cron.d目录下的所有文件并读取之。其格式和tabs下的略有不同，主要区别是指定了脚本的执行用户。
-原始信息收集 /proc是Linux下一种虚拟文件系统，存储的是当前内核运行状态的一系列特殊文件，用户可以通过查看这些文件了解系统硬件及当前正在运行进程的信息。ATOP正是从/proc下各种文件中读取原始信息，通过采样来计算周期内的即时数据。比如A时间点记录下消耗在用户态的cpu时间和总的CPU时间为M，X。在B时间点记录下此两项对应的值为N，Y。则当前的用户态CPU使用率为(N-M)/(Y-X)。等所有的性能信息都计算加工完毕后,使用libncurses库提供的函数将最终信息打印在字符界面上。
-/proc里记录的统计信息（除内存）都是自设备启动以来或者进程启动以来的累积值。如果没具体说明，则本文所讲到的各字段的值默认都是差值(即当前时间点采样值减去先前时间点的采样值)。
-本文所有示例在Suse11环境下通过，atop版本为1.27。示例中数据仅为说明，一些影响阅读且与本文无关的内容会删除。如果想要全面了解/proc文件系统里文件含义，可以man 5 proc
-CPU 读取/proc/stat获取CPU的统计信息，包括每个CPU和总的CPU信息。
-AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 0 0 cpu0 1903376 11614 1577768 70138672 1000644 81353 12021 0 0 cpu1 1966740 11763 1655527 69653824 1050882 78597 17626 0 0 ." />
+  <meta name="description" content="ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。 " />
 
   
   
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@gohugoio" />
     <meta name="twitter:title" content="ATOP工作原理总结" />
-    <meta name="twitter:description" content="ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。
-运行方式 atop 3可以按每3秒刷新一次的频率在ASCII屏幕上显示即时性能信息，结果如下图。 可以实时了解当前系统的负载情况，同时具有很强的交互性。比如按键盘上的c可显示运行进程的完整名称（包括参数）。按键m可以按内存利用率降序排序当前进程列表，称之为内存视图。 atop -a -w /var/log/atop/atop_AAA_20151123 30则每30秒记录一次数据并持久化到atop_AAA_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用atop -r FileName读取文件并查看里面的性能数据。这里列出文件的一些默认设置
- 性能收集时间间隔：30s 文件名：atop_HOSTNAME_CURDAY 文件保存天数：7days 文件保存目录：/var/log/atop 执行ATOP的定时任务脚本：/etc/cron.d/atop  目前ATAE机上每天都会产生对应的atop文件，但我们执行crontab -l却找不到与atop相关的定时任务，其实它在/etc/cron.d下面。
-AAA:~ # cat /etc/cron.d/atop # start atop daily at midnight 0 0 * * * root /etc/atop/atop.daily  cron进程先在/var/spool/cron/tabs目录下搜索以用户名命名的文件，找到就读到内存中，其内容就是crontab -l的输出。接着继续搜索/etc/crontab和 /etc/cron.d目录下的所有文件并读取之。其格式和tabs下的略有不同，主要区别是指定了脚本的执行用户。
-原始信息收集 /proc是Linux下一种虚拟文件系统，存储的是当前内核运行状态的一系列特殊文件，用户可以通过查看这些文件了解系统硬件及当前正在运行进程的信息。ATOP正是从/proc下各种文件中读取原始信息，通过采样来计算周期内的即时数据。比如A时间点记录下消耗在用户态的cpu时间和总的CPU时间为M，X。在B时间点记录下此两项对应的值为N，Y。则当前的用户态CPU使用率为(N-M)/(Y-X)。等所有的性能信息都计算加工完毕后,使用libncurses库提供的函数将最终信息打印在字符界面上。
-/proc里记录的统计信息（除内存）都是自设备启动以来或者进程启动以来的累积值。如果没具体说明，则本文所讲到的各字段的值默认都是差值(即当前时间点采样值减去先前时间点的采样值)。
-本文所有示例在Suse11环境下通过，atop版本为1.27。示例中数据仅为说明，一些影响阅读且与本文无关的内容会删除。如果想要全面了解/proc文件系统里文件含义，可以man 5 proc
-CPU 读取/proc/stat获取CPU的统计信息，包括每个CPU和总的CPU信息。
-AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 0 0 cpu0 1903376 11614 1577768 70138672 1000644 81353 12021 0 0 cpu1 1966740 11763 1655527 69653824 1050882 78597 17626 0 0 ." />
+    <meta name="twitter:description" content="ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。 " />
     <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
   
 
@@ -118,11 +102,11 @@ AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 
     
     
   <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/avatar.jpg" alt="Avatar">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
   
   <h2 class="title">个人网站</h2>
   
-  <p class="subtitle">生如夏花般灿烂</p>
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
   <button class="menu-toggle" type="button">
     <span class="icon icon-menu"></span>
   </button>
@@ -198,16 +182,15 @@ AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">ATOP工作原理总结</h1>
-      <p class="post-meta">@Peter Wang · Mar 5, 2017 · 5 min read</p>
+      <p class="post-meta">@Peter Wang · Mar 5, 2017 · 4 min read</p>
     </header>
-    <article class="post-content">
-
-<p>ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 <code>CPU，Memory，Disk，Network</code> 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。</p>
+    <article class="post-content"><p>ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 <code>CPU，Memory，Disk，Network</code> 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。
+</p>
 
 <h1 id="运行方式">运行方式</h1>
 
 <p><code>atop 3</code>可以按每3秒刷新一次的频率在ASCII屏幕上显示即时性能信息，结果如下图。 可以实时了解当前系统的负载情况，同时具有很强的交互性。比如按键盘上的<code>c</code>可显示运行进程的完整名称（包括参数）。按键<code>m</code>可以按内存利用率降序排序当前进程列表，称之为内存视图。
-<img src="https://xixiliguo.github.io/media/atop.png" alt="abc" /></p>
+<img src="https://xixiliguo.github.io/img/atop.png" alt="abc" /></p>
 
 <p><code>atop -a -w /var/log/atop/atop_AAA_20151123 30</code>则每30秒记录一次数据并持久化到atop_AAA_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用<code>atop -r FileName</code>读取文件并查看里面的性能数据。这里列出文件的一些默认设置</p>
 
@@ -221,10 +204,10 @@ AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 
 
 <p>目前ATAE机上每天都会产生对应的atop文件，但我们执行<code>crontab -l</code>却找不到与atop相关的定时任务，其实它在/etc/cron.d下面。</p>
 
-<pre><code>AAA:~ # cat /etc/cron.d/atop
-# start atop daily at midnight
-0 0 * * * root /etc/atop/atop.daily
-</code></pre>
+<blockquote>
+<p>AAA:~ # cat /etc/cron.d/atop<br />
+0 0 * * * root /etc/atop/atop.daily</p>
+</blockquote>
 
 <p>cron进程先在<code>/var/spool/cron/tabs</code>目录下搜索以用户名命名的文件，找到就读到内存中，其内容就是<code>crontab -l</code>的输出。接着继续搜索<code>/etc/crontab</code>和 <code>/etc/cron.d</code>目录下的所有文件并读取之。其格式和<code>tabs</code>下的略有不同，主要区别是指定了脚本的执行用户。</p>
 
@@ -232,7 +215,7 @@ AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 
 
 <p><code>/proc</code>是Linux下一种虚拟文件系统，存储的是当前内核运行状态的一系列特殊文件，用户可以通过查看这些文件了解系统硬件及当前正在运行进程的信息。ATOP正是从<code>/proc</code>下各种文件中读取原始信息，通过采样来计算周期内的即时数据。比如A时间点记录下消耗在用户态的cpu时间和总的CPU时间为<code>M</code>，<code>X</code>。在B时间点记录下此两项对应的值为<code>N</code>，<code>Y</code>。则当前的用户态CPU使用率为<code>(N-M)/(Y-X)</code>。等所有的性能信息都计算加工完毕后,使用libncurses库提供的函数将最终信息打印在字符界面上。</p>
 
-<p>/proc里记录的统计信息（除内存）都是自设备启动以来或者进程启动以来的累积值。如果没具体说明，则本文所讲到的各字段的值默认都是差值(即当前时间点采样值减去先前时间点的采样值)。</p>
+<p><code>/proc</code>里记录的统计信息（除内存）都是自设备启动以来或者进程启动以来的累积值。如果没具体说明，则本文所讲到的各字段的值默认都是差值,即当前时间点采样值减去先前时间点的采样值.</p>
 
 <p>本文所有示例在<code>Suse11</code>环境下通过，atop版本为<code>1.27</code>。示例中数据仅为说明，一些影响阅读且与本文无关的内容会删除。如果想要全面了解/proc文件系统里文件含义，可以<code>man 5 proc</code></p>
 
@@ -240,22 +223,24 @@ AAA:~ # cat /proc/stat cpu 3870117 23378 3233296 139792496 2051527 159950 29648 
 
 <p>读取<code>/proc/stat</code>获取CPU的统计信息，包括每个CPU和总的CPU信息。</p>
 
-<pre><code>AAA:~ # cat /proc/stat
-cpu  3870117 23378 3233296 139792496 2051527 159950 29648 0 0
-cpu0 1903376 11614 1577768 70138672 1000644 81353 12021 0 0
-cpu1 1966740 11763 1655527 69653824 1050882 78597 17626 0 0
-....
-btime 1447557115
-processes 3543228
-procs_running 1
-procs_blocked 0
-</code></pre>
+<blockquote>
+<p>AAA:~ # cat /proc/stat<br />
+cpu  3870117 23378 3233296 139792496 2051527 159950 29648 0 0<br />
+cpu0 1903376 11614 1577768 70138672 1000644 81353 12021 0 0<br />
+cpu1 1966740 11763 1655527 69653824 1050882 78597 17626 0 0<br />
+&hellip;.<br />
+btime 1447557115<br />
+processes 3543228<br />
+procs_running 1<br />
+procs_blocked 0</p>
+</blockquote>
 
 <p>cpuN行后面的数值含义从左到右分别是：user，nice，system，idle，iowait，irq，softirq，steal，guest。单位为jiffies，该值等于<code>1/hertz</code>秒。<code>hertz</code>在大部分系统里为100。可以用如下命令查询：</p>
 
-<pre><code>AAA:~ # getconf -a | grep TCK
-CLK_TCK                            100
-</code></pre>
+<blockquote>
+<p>AAA:~ # getconf -a | grep TCK<br />
+CLK_TCK                            100</p>
+</blockquote>
 
 <p>那么当前每个CPU的利用率为：<code>CPU usage = (total - idle - iowait) / total</code>  <code>total</code>为cpuN这一行所有值之和.</p>
 
@@ -282,28 +267,29 @@ CLK_TCK                            100
 
 <p>系统自带的<code>vmstat</code>命令也可以观察到<code>SWAP</code>的交换情况，它正是通过读取<code>/proc/vmstat</code>来获取页交换信息的</p>
 
-<pre><code>AAA:~ # strace -ftT -e trace=open vmstat &gt;/dev/null
-09:36:16 open(&quot;/etc/ld.so.cache&quot;, O_RDONLY) = 3 &lt;0.000015&gt;
-09:36:16 open(&quot;/lib64/libc.so.6&quot;, O_RDONLY) = 3 &lt;0.000014&gt;
-09:36:16 open(&quot;/proc/meminfo&quot;, O_RDONLY) = 3 &lt;0.000027&gt;
-09:36:16 open(&quot;/proc/stat&quot;, O_RDONLY)   = 4 &lt;0.000018&gt;
-09:36:16 open(&quot;/proc/vmstat&quot;, O_RDONLY) = 5 &lt;0.000018&gt;
+<blockquote>
+<p>AAA:~ # strace -ftT -e trace=open vmstat &gt;/dev/null<br />
+09:36:16 open(&ldquo;/etc/ld.so.cache&rdquo;, O_RDONLY) = 3 <0.000015><br />
+09:36:16 open(&ldquo;/lib64/libc.so.6&rdquo;, O_RDONLY) = 3 <0.000014><br />
+09:36:16 open(&ldquo;/proc/meminfo&rdquo;, O_RDONLY) = 3 <0.000027><br />
+09:36:16 open(&ldquo;/proc/stat&rdquo;, O_RDONLY)   = 4 <0.000018><br />
+09:36:16 open(&ldquo;/proc/vmstat&rdquo;, O_RDONLY) = 5 <0.000018></p>
 
-AAA:~ # cat /proc/meminfo 
-MemTotal:        7669188 kB
-MemFree:         1909052 kB
-Buffers:          424088 kB
-Cached:          3670052 kB
-....
-SwapCached:            0 kB
-SwapTotal:       8393920 kB
-SwapFree:        8393920 kB
-Mapped:           681904 kB
-....
-Shmem:            736624 kB
-Slab:             178552 kB
-SReclaimable:     139164 kB
-</code></pre>
+<p>AAA:~ # cat /proc/meminfo<br />
+MemTotal:        7669188 kB<br />
+MemFree:         1909052 kB<br />
+Buffers:          424088 kB<br />
+Cached:          3670052 kB<br />
+&hellip;.<br />
+SwapCached:            0 kB<br />
+SwapTotal:       8393920 kB<br />
+SwapFree:        8393920 kB<br />
+Mapped:           681904 kB<br />
+&hellip;.<br />
+Shmem:            736624 kB<br />
+Slab:             178552 kB<br />
+SReclaimable:     139164 kB</p>
+</blockquote>
 
 <p>上述meminfo文件字段解释：</p>
 
@@ -358,47 +344,47 @@ SReclaimable:     139164 kB
 <table>
 <thead>
 <tr>
-<th>ATOP字段</th>
-<th align="center">含义</th>
-<th align="center">计算公式</th>
-<th align="right">单位</th>
+<th align="left">ATOP字段</th>
+<th align="left">含义</th>
+<th align="left">计算公式</th>
+<th align="left">单位</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td>MBr/s</td>
-<td align="center">平均每秒读数据量</td>
-<td align="center">第3列 * 2 / 1024 / nsecs</td>
-<td align="right">MB/s</td>
+<td align="left">MBr/s</td>
+<td align="left">平均每秒读数据量</td>
+<td align="left">第3列 * 2 / 1024 / nsecs</td>
+<td align="left">MB/s</td>
 </tr>
 
 <tr>
-<td>MBw/s</td>
-<td align="center">平均1秒内写数据量</td>
-<td align="center">第7列* 2 / 1024 / nsecs</td>
-<td align="right">MB/s</td>
+<td align="left">MBw/s</td>
+<td align="left">平均1秒内写数据量</td>
+<td align="left">第7列* 2 / 1024 / nsecs</td>
+<td align="left">MB/s</td>
 </tr>
 
 <tr>
-<td>avio</td>
-<td align="center">IO操作的平均操作时长</td>
-<td align="center">第10列 / iotot</td>
-<td align="right">ms</td>
+<td align="left">avio</td>
+<td align="left">IO操作的平均操作时长</td>
+<td align="left">第10列 / iotot</td>
+<td align="left">ms</td>
 </tr>
 
 <tr>
-<td>avq</td>
-<td align="center">平均阵列深度，即加权后的IO操作时长</td>
-<td align="center">第11列/iotot</td>
-<td align="right">ms</td>
+<td align="left">avq</td>
+<td align="left">平均阵列深度，即加权后的IO操作时长</td>
+<td align="left">第11列/iotot</td>
+<td align="left">ms</td>
 </tr>
 
 <tr>
-<td>busy</td>
-<td align="center">磁盘利用率</td>
-<td align="center">第10列 / mstot</td>
-<td align="right">百分比</td>
+<td align="left">busy</td>
+<td align="left">磁盘利用率</td>
+<td align="left">第10列 / mstot</td>
+<td align="left">百分比</td>
 </tr>
 </tbody>
 </table>
@@ -418,18 +404,19 @@ SReclaimable:     139164 kB
 
 <p>读取/proc/net/dev获取所有网卡信息</p>
 
-<pre><code>AAA:~ # cat /proc/net/dev
-Inter-|   Receive                                                |  Transmit
-    face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
-    lo:5993298914 41500939    0    0    0     0          0         0 5993298914 41500939    0    0    0     0       0          0
-    eth0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
-    eth4:46036327  544231    0    0    0     0          0         1 31411179   41268    0    0    0     0       0          0
-    eth5:48454032  556137    0    0    0     0          0     30920  3808752    7778    0    0    0     0       0          0
-    eth2: 7766519  106577    0    0    0     0          0      3428   531166    7950    0    0    0     0       0          0
-    eth3:50947490  669306    0    0    0     0          0     30980      680       8    0    0    0     0       0          0
-    bond1:94490359 1100368    0    0    0     0          0     30921 35219931   49046    0    0    0     0       0          0
-AAA:~ #
-</code></pre>
+<blockquote>
+<p>AAA:~ # cat /proc/net/dev<br />
+Inter-|   Receive                                                |  Transmit<br />
+   face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed<br />
+   lo:5993298914 41500939    0    0    0     0          0         0 5993298914 41500939    0    0    0     0       0          0<br />
+   eth0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0<br />
+   eth4:46036327  544231    0    0    0     0          0         1 31411179   41268    0    0    0     0       0          0<br />
+   eth5:48454032  556137    0    0    0     0          0     30920  3808752    7778    0    0    0     0       0          0<br />
+   eth2: 7766519  106577    0    0    0     0          0      3428   531166    7950    0    0    0     0       0          0<br />
+   eth3:50947490  669306    0    0    0     0          0     30980      680       8    0    0    0     0       0          0<br />
+   bond1:94490359 1100368    0    0    0     0          0     30921 35219931   49046    0    0    0     0       0          0<br />
+AAA:~ #</p>
+</blockquote>
 
 <ul>
 <li>最左边的表示接口的名字，Receive表示收包，Transmit表示发包。</li>
@@ -441,42 +428,41 @@ AAA:~ #
 </ul>
 
 <p>网卡的带宽和双工模式并不是从<code>/proc</code>读取，而是通过类似下面的代码获取。</p>
-
-<pre><code>#include &lt;string.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;sys/ioctl.h&gt;
-#include &lt;linux/ethtool.h&gt;
-#include &lt;sys/types.h&gt;   
-#include &lt;sys/socket.h&gt;
-#include &lt;linux/sockios.h&gt;
-#include &lt;linux/if.h&gt;
-int main(int argc, char **argv) {
-    int sockfd;
-    struct ifreq ifreq;
-    struct ethtool_cmd 	ethcmd;
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    memset(&amp;ifreq,  0, sizeof ifreq);
-    memset(&amp;ethcmd, 0, sizeof ethcmd);
-    strncpy((void *)&amp;ifreq.ifr_ifrn.ifrn_name, &quot;eth4&quot;,
-                    sizeof ifreq.ifr_ifrn.ifrn_name-1);
-    ifreq.ifr_ifru.ifru_data = (void *)&amp;ethcmd;
-    ethcmd.cmd = ETHTOOL_GSET;
-    ioctl(sockfd, SIOCETHTOOL, &amp;ifreq);
-    printf(&quot;speed is %d Mb, mode is %s duplex\n&quot;,ethcmd.speed,ethcmd.duplex ? &quot;Full&quot; : &quot;Half&quot;);
-    return 0;
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/ioctl.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;linux/ethtool.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/types.h&gt;   </span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/socket.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;linux/sockios.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;linux/if.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">(</span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">argc</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">**</span><span style="">argv</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">sockfd</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">ifreq</span><span style=""> </span><span style="">ifreq</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">ethtool_cmd</span><span style=""> 	</span><span style="">ethcmd</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">sockfd</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">socket</span><span style="">(</span><span style="">AF_INET</span><span style="">,</span><span style=""> </span><span style="">SOCK_DGRAM</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">memset</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">ifreq</span><span style="">,</span><span style="">  </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style=""> </span><span style="">ifreq</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">memset</span><span style="">(</span><span style="color:#960050;background-color:#1e0010">ð</span><span style="">cmd</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style=""> </span><span style="">ethcmd</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">strncpy</span><span style="">((</span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#f92672">*</span><span style="">)</span><span style="color:#f92672">&amp;</span><span style="">ifreq</span><span style="">.</span><span style="">ifr_ifrn</span><span style="">.</span><span style="">ifrn_name</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;eth4&#34;</span><span style="">,</span><span style="">
+</span><span style="">                    </span><span style="color:#66d9ef">sizeof</span><span style=""> </span><span style="">ifreq</span><span style="">.</span><span style="">ifr_ifrn</span><span style="">.</span><span style="">ifrn_name</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">ifreq</span><span style="">.</span><span style="">ifr_ifru</span><span style="">.</span><span style="">ifru_data</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#f92672">*</span><span style="">)</span><span style="color:#960050;background-color:#1e0010">ð</span><span style="">cmd</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">ethcmd</span><span style="">.</span><span style="">cmd</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">ETHTOOL_GSET</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">ioctl</span><span style="">(</span><span style="">sockfd</span><span style="">,</span><span style=""> </span><span style="">SIOCETHTOOL</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">ifreq</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;speed is %d Mb, mode is %s duplex</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style="">ethcmd</span><span style="">.</span><span style="">speed</span><span style="">,</span><span style="">ethcmd</span><span style="">.</span><span style="">duplex</span><span style=""> </span><span style="color:#f92672">?</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Full&#34;</span><span style=""> </span><span style="color:#f92672">:</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Half&#34;</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p><a href="http://www.linuxjournal.com/node/6908/">这篇文章</a>详细地介绍了ETHTOOL 这个操作，只需要配合ioctl就可以获得网卡的全部信息。Linux下的ethtool工具也是通过这种方式查询网卡驱动和配置信息。</p>
 
-<pre><code>AAA:~ # strace -ftT -e trace=ioctl ethtool eth4 &gt;/dev/null
-11:31:48 ioctl(1, SNDCTL_TMR_TIMEBASE or TCGETS, 0x7fffca09bb30) = -1 ENOTTY (Inappropriate ioctl for device) &lt;0.000012&gt;
-11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 &lt;0.000017&gt;
-11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 &lt;0.000012&gt;
-11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 &lt;0.000025&gt;
-11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 &lt;0.000027&gt;
-AAA:~ # 
-</code></pre>
+<blockquote>
+<p>AAA:~ # strace -ftT -e trace=ioctl ethtool eth4 &gt;/dev/null<br />
+11:31:48 ioctl(1, SNDCTL_TMR_TIMEBASE or TCGETS, 0x7fffca09bb30) = -1 ENOTTY (Inappropriate ioctl for device) <0.000012><br />
+11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 <0.000017><br />
+11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 <0.000012><br />
+11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 <0.000025><br />
+11:31:48 ioctl(3, SIOCETHTOOL, 0x7fffca09cb10) = 0 <0.000027><br />
+AAA:~ #</p>
+</blockquote>
 
 <p>网卡利用率的计算方法如下：
 全双工： 获取rbytes与wbytes中的最大值A, curspeed = A * 8 / 1000
@@ -578,12 +564,12 @@ AAA:~ #
 </table>
 
 <p>这样ATOP判断当前最严重过载的资源是磁盘，则进程按磁盘利用率降序排列。我们经常遇到的都是高负载服务器，使用<code>A</code>能自动判断当前资源瓶颈在哪块，并显示导致相关资源极度紧张的TOP进程。对排查问题很有帮助。这里有一种特殊情况，当最严重过载资源是内存且加权后低于70%， 则仍按CPU排序。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="s1770">/*
-</span><span class="s1770">** if the system is hardly loaded, still CPU-ordering of
-</span><span class="s1770">** processes is most interesting (instead of memory)
-</span><span class="s1770">*/</span><span class="s1f40">
-</span><span class="s1f40"></span><span class="s3e8">if</span><span class="s1f40"> </span><span class="s1388">(</span><span class="s7d0">highbadness</span><span class="s1f40"> </span><span class="sfa0">&lt;</span><span class="s1f40"> </span><span class="sc80">70</span><span class="s1f40"> </span><span class="sfa0">&amp;&amp;</span><span class="s1f40"> </span><span class="sfa0">*</span><span class="s7d0">highorderp</span><span class="s1f40"> </span><span class="sfa0">==</span><span class="s1f40"> </span><span class="s7d0">MSORTMEM</span><span class="s1388">)</span><span class="s1f40">
-</span><span class="s1f40">        </span><span class="sfa0">*</span><span class="s7d0">highorderp</span><span class="s1f40"> </span><span class="sfa0">=</span><span class="s1f40"> </span><span class="s7d0">MSORTCPU</span><span class="s1388">;</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/*
+</span><span style="color:#75715e">** if the system is hardly loaded, still CPU-ordering of
+</span><span style="color:#75715e">** processes is most interesting (instead of memory)
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">highbadness</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="color:#ae81ff">70</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#f92672">*</span><span style="">highorderp</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">MSORTMEM</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">*</span><span style="">highorderp</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">MSORTCPU</span><span style="">;</span></code></pre>
 </div></article>
     <footer class="post-footer">
       
@@ -596,7 +582,7 @@ AAA:~ #
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License，please give source if you likes to quote or reproduce.This post was published <strong>210</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>210</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
@@ -610,14 +596,6 @@ AAA:~ #
 </footer>
 
 
-
-<script async src="//cdn.bootcss.com/video.js/6.2.8/alt/video.novtt.min.js"></script>
-<script async src="//cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\(','\)']]}
-});
-</script>
 
 <script src="https://xixiliguo.github.io/js/bundle.js"></script>
 
