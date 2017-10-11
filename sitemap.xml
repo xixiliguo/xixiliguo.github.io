@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/linux-shadow/</loc>
+    <lastmod>2017-10-11T22:11:23+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/strings-algorithm-golang/</loc>
     <lastmod>2017-10-02T09:48:04+08:00</lastmod>
   </url>
@@ -35,6 +40,12 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/crypt/</loc>
+    <lastmod>2017-10-11T22:11:23+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/tags/golang/</loc>
     <lastmod>2017-10-02T09:48:04+08:00</lastmod>
     <priority>0</priority>
@@ -53,14 +64,26 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/linux/</loc>
+    <lastmod>2017-10-11T22:11:23+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2017-10-02T09:48:04+08:00</lastmod>
+    <lastmod>2017-10-11T22:11:23+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://xixiliguo.github.io/tags/proc/</loc>
     <lastmod>2017-03-05T13:15:27+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/shadow/</loc>
+    <lastmod>2017-10-11T22:11:23+08:00</lastmod>
     <priority>0</priority>
   </url>
   

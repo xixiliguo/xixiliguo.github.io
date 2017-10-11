@@ -23,6 +23,15 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>Linux /etc/shadow 文件学习笔记</title>
+      <link>https://xixiliguo.github.io/post/linux-shadow/</link>
+      <pubDate>Wed, 11 Oct 2017 22:11:23 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/linux-shadow/</guid>
+      <description>&lt;p&gt;Linux系统下，创建的用户信息如ID，家目录，默认shell保存在/etc/passwd下，该文件每行的第二位（以冒号分隔）表示密码。但真正的密码其实被加密后放在/etc/shadow里，/etc/passwd里只显示为x。本文主要介绍shadow文件各字段含义和相关的密码生命周期配置。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>从Go标准库看字符串匹配算法</title>
       <link>https://xixiliguo.github.io/post/strings-algorithm-golang/</link>
       <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
