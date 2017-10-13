@@ -395,6 +395,33 @@ root:$6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleG
 salt: $6$DEgVEU0T, crypt: $6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.  
 </code></pre>
 
+<h3 id="密码相关一些配置">密码相关一些配置</h3>
+
+<p>/etc/login.defs 用来存放一些与创建用户和密码相关的配置信息<br />
+当使用useradd创建新用户时，系统会读取该文件，然后写入/etc/shadows.<br />
+和密码相关的只要是 PASS_MAX_DAYS，PASS_MIN_DAYS，PASS_MIN_LEN，PASS_WARN_AGE，ENCRYPT_METHOD 这几个参数<br />
+UMASK用来定义默认的新建文件权限</p>
+
+<pre><code>[root@linux /root]# grep ^[^#] /etc/login.defs
+MAIL_DIR	/var/spool/mail
+PASS_MAX_DAYS	99999
+PASS_MIN_DAYS	0
+PASS_MIN_LEN	5
+PASS_WARN_AGE	7
+UID_MIN                  1000
+UID_MAX                 60000
+SYS_UID_MIN               201
+SYS_UID_MAX               999
+GID_MIN                  1000
+GID_MAX                 60000
+SYS_GID_MIN               201
+SYS_GID_MAX               999
+CREATE_HOME	yes
+UMASK           077
+USERGROUPS_ENAB yes
+ENCRYPT_METHOD SHA512
+</code></pre>
+
 <blockquote>
 <p>参考：<br />
 man 8 pwconv<br />
