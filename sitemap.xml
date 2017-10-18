@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/cloud-init-1/</loc>
+    <lastmod>2017-10-18T21:34:09+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/linux-shadow/</loc>
     <lastmod>2017-10-11T22:11:23+08:00</lastmod>
   </url>
@@ -36,6 +41,12 @@
   
   <url>
     <loc>https://xixiliguo.github.io/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/cloud-init/</loc>
+    <lastmod>2017-10-18T21:34:09+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -71,13 +82,19 @@
   
   <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2017-10-11T22:11:23+08:00</lastmod>
+    <lastmod>2017-10-18T21:34:09+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://xixiliguo.github.io/tags/proc/</loc>
     <lastmod>2017-03-05T13:15:27+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/python/</loc>
+    <lastmod>2017-10-18T21:34:09+08:00</lastmod>
     <priority>0</priority>
   </url>
   
