@@ -7,10 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
-    <lastBuildDate>Wed, 18 Oct 2017 21:34:09 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 10 Dec 2017 15:47:09 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/openstack/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>cloud-init学习笔记（二）</title>
+      <link>https://xixiliguo.github.io/post/cloud-init-2/</link>
+      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/cloud-init-2/</guid>
+      <description>&lt;h2 id=&#34;cloud-init-源码结构&#34;&gt;cloud-init 源码结构&lt;/h2&gt;
+
+&lt;p&gt;大部分代码存放于 /lib/python2.7/site-packages/cloudinit
+&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>cloud-init学习笔记（一）</title>
@@ -21,18 +33,6 @@
       <description>&lt;h2 id=&#34;cloud-init介绍&#34;&gt;cloud-init介绍&lt;/h2&gt;
 
 &lt;p&gt;目前大部分公有云（openstack, AWS, Aliyun）都在使用cloud-init, 已经成为虚拟机元数据管理和OS系统配置初始化的事实标准.最早cloud-init由ubuntu的母公司 Canonical 开发。主要思想是当用户首次创建虚拟机时，将前台设置的主机名，密码或者秘钥等存入metadata server(顾名思义，存放元数据的服务器）。在openstack环境下当cloud-init随虚拟机启动而运行时，通过http协议访问metadata server，获取这些信息并修改主机配置。完成系统的环境初始化。本文以openstack + centos7 + cloud-init 0.7.9 为例,分两篇介绍基本概念，工作原理和源码解读。&lt;br /&gt;
-&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>cloud-init学习笔记（二）</title>
-      <link>https://xixiliguo.github.io/post/cloud-init-2/</link>
-      <pubDate>Wed, 18 Oct 2017 21:34:09 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/post/cloud-init-2/</guid>
-      <description>&lt;h2 id=&#34;cloud-init-源码结构&#34;&gt;cloud-init 源码结构&lt;/h2&gt;
-
-&lt;p&gt;大部分代码存放于 /lib/python2.7/site-packages/cloudinit
 &lt;/p&gt;</description>
     </item>
     
