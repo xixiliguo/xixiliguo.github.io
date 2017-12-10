@@ -375,7 +375,7 @@ Connection closed by 10.211.55.9
 
 <h5 id="9-其他为保留字段-为将来扩展功能用">9. 其他为保留字段，为将来扩展功能用</h5>
 
-<h3 id="一段程序实现加密">一段程序实现加密</h3>
+<h3 id="自己写代码实现加密-c-和-python实现">自己写代码实现加密(C 和 Python实现)</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;crypt.h&gt;</span><span style="color:#75715e">
 </span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span><span style="">
@@ -393,6 +393,17 @@ Connection closed by 10.211.55.9
 root:$6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.:17450:0:99999:7:::  
 #./a.out abc \$6\$DEgVEU0T  
 salt: $6$DEgVEU0T, crypt: $6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.  
+</code></pre>
+
+<p>Python 2.7 自带crypt模块，它是C库 crypt的binding， 实现更简单。代码如下：</p>
+
+<pre><code>[root@abc ~]# python
+Python 2.7.5 (default, Nov  6 2016, 00:28:07)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-11)] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; import crypt
+&gt;&gt;&gt; crypt.crypt(&quot;abc&quot;, &quot;$6$DEgVEU0T&quot;)
+'$6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.'
 </code></pre>
 
 <h3 id="密码相关一些配置">密码相关一些配置</h3>
