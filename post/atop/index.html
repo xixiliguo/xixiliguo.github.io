@@ -192,7 +192,7 @@
 <p><code>atop 3</code>可以按每3秒刷新一次的频率在ASCII屏幕上显示即时性能信息，结果如下图。 可以实时了解当前系统的负载情况，同时具有很强的交互性。比如按键盘上的<code>c</code>可显示运行进程的完整名称（包括参数）。按键<code>m</code>可以按内存利用率降序排序当前进程列表，称之为内存视图。
 <img src="https://xixiliguo.github.io/img/atop.png" alt="abc" /></p>
 
-<p><code>atop -a -w /var/log/atop/atop_AAA_20151123 30</code>则每30秒记录一次数据并持久化到atop_AAA_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用<code>atop -r FileName</code>读取文件并查看里面的性能数据。这里列出文件的一些默认设置</p>
+<p><code>atop -a -w /var/log/atop/atop_{HOSTNAME}_20151123 30</code>则每30秒记录一次数据并持久化到atop_{HOSTNAME}_20151123文件里。这样的命令通常被定时任务拉起。当服务器在特定时间点出现异常或者想要查看近几天内的性能信息时，就可以使用<code>atop -r FileName</code>读取文件并查看里面的性能数据。这里列出文件的一些默认设置</p>
 
 <ul>
 <li>性能收集时间间隔：30s</li>
@@ -202,7 +202,7 @@
 <li>执行ATOP的定时任务脚本：/etc/cron.d/atop</li>
 </ul>
 
-<p>目前ATAE机上每天都会产生对应的atop文件，但我们执行<code>crontab -l</code>却找不到与atop相关的定时任务，其实它在/etc/cron.d下面。</p>
+<p>安装atop后主机上每天都会产生对应的atop文件，但我们执行<code>crontab -l</code>却找不到与atop相关的定时任务，其实它在/etc/cron.d下面。</p>
 
 <blockquote>
 <p>AAA:~ # cat /etc/cron.d/atop<br />
@@ -305,7 +305,7 @@ SReclaimable:     139164 kB</p>
 <li>Shmem: 共享内存大小</li>
 </ul>
 
-<p>内存利用率的公式为：<code>(MemTotal - MemFree - Cached - Buffers) / MemTotal</code>. Shmem这部分内存是包含在Cache里的，其实它是无法被回收的。 所以从ATOP2.0版本开始，该利用用率公式变为：<code>(MemTotal - MemFree - Cached - Buffers +　Shmem) / MemTotal</code> . 这个结果已经非常准确了。如需要进一步精确计算内存占用,可移步<a href="http://3ms.huawei.com/hi/blog/495_61115.html">这里</a>。</p>
+<p>内存利用率的公式为：<code>(MemTotal - MemFree - Cached - Buffers) / MemTotal</code>. Shmem这部分内存是包含在Cache里的，其实它是无法被回收的。 所以从ATOP2.0版本开始，该利用用率公式变为：<code>(MemTotal - MemFree - Cached - Buffers +　Shmem) / MemTotal</code> . 这个结果已经非常准确了。</p>
 
 <p>Swap利用率公式为：<code>(SwapTotal - SwapFree) / SwapTotal</code></p>
 
@@ -582,7 +582,7 @@ AAA:~ #</p>
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>280</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>293</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
