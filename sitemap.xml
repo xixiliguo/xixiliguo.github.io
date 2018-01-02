@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/bandersnatch-pypi/</loc>
+    <lastmod>2018-01-02T22:14:04+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/cloud-init-2/</loc>
     <lastmod>2017-12-10T15:47:09+08:00</lastmod>
   </url>
@@ -35,6 +40,12 @@
   <url>
     <loc>https://xixiliguo.github.io/tags/atop/</loc>
     <lastmod>2017-03-05T13:15:27+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/bandersnatch/</loc>
+    <lastmod>2018-01-02T22:14:04+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -93,13 +104,19 @@
   
   <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2017-12-10T15:47:09+08:00</lastmod>
+    <lastmod>2018-01-02T22:14:04+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://xixiliguo.github.io/tags/proc/</loc>
     <lastmod>2017-03-05T13:15:27+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/pypi/</loc>
+    <lastmod>2018-01-02T22:14:04+08:00</lastmod>
     <priority>0</priority>
   </url>
   

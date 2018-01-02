@@ -23,6 +23,17 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>使用Bandersnatch搭建私有Pypi源</title>
+      <link>https://xixiliguo.github.io/post/bandersnatch-pypi/</link>
+      <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/bandersnatch-pypi/</guid>
+      <description>&lt;p&gt;经常使用python的公司,考虑到pypi.python.org不稳定,都会自己搭建私有的Pypi源.这里简单介绍下方法.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>cloud-init学习笔记（二）</title>
       <link>https://xixiliguo.github.io/post/cloud-init-2/</link>
       <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
