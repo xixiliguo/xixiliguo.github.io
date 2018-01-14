@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
-    <lastBuildDate>Wed, 11 Oct 2017 22:11:23 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jan 2018 18:10:50 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 下常用命令与技巧汇总</title>
+      <link>https://xixiliguo.github.io/post/linux-common-commands/</link>
+      <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/linux-common-commands/</guid>
+      <description>&lt;p&gt;收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
+&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Linux /etc/shadow 文件学习笔记</title>
