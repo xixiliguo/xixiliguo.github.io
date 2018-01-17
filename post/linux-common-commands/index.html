@@ -182,14 +182,16 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 10 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 13 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
 </p>
 
 <h3 id="1-查询系统准确的启动时间">1. 查询系统准确的启动时间</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">date -d </span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span><span style="">awk -F. </span><span style="color:#e6db74">&#39;{print $1}&#39;</span><span style=""> /proc/uptime</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> second ago&#34;</span><span style=""> +</span><span style="color:#e6db74">&#34;%Y-%m-%d %H:%M:%S&#34;</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">2018</span><span style="">-01-05 </span><span style="color:#ae81ff">00</span><span style="">:25:53</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">date -d </span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span><span style="">awk -F.date -d </span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span><span style="">awk -F. </span><span style="color:#e6db74">&#39;{print $1}&#39;</span><span style=""> /proc/uptime</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> second ago&#34;</span><span style=""> +</span><span style="color:#e6db74">&#34;%Y-%m-%d %H:%M:%S&#34;</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">2018</span><span style="">-01-17 </span><span style="color:#ae81ff">22</span><span style="">:27:55</span></code></pre>
+</div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">who -b
+</span><span style="">         system boot  </span><span style="color:#ae81ff">2018</span><span style="">-01-17 </span><span style="color:#ae81ff">22</span><span style="">:27</span></code></pre>
 </div>
 <h3 id="2-查询所有进程的准确启动时间和运行时长">2. 查询所有进程的准确启动时间和运行时长</h3>
 
@@ -206,13 +208,109 @@ args 为具体的命令行参数</p>
 <p>也可以在centos7下使用</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">timedatectl set-time </span><span style="color:#e6db74">&#34;2012-10-30 18:17:16&#34;</span></code></pre>
 </div>
-<h3 id="4-锁定文件-不被任何程序修改">4. 锁定文件,不被任何程序修改</h3>
+<h3 id="4-同步os与硬件时间">4. 同步OS与硬件时间</h3>
 
-<p>chattr 可以改变文件隐藏属性, <code>chattr +i</code> 可以防止任何程序修改该文件. 即使有root权限.<br />
-常用于锁定dns配置,防止dhcp程序自动修改. <code>lsattr</code> 查看当前的属性. <code>man chattr</code> 查看所有参数含义.</p>
+<p>将OS系统时间同步到硬件(RTC)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">hwclock –-systohc</span></code></pre>
+</div>
+<p>将硬件时间同步到OS</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">hwclock --hctosys</span></code></pre>
+</div>
+<h3 id="5-查看硬件信息">5. 查看硬件信息</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">lscpu               </span><span style="color:#75715e">#查看CPU信息
+</span><span style="color:#75715e"></span><span style="">lspci               </span><span style="color:#75715e">#查看PCI信息
+</span><span style="color:#75715e"></span><span style="">lsusb               </span><span style="color:#75715e">#查看外设USB
+</span><span style="color:#75715e"></span><span style="">lsscsi              </span><span style="color:#75715e">#查看SCSI设备
+</span><span style="color:#75715e"></span><span style="">lsblk               </span><span style="color:#75715e">#查看块设备
+</span><span style="color:#75715e"></span><span style="">dmidecode -t memory #查内存槽位信息. 不跟 -t , 查全量processor, Memory, BIOS</span></code></pre>
+</div>
+<h3 id="6-锁定文件-不被任何程序修改">6 锁定文件,不被任何程序修改</h3>
+
+<p>chattr 可以改变文件扩展属性, <code>chattr +i</code> 可以防止任何程序修改该文件. 即使有root权限.<br />
+常用于锁定dns配置,防止dhcp程序自动修改. <code>lsattr</code> 查看当前的扩展属性. <code>man chattr</code> 查看所有参数含义.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">chattr +i /etc/resolv.conf</span></code></pre>
 </div>
-<h3 id="5-find删除查找到的文件">5. find删除查找到的文件</h3>
+<h3 id="7-stat-查看文件详细元数据信息-特别是inode">7. stat 查看文件详细元数据信息, 特别是inode</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ stat messages
+</span><span style="">  File: ‘messages’
+</span><span style="">  Size: </span><span style="color:#ae81ff">0</span><span style="">         	Blocks: </span><span style="color:#ae81ff">0</span><span style="">          IO Block: </span><span style="color:#ae81ff">4096</span><span style="">   regular empty file
+</span><span style="">Device: fd01h/64769d	Inode: </span><span style="color:#ae81ff">528438</span><span style="">      Links: </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">Access: </span><span style="color:#f92672">(</span><span style="color:#ae81ff">0600</span><span style="">/-rw-------</span><span style="color:#f92672">)</span><span style="">  Uid: </span><span style="color:#f92672">(</span><span style="">    </span><span style="color:#ae81ff">0</span><span style="">/    root</span><span style="color:#f92672">)</span><span style="">   Gid: </span><span style="color:#f92672">(</span><span style="">    </span><span style="color:#ae81ff">0</span><span style="">/    root</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">Context: system_u:object_r:var_log_t:s0
+</span><span style="">Access: </span><span style="color:#ae81ff">2018</span><span style="">-01-14 </span><span style="color:#ae81ff">21</span><span style="">:32:01.977218590 +0800
+</span><span style="">Modify: </span><span style="color:#ae81ff">2018</span><span style="">-01-14 </span><span style="color:#ae81ff">21</span><span style="">:32:01.977218590 +0800
+</span><span style="">Change: </span><span style="color:#ae81ff">2018</span><span style="">-01-14 </span><span style="color:#ae81ff">21</span><span style="">:32:01.977218590 +0800
+</span><span style=""> Birth: -</span></code></pre>
+</div>
+<h3 id="8-xxd查看二进制文件">8. xxd查看二进制文件</h3>
+
+<p>-s 指定起始位置(不指定则从0开始),  -l 指定打印多少个字节</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">xxd  -s </span><span style="color:#ae81ff">1</span><span style=""> -l </span><span style="color:#ae81ff">5</span><span style=""> /etc/hosts</span></code></pre>
+</div>
+<p>当将js,或其他文本类信息嵌入到C程序时, <code>xxd -i</code> 非常实用.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ xxd a.js
+</span><span style=""></span><span style="color:#ae81ff">0000000</span><span style="">: </span><span style="color:#ae81ff">7661</span><span style=""> </span><span style="color:#ae81ff">7220</span><span style=""> </span><span style="color:#ae81ff">6120</span><span style=""> 3d20 310a                 var </span><span style="">a</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">.
+</span><span style="">$ xxd -i a.js
+</span><span style="">unsigned char a_js</span><span style="color:#f92672">[]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">  0x76, 0x61, 0x72, 0x20, 0x61, 0x20, 0x3d, 0x20, 0x31, 0x0a
+</span><span style=""></span><span style="color:#f92672">}</span><span style="">;</span><span style="">
+</span><span style="">unsigned int </span><span style="">a_js_len</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">10</span><span style="">;</span></code></pre>
+</div>
+<h3 id="9-批量修改文件名">9. 批量修改文件名</h3>
+
+<p>用法:<code>rename 原字符串 目标字符串 文件</code><br />
+含义:<br />
+原字符串：将文件名需要替换的字符串；<br />
+目标字符串：将文件名中含有的原字符替换成目标字符串；<br />
+文件：指定要改变文件名的文件列</p>
+
+<pre><code>rename支持通配符
+?    可替代单个字符
+*    可替代多个字符
+[charset]    可替代charset集中的任意单个字符
+</code></pre>
+
+<p>将所有已<code>yum</code>开头的文件的后缀名从<code>.yumtx</code>改为<code>.txt</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rename .yumtx .txt yum*</span></code></pre>
+</div>
+<h3 id="10-df-查询文件系统挂载点信息">10. df 查询文件系统挂载点信息</h3>
+
+<p><code>-h</code> 使容量的大小显示更人性化
+<code>-T</code> 显示文件系统类型</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ df -hT
+</span><span style="">Filesystem                   Type      Size  Used Avail Use% Mounted on
+</span><span style="">/dev/mapper/VolGroup-lv_root ext4       50G  </span><span style="color:#ae81ff">8</span><span style="">.0G   39G  </span><span style="color:#ae81ff">18</span><span style="">% /
+</span><span style="">devtmpfs                     devtmpfs  484M     </span><span style="color:#ae81ff">0</span><span style="">  484M   </span><span style="color:#ae81ff">0</span><span style="">% /dev
+</span><span style="">tmpfs                        tmpfs     495M     </span><span style="color:#ae81ff">0</span><span style="">  495M   </span><span style="color:#ae81ff">0</span><span style="">% /dev/shm
+</span><span style="">tmpfs                        tmpfs     495M  460K  494M   </span><span style="color:#ae81ff">1</span><span style="">% /run
+</span><span style="">tmpfs                        tmpfs     495M     </span><span style="color:#ae81ff">0</span><span style="">  495M   </span><span style="color:#ae81ff">0</span><span style="">% /sys/fs/cgroup
+</span><span style="">/dev/sda1                    ext4      477M  234M  215M  </span><span style="color:#ae81ff">53</span><span style="">% /boot
+</span><span style="">/dev/mapper/VolGroup-lv_home ext4       12G   41M   11G   </span><span style="color:#ae81ff">1</span><span style="">% /home
+</span><span style="">tmpfs                        tmpfs      99M     </span><span style="color:#ae81ff">0</span><span style="">   99M   </span><span style="color:#ae81ff">0</span><span style="">% /run/user/0</span></code></pre>
+</div>
+<p><code>-i</code> 显示inode容量</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ df -hi
+</span><span style="">Filesystem                   Inodes IUsed IFree IUse% Mounted on
+</span><span style="">/dev/mapper/VolGroup-lv_root   </span><span style="color:#ae81ff">3</span><span style="">.2M  170K  </span><span style="color:#ae81ff">3</span><span style="">.0M    </span><span style="color:#ae81ff">6</span><span style="">% /
+</span><span style="">devtmpfs                       121K   </span><span style="color:#ae81ff">389</span><span style="">  121K    </span><span style="color:#ae81ff">1</span><span style="">% /dev
+</span><span style="">tmpfs                          124K     </span><span style="color:#ae81ff">1</span><span style="">  124K    </span><span style="color:#ae81ff">1</span><span style="">% /dev/shm
+</span><span style="">tmpfs                          124K   </span><span style="color:#ae81ff">498</span><span style="">  124K    </span><span style="color:#ae81ff">1</span><span style="">% /run
+</span><span style="">tmpfs                          124K    </span><span style="color:#ae81ff">16</span><span style="">  124K    </span><span style="color:#ae81ff">1</span><span style="">% /sys/fs/cgroup
+</span><span style="">/dev/sda1                      126K   </span><span style="color:#ae81ff">358</span><span style="">  125K    </span><span style="color:#ae81ff">1</span><span style="">% /boot
+</span><span style="">/dev/mapper/VolGroup-lv_home   740K    </span><span style="color:#ae81ff">31</span><span style="">  740K    </span><span style="color:#ae81ff">1</span><span style="">% /home
+</span><span style="">tmpfs                          124K     </span><span style="color:#ae81ff">1</span><span style="">  124K    </span><span style="color:#ae81ff">1</span><span style="">% /run/user/0</span></code></pre>
+</div>
+<h3 id="11-du-命令">11. du 命令</h3>
+
+<p>单位是KB
+如下获取/tmp下所有文件的大小, 并按降序排列</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">du -xs /tmp/* </span><span style="">|</span><span style=""> sort -rn -k1
+</span><span style=""></span><span style="color:#ae81ff">8</span><span style="">	systemd-private-415928f8a9ee431abb4fdb7f6265aa87-chronyd.service-uw9sq7
+</span><span style=""></span><span style="color:#ae81ff">4</span><span style="">	</span><span style="">test</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">4</span><span style="">	empty
+</span><span style=""></span><span style="color:#ae81ff">4</span><span style="">	a.tar.gz</span></code></pre>
+</div>
+<h3 id="12-find删除查找到的文件">12. find删除查找到的文件</h3>
 
 <p>find命令经常会用到, <code>-type f</code>表示只返回文件, <code>-exec</code> 可将已找到的结果作为标准输入执行其他命令.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find ./ -type f -exec rm </span><span style="color:#f92672">{}</span><span style=""> </span><span style="color:#ae81ff">\;</span><span style="">    # 删除查找到的文件</span></code></pre>
@@ -238,7 +336,17 @@ args 为具体的命令行参数</p>
 </span><span style="color:#75715e"></span><span style="">find . -perm </span><span style="color:#ae81ff">0755</span><span style=""> </span><span style="color:#75715e"># 查找当前目录中文件权限的0755的文件  
 </span><span style="color:#75715e"></span><span style="">find . -size +12k # 查找当前目录中大于12KB的文件，注意c表示byte  </span></code></pre>
 </div>
-<h3 id="6-grep查询文本">6. grep查询文本</h3>
+<h3 id="13-xargs-命令">13. xargs 命令</h3>
+
+<p>该命令可以将一个命令的输出作为参数传递给另一个命令。
+区别于管道符<code>|</code>是将将输出作为另一个命令的标准输入传递.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find. -name *.png -type f </span><span style="">|</span><span style=""> xargs tar -cvzf images.tar.gz</span></code></pre>
+</div>
+<p>默认是将内容放到参数的最后面, 如果要放到指定位置,需要使用 <code>-i</code> 和 <code>{}</code><br />
+如下所示，将第一个命令的输出放到<code>{}</code>出现的位置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ls /etc/*.conf </span><span style="">|</span><span style=""> xargs -i cp </span><span style="color:#f92672">{}</span><span style=""> /home/likegeeks/Desktop/out</span></code></pre>
+</div>
+<h3 id="14-grep查询文本">14. grep查询文本</h3>
 
 <p>在文件中查找字符串(不区分大小写)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">grep -i </span><span style="color:#e6db74">&#34;the&#34;</span><span style=""> /etc/hosts</span></code></pre>
@@ -252,21 +360,23 @@ args 为具体的命令行参数</p>
 <p>查找不包含 127 的所有行</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">grep -v </span><span style="color:#e6db74">&#34;127&#34;</span><span style=""> /etc/hosts</span></code></pre>
 </div>
-<h3 id="7-xxd查看二进制文件">7. xxd查看二进制文件</h3>
+<h3 id="15-tail-查看文件指定行信息">15. tail 查看文件指定行信息</h3>
 
-<p>-s 指定起始位置(不指定则从0开始),  -l 指定打印多少个字节</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">xxd  -s </span><span style="color:#ae81ff">1</span><span style=""> -l </span><span style="color:#ae81ff">5</span><span style=""> /etc/hosts</span></code></pre>
+<p>显示最后3行记录</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ tail -3 /var/log/yum.log-20180101
+</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">00</span><span style="">:35:55 Installed: libvirt-debuginfo-3.2.0-14.el7_4.3.x86_64
+</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">18</span><span style="">:52:40 Installed: cloud-init-0.7.9-9.el7.centos.2.x86_64
+</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">19</span><span style="">:50:30 Erased: cloud-init-0.7.9-9.el7.centos.2.x86_64</span></code></pre>
 </div>
-<p>当将js,或其他文本类信息嵌入到C程序时, <code>xxd -i</code> 非常实用.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ xxd a.js
-</span><span style=""></span><span style="color:#ae81ff">0000000</span><span style="">: </span><span style="color:#ae81ff">7661</span><span style=""> </span><span style="color:#ae81ff">7220</span><span style=""> </span><span style="color:#ae81ff">6120</span><span style=""> 3d20 310a                 var </span><span style="">a</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">.
-</span><span style="">$ xxd -i a.js
-</span><span style="">unsigned char a_js</span><span style="color:#f92672">[]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  0x76, 0x61, 0x72, 0x20, 0x61, 0x20, 0x3d, 0x20, 0x31, 0x0a
-</span><span style=""></span><span style="color:#f92672">}</span><span style="">;</span><span style="">
-</span><span style="">unsigned int </span><span style="">a_js_len</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">10</span><span style="">;</span></code></pre>
+<p>从第770行开始显示</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ tail -n +770 /var/log/yum.log-20180101
+</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">18</span><span style="">:52:40 Installed: cloud-init-0.7.9-9.el7.centos.2.x86_64
+</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">19</span><span style="">:50:30 Erased: cloud-init-0.7.9-9.el7.centos.2.x86_64</span></code></pre>
 </div>
-<h3 id="8-echo-相关命令">8. echo 相关命令</h3>
+<h3 id="16-批量创建目录">16. 批量创建目录</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">mkdir -p new_folder/</span><span style="color:#f92672">{</span><span style="">folder_1,folder_2,folder_3,folder_4,folder_5</span><span style="color:#f92672">}</span></code></pre>
+</div>
+<h3 id="17-echo-相关命令">17. echo 相关命令</h3>
 
 <p>显示当前使用哪个shell</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ </span><span style="">echo</span><span style=""> </span><span style="">$0</span><span style="">
@@ -276,7 +386,7 @@ args 为具体的命令行参数</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ </span><span style="">echo</span><span style=""> </span><span style="">$?</span><span style="">
 </span><span style=""></span><span style="color:#ae81ff">0</span></code></pre>
 </div>
-<h3 id="9-nohup与标准输出-标准错误输出">9. nohup与标准输出,标准错误输出</h3>
+<h3 id="18-nohup与标准输出-标准错误输出">18. nohup与标准输出,标准错误输出</h3>
 
 <p><code>nohup</code>配和<code>&amp;</code>可以让进程在后台运行, 如果没有显示指定, 默认将标准输出和错误输出重定向到 nohup.out<br />
 <code>1&gt;/dev/null</code> 首先表示标准输出重定向到空设备文件，也就是不输出任何信息到终端，不显示任何信息<br />
@@ -284,7 +394,33 @@ args 为具体的命令行参数</p>
 常用使用方式为:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">nohup COMMAND  &gt;output.log </span><span style="color:#ae81ff">2</span><span style="">&gt;</span><span style="">&amp;</span><span style="color:#ae81ff">1</span><span style=""> </span><span style="">&amp;</span></code></pre>
 </div>
-<h3 id="10-column格式化输出">10. column格式化输出</h3>
+<h3 id="19-linux模块的安装和卸载">19. Linux模块的安装和卸载</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">lsmod                               </span><span style="color:#75715e">#显示当前装入的内核模块
+</span><span style="color:#75715e"></span><span style="">modinfo module_name                 </span><span style="color:#75715e">#显示模块信息
+</span><span style="color:#75715e"></span><span style="">modprobe -c                         </span><span style="color:#75715e">#显示模块的配置信息       
+</span><span style="color:#75715e"></span><span style="">modprobe --show-depends module_name </span><span style="color:#75715e">#显示模块的依赖信息
+</span><span style="color:#75715e"></span><span style="">modprobe module_name                </span><span style="color:#75715e">#手动加载模块
+</span><span style="color:#75715e"></span><span style="">rmmod module_name                   #卸载模块</span></code></pre>
+</div>
+<p>systemd 读取 /etc/modules-load.d/ 中的配置加载额外的内核模块。配置文件名称通常为 <code>/etc/modules-load.d/&lt;program&gt;.conf</code>。如：</p>
+
+<pre><code>$ cat /etc/modules-load.d/bonding.conf
+bonding
+</code></pre>
+
+<p>使用 /etc/modprobe.d/中的文件来配置传递参数，如:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ /etc/modprobe.d/bonding.conf
+</span><span style="">options bonding </span><span style="">mode</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span></code></pre>
+</div>
+<p>别名</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /etc/modprobe.d/myalias.conf
+</span><span style=""></span><span style="color:#75715e"># Lets you use &#39;mymod&#39; in MODULES, instead of &#39;really_long_module_name&#39;
+</span><span style="color:#75715e"></span><span style="">alias</span><span style=""> mymod really_long_module_name</span></code></pre>
+</div>
+<p>如果模块直接编译进内核，也可以通过启动管理器(GRUB, LILO 或 Syslinux)的内核行加入参数：
+<code>modname.parametername=parametercontents</code></p>
+
+<h3 id="20-column格式化输出">20. column格式化输出</h3>
 
 <p>可以让一些命令的输出看起来更舒服些. 例如<code>blkid</code>,<code>mount</code>,<code>cat /etc/fstab</code>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ blkid
@@ -300,21 +436,12 @@ args 为具体的命令行参数</p>
 </span><span style="">/dev/mapper/VolGroup-lv_root:  </span><span style="">UUID</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;e9fe20ee-5d6f-4610-98ca-7cbed5d012ad&#34;</span><span style="">    </span><span style="">TYPE</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ext4&#34;</span><span style="">
 </span><span style="">/dev/mapper/VolGroup-lv_home:  </span><span style="">UUID</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;43578ba0-a809-4274-931d-b92f881196ad&#34;</span><span style="">    </span><span style="">TYPE</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ext4&#34;</span></code></pre>
 </div>
-<h3 id="11-netstat查询网络连接信息">11. netstat查询网络连接信息</h3>
-
-<p>查看所有tcp下监听端口, p表示打印相应的进程</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -lntp</span></code></pre>
+<p><code>-s</code>参数指定可以指定分隔符. 默认是空格</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ grep -E </span><span style="color:#e6db74">&#34;sshd|qemu&#34;</span><span style=""> /etc/passwd </span><span style="">|</span><span style=""> column -t -s:
+</span><span style="">sshd  x  </span><span style="color:#ae81ff">74</span><span style="">   </span><span style="color:#ae81ff">74</span><span style="">   Privilege-separated SSH  /var/empty/sshd  /sbin/nologin
+</span><span style="">qemu  x  </span><span style="color:#ae81ff">107</span><span style="">  </span><span style="color:#ae81ff">107</span><span style="">  qemu user                /                /sbin/nologin</span></code></pre>
 </div>
-<p>查看所有已经建立的连接</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -antp</span></code></pre>
-</div>
-<p>查看路由表</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -rn</span></code></pre>
-</div>
-<p>查看网络统计信息进程</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -s</span></code></pre>
-</div>
-<h3 id="12-通过pid查看进程的环境变量信息">12. 通过pid查看进程的环境变量信息</h3>
+<h3 id="21-通过pid查看进程的环境变量信息">21. 通过pid查看进程的环境变量信息</h3>
 
 <p>使用strings, 可以格式化打印</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ strings /proc/1158/environ
@@ -323,26 +450,18 @@ args 为具体的命令行参数</p>
 </span><span style=""></span><span style="">NOTIFY_SOCKET</span><span style=""></span><span style="color:#f92672">=</span><span style="">/run/systemd/notify
 </span><span style=""></span><span style="">SSH_USE_STRONG_RNG</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span></code></pre>
 </div>
-<h3 id="13-通过pid查看进程对应可执行文件的绝对路径">13. 通过pid查看进程对应可执行文件的绝对路径</h3>
+<h3 id="22-通过pid查看进程对应可执行文件的绝对路径">22. 通过pid查看进程对应可执行文件的绝对路径</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">readlink /proc/</span><span style="color:#f92672">[</span><span style="">pid</span><span style="color:#f92672">]</span><span style="">/exe</span></code></pre>
 </div>
-<h3 id="14-通过pid查看进程的当前工作目录">14. 通过pid查看进程的当前工作目录</h3>
+<h3 id="23-通过pid查看进程的当前工作目录">23. 通过pid查看进程的当前工作目录</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">pwdx </span><span style="color:#f92672">[</span><span style="">pid</span><span style="color:#f92672">]</span></code></pre>
 </div>
-<h3 id="15-同步os与硬件时间">15. 同步OS与硬件时间</h3>
-
-<p>将OS系统时间同步到硬件(RTC)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">hwclock –-systohc</span></code></pre>
-</div>
-<p>将硬件时间同步到OS</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">hwclock --hctosys</span></code></pre>
-</div>
-<h3 id="16-lsof-一切皆文件">16. lsof 一切皆文件</h3>
+<h3 id="24-lsof-一切皆文件">24. lsof 一切皆文件</h3>
 
 <p><code>-p [PID]</code> 只显示该进程打开的所有文件. 不带参数显示所有已打开的文件<br />
 <code>-d</code>  对<code>FD</code>有效, 用于筛选文件列表.  <code>^txt</code> 显示除txt 其他所有类型的文件.  <code>1</code> 显示所有fd为1的文件. 可以使用<code>,</code>逗号连接多个选择<br />
 <code>-a</code> 表示两个参数都必须满足 (AND)。如果没有 -a 标志，缺省的情况是显示匹配任何一个参数 (OR) 的文件<br />
-<code>-n</code> 阻止网络地址转换
+<code>-n</code> 阻止网络地址转换<br />
 <code>-P</code> 阻止端口号到端口名的转换<br />
 <code>-i protocol:@ip:port</code> protocol 包括 tcp 和 udp. 显示符合该地址的文件列表
 <code>-u s</code> s为用户名或者用户ID, 选择该用户下的文件</p>
@@ -388,7 +507,7 @@ name是 文件夹(非mount point), 则显示所有将该文件夹作为正常文
 </span><span style="">tcpdump </span><span style="color:#ae81ff">17905</span><span style=""> tcpdump    3u  pack </span><span style="color:#ae81ff">231120</span><span style="">      0t0     ALL </span><span style="">type</span><span style=""></span><span style="color:#f92672">=</span><span style="">SOCK_RAW
 </span><span style="">tcpdump </span><span style="color:#ae81ff">17905</span><span style=""> tcpdump    4w   REG  </span><span style="color:#ae81ff">253</span><span style="">,1   </span><span style="color:#ae81ff">864256</span><span style=""> </span><span style="color:#ae81ff">2756467</span><span style=""> /root/abc2</span></code></pre>
 </div>
-<h3 id="17-fuser-查找访问文件系统的进程">17. fuser 查找访问文件系统的进程</h3>
+<h3 id="25-fuser-查找访问文件系统的进程">25. fuser 查找访问文件系统的进程</h3>
 
 <p><code>-v</code> 显示具体的进程名和用户</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ fuser -v /
@@ -402,7 +521,7 @@ name是 文件夹(非mount point), 则显示所有将该文件夹作为正常文
 <p><code>-k</code> kill掉访问该文件系统的所有进程.慎用. 先使用上述命令查询</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">fuser -k /</span></code></pre>
 </div>
-<h3 id="18-dd-测试磁盘或者文件读写">18. dd 测试磁盘或者文件读写</h3>
+<h3 id="26-dd-测试磁盘或者文件读写">26. dd 测试磁盘或者文件读写</h3>
 
 <p><code>if</code> 表示从哪个设备/文件读<br />
 <code>of</code> 表示写到哪个设备/文件<br />
@@ -411,7 +530,7 @@ name是 文件夹(非mount point), 则显示所有将该文件夹作为正常文
 <code>/dev/zero</code> 可以无限读取<code>\0</code></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">dd </span><span style="color:#66d9ef">if</span><span style=""></span><span style="color:#f92672">=</span><span style="">/dev/zero </span><span style="">of</span><span style=""></span><span style="color:#f92672">=</span><span style="">/tmp/abc.txt </span><span style="">bs</span><span style=""></span><span style="color:#f92672">=</span><span style="">1M </span><span style="">count</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span></code></pre>
 </div>
-<h3 id="19-rpm-安装-更新-卸载软件包">19. rpm 安装/更新/卸载软件包</h3>
+<h3 id="27-rpm-安装-更新-卸载软件包">27. rpm 安装/更新/卸载软件包</h3>
 
 <p>查询系统已安装的所有软件包</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm -qa</span></code></pre>
@@ -494,7 +613,7 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 <p>升级包</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm -Uvh abc.rpm</span></code></pre>
 </div>
-<h3 id="20-yum-安装-更新-卸载软件包">20. yum 安装/更新/卸载软件包</h3>
+<h3 id="28-yum-安装-更新-卸载软件包">28. yum 安装/更新/卸载软件包</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">yum install a            </span><span style="color:#75715e">#安装软件包a   (加上-y选项，可以在安装软件包时，不弹出是否继续的提示)
 </span><span style="color:#75715e"></span><span style="">yum install xxx --downloadonly --downloaddir</span><span style="color:#f92672">=</span><span style="">/xxx  </span><span style="color:#75715e">#只下载,不安装.
 </span><span style="color:#75715e"></span><span style="">yum remove a             </span><span style="color:#75715e">#卸载软件包a
@@ -543,6 +662,19 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="">    Update                  </span><span style="color:#ae81ff">10</span><span style="">:1.5.3-141.el7_4.4.x86_64 @updates
 </span><span style=""></span><span style="">history</span><span style=""> info</span></code></pre>
 </div>
+<p>查询某个软件包的所有历史变更记录</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ yum </span><span style="">history</span><span style=""> list  cloud-init
+</span><span style="">Loaded plugins: auto-update-debuginfo, fastestmirror
+</span><span style="">ID     </span><span style="">|</span><span style=""> Command line             </span><span style="">|</span><span style=""> Date and </span><span style="">time</span><span style="">    </span><span style="">|</span><span style=""> Action</span><span style="color:#f92672">(</span><span style="">s</span><span style="color:#f92672">)</span><span style="">      </span><span style="">|</span><span style=""> Altered
+</span><span style="">-------------------------------------------------------------------------------
+</span><span style="">   </span><span style="color:#ae81ff">312</span><span style=""> </span><span style="">|</span><span style=""> erase cloud-init         </span><span style="">|</span><span style=""> </span><span style="color:#ae81ff">2018</span><span style="">-01-11 </span><span style="color:#ae81ff">00</span><span style="">:07 </span><span style="">|</span><span style=""> Erase          </span><span style="">|</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">   </span><span style="color:#ae81ff">311</span><span style=""> </span><span style="">|</span><span style=""> install cloud-init       </span><span style="">|</span><span style=""> </span><span style="color:#ae81ff">2018</span><span style="">-01-11 </span><span style="color:#ae81ff">00</span><span style="">:01 </span><span style="">|</span><span style=""> Install        </span><span style="">|</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">   </span><span style="color:#ae81ff">310</span><span style=""> </span><span style="">|</span><span style=""> erase cloud-init         </span><span style="">|</span><span style=""> </span><span style="color:#ae81ff">2017</span><span style="">-12-10 </span><span style="color:#ae81ff">19</span><span style="">:50 </span><span style="">|</span><span style=""> Erase          </span><span style="">|</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">   </span><span style="color:#ae81ff">309</span><span style=""> </span><span style="">|</span><span style=""> install cloud-init       </span><span style="">|</span><span style=""> </span><span style="color:#ae81ff">2017</span><span style="">-12-10 </span><span style="color:#ae81ff">18</span><span style="">:52 </span><span style="">|</span><span style=""> Install        </span><span style="">|</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">   </span><span style="color:#ae81ff">306</span><span style=""> </span><span style="">|</span><span style=""> erase cloud-init         </span><span style="">|</span><span style=""> </span><span style="color:#ae81ff">2017</span><span style="">-12-09 </span><span style="color:#ae81ff">13</span><span style="">:09 </span><span style="">|</span><span style=""> Erase          </span><span style="">|</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">   </span><span style="color:#ae81ff">301</span><span style=""> </span><span style="">|</span><span style=""> install cloud-init       </span><span style="">|</span><span style=""> </span><span style="color:#ae81ff">2017</span><span style="">-10-14 </span><span style="color:#ae81ff">11</span><span style="">:49 </span><span style="">|</span><span style=""> Install        </span><span style="">|</span><span style="">    </span><span style="color:#ae81ff">5</span><span style="">
+</span><span style=""></span><span style="">history</span><span style=""> list</span></code></pre>
+</div>
 <p>查询包的依赖关系</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ yum deplist strace
 </span><span style="">package: strace.x86_64 </span><span style="color:#ae81ff">4</span><span style="">.12-4.el7
@@ -560,7 +692,7 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="">   provider: glibc.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.17-196.el7_4.2
 </span><span style="">   provider: glibc.i686 </span><span style="color:#ae81ff">2</span><span style="">.17-196.el7_4.2</span></code></pre>
 </div>
-<h3 id="21-解压缩命令">21. 解压缩命令</h3>
+<h3 id="29-解压缩命令">29. 解压缩命令</h3>
 
 <p>tar.gz</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tar -xzvf abc.tar.gz               </span><span style="color:#75715e">#解压缩
@@ -596,7 +728,7 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 <p>.deb</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ar p FileName.deb data.tar.gz </span><span style="">|</span><span style=""> tar -xzvf  #解包</span></code></pre>
 </div>
-<h3 id="22-systemd-管理命令">22. systemd 管理命令</h3>
+<h3 id="30-systemd-管理命令">30. systemd 管理命令</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">systemctl    -t </span><span style="">help</span><span style="">            </span><span style="color:#75715e">#列出所有的单元类型
 </span><span style="color:#75715e"></span><span style="">systemctl --type </span><span style="color:#e6db74">&#34;unit&#34;</span><span style="">         </span><span style="color:#75715e">#查看指定单元类型的状况, 替换 unit 为 &#34;mount&#34;, &#34;service&#34;, &#34;socket&#34;等
 </span><span style="color:#75715e"></span><span style="">systemctl --failed              </span><span style="color:#75715e">#查看所有加载失败的单元信息
@@ -688,17 +820,17 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="">journalctl --since </span><span style="color:#e6db74">&#34;2015-01-10&#34;</span><span style=""> --until </span><span style="color:#e6db74">&#34;2015-01-11 03:00&#34;</span><span style="">
 </span><span style="">journalctl --since </span><span style="color:#ae81ff">09</span><span style="">:00 --until </span><span style="color:#e6db74">&#34;1 hour ago&#34;</span></code></pre>
 </div>
-<h3 id="23-ubuntu-debian-检查已经安装好的软件包的更新日志">23. Ubuntu/Debian 检查已经安装好的软件包的更新日志</h3>
+<h3 id="31-ubuntu-debian-检查已经安装好的软件包的更新日志">31. Ubuntu/Debian 检查已经安装好的软件包的更新日志</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">zless /usr/share/doc/&lt;package -name&gt;/changelog.Debian.gz
 </span><span style="">zless /usr/share/doc/&lt;package -name&gt;/changelog.gz</span></code></pre>
 </div>
-<h3 id="24-搜索含有指定字符的手册页">24. 搜索含有指定字符的手册页</h3>
+<h3 id="32-搜索含有指定字符的手册页">32. 搜索含有指定字符的手册页</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ man -k logrotate
 </span><span style="">dh_installlogrotate </span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">)</span><span style=""> - install logrotate config files
 </span><span style="">logrotate </span><span style="color:#f92672">(</span><span style="color:#ae81ff">8</span><span style="color:#f92672">)</span><span style=""> - rotates, compresses, and mails system logs
 </span><span style="">logrotate.conf </span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="color:#f92672">)</span><span style=""> - rotates, compresses, and mails system logs</span></code></pre>
 </div>
-<h3 id="25-快速删除大量小文件">25. 快速删除大量小文件</h3>
+<h3 id="33-快速删除大量小文件">33. 快速删除大量小文件</h3>
 
 <p>使用<code>rsync</code>, 速度快但占用大量IO, 业务量低时使用</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">mkdir empty_dir
@@ -707,25 +839,26 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 <p>使用<code>find</code>, 速度慢但消耗IO少. <code>rm</code>会遇到<code>Argument list too long</code>报错</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find ./ -type f -exec rm </span><span style="color:#f92672">{}</span><span style=""> </span><span style="color:#ae81ff">\;</span></code></pre>
 </div>
-<h3 id="26-使用ionice删除非常大的单个文件-比如100g">26. 使用ionice删除非常大的单个文件,比如100G</h3>
-
-<p>以下命令表示 rm 会属于空闲 I/O 级别，并且只在其他进程不使用的时候使用 I/O：
-（0 表示无、1 表示实时、2 表示尽力、3 表示空闲）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ionice -c </span><span style="color:#ae81ff">3</span><span style=""> rm /var/logs/syslog
-</span><span style="">$ ionice -c </span><span style="color:#ae81ff">3</span><span style=""> rm -rf /var/log/apache</span></code></pre>
-</div>
-<h3 id="27-sysctl-管理系统参数">27. sysctl 管理系统参数</h3>
+<h3 id="34-sysctl-管理系统参数">34. sysctl 管理系统参数</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">sysctl -a                                       </span><span style="color:#75715e">#打印当前参数
 </span><span style="color:#75715e"></span><span style="">sysctl -w net.ipv4.tcp_fin_timeout</span><span style="color:#f92672">=</span><span style="color:#ae81ff">30</span><span style="">           </span><span style="color:#75715e">#实时更新一个系统参数
 </span><span style="color:#75715e"></span><span style="">sysctl -p                                       #读取/etc/sysctl.conf和 /etc/sysctl.d/下配置文件信息,使其生效  </span></code></pre>
 </div>
-<h3 id="28-清空文件内容">28. 清空文件内容</h3>
+<h3 id="35-清空文件内容">35. 清空文件内容</h3>
 
 <p>假设文件名为 abc.txt, 以下方法都可以清空该文件的内容</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">&gt; abc.txt
 </span><span style="">cp /dev/null abc.txt</span></code></pre>
 </div>
-<h3 id="29-查看磁盘uuid和文件系统类型">29. 查看磁盘uuid和文件系统类型</h3>
+<h3 id="36-查询系统调用">36. 查询系统调用</h3>
+
+<p>跟踪命令<code>ls -rlt</code>的系统调用, 将信息输出到<code>a.txt</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">strace -ftT -o a.txt ls -rlt</span></code></pre>
+</div>
+<p>统计命令进行的系统调用信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">strace -c ls</span></code></pre>
+</div>
+<h3 id="37-查看磁盘uuid和文件系统类型">37. 查看磁盘uuid和文件系统类型</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ lsblk -f
 </span><span style="">NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
 </span><span style="">vda
@@ -733,16 +866,16 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="">$ blkid
 </span><span style="">/dev/vda1: </span><span style="">UUID</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;32236b41-fcde-460e-8c34-ba50515b33f2&#34;</span><span style=""> </span><span style="">TYPE</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ext3&#34;</span></code></pre>
 </div>
-<h3 id="30-创建软连接">30. 创建软连接</h3>
+<h3 id="38-创建软连接">38. 创建软连接</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ln -s regular_file softlink          创建软连接</span></code></pre>
 </div>
-<h3 id="31-history查看历史记录">31. history查看历史记录</h3>
+<h3 id="39-history查看历史记录">39. history查看历史记录</h3>
 
 <p>如果直接执行<code>history</code>没有显示时间戳,可以使用下面的命令</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">HISTTIMEFORMAT</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;%d/%m/%y %T&#34;</span><span style="">
 </span><span style="">history</span></code></pre>
 </div>
-<h3 id="32-查看进程的父子调用关系">32. 查看进程的父子调用关系</h3>
+<h3 id="40-查看进程的父子调用关系">40. 查看进程的父子调用关系</h3>
 
 <p><code>-p</code> 显示pid信息. {}表示线程</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ pstree -p
@@ -761,20 +894,43 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="">           │               ├─</span><span style="color:#f92672">{</span><span style="">gssproxy</span><span style="color:#f92672">}(</span><span style="color:#ae81ff">727</span><span style="color:#f92672">)</span><span style="">
 </span><span style="">           │               └─</span><span style="color:#f92672">{</span><span style="">gssproxy</span><span style="color:#f92672">}(</span><span style="color:#ae81ff">728</span><span style="color:#f92672">)</span></code></pre>
 </div>
-<h3 id="33-tail-查看文件指定行信息">33. tail 查看文件指定行信息</h3>
+<h3 id="41-rsync文件">41. rsync文件</h3>
 
-<p>显示最后3行记录</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ tail -3 /var/log/yum.log-20180101
-</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">00</span><span style="">:35:55 Installed: libvirt-debuginfo-3.2.0-14.el7_4.3.x86_64
-</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">18</span><span style="">:52:40 Installed: cloud-init-0.7.9-9.el7.centos.2.x86_64
-</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">19</span><span style="">:50:30 Erased: cloud-init-0.7.9-9.el7.centos.2.x86_64</span></code></pre>
+<p>rsync [OPTION]&hellip; SRC [SRC]&hellip; DEST<br />
+在指定复制源时，路径是否有最后的 “/” 有不同的含义，例如：<br />
+/data ：表示将整个 /data 目录复制到目标目录<br />
+/data/ ：表示将 /data/ 目录中的所有内容复制到目标目录<br />
+<code>--stats</code> : 输出文件传输的状态<br />
+<code>--progress</code> : 输出文件传输的进度<br />
+<code>-a</code>归档模式, 递归且保留符号链接，保留权限信息，时间戳，以及owner,group信息<br />
+<code>-z</code>  打开压缩功能<br />
+<code>-v</code> verbose更多打印信息<br />
+本地同步</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rsync -azv /var/opt/installation/inventory/ /root/temp/</span></code></pre>
 </div>
-<p>从第770行开始显示</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ tail -n +770 /var/log/yum.log-20180101
-</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">18</span><span style="">:52:40 Installed: cloud-init-0.7.9-9.el7.centos.2.x86_64
-</span><span style="">Dec </span><span style="color:#ae81ff">10</span><span style=""> </span><span style="color:#ae81ff">19</span><span style="">:50:30 Erased: cloud-init-0.7.9-9.el7.centos.2.x86_64</span></code></pre>
+<p>从本地到远端</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rsync -avz /root/temp/ thegeekstuff@192.168.200.10:/home/thegeekstuff/temp/</span></code></pre>
 </div>
-<h3 id="34-iptable-内置防火墙">34. iptable 内置防火墙</h3>
+<h3 id="42-查询的动态库链接信息">42. 查询的动态库链接信息</h3>
+
+<p>查询python这个程序依赖的所有动态库</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ldd </span><span style="color:#e6db74">`</span><span style="">which python</span><span style="color:#e6db74">`</span><span style="">
+</span><span style="">	linux-vdso.so.1 </span><span style="color:#f92672">=</span><span style="">&gt;  </span><span style="color:#f92672">(</span><span style="">0x00007fffb1fb4000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	libpython2.7.so.1.0 </span><span style="color:#f92672">=</span><span style="">&gt; /lib64/libpython2.7.so.1.0 </span><span style="color:#f92672">(</span><span style="">0x00007f5dee201000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	libpthread.so.0 </span><span style="color:#f92672">=</span><span style="">&gt; /lib64/libpthread.so.0 </span><span style="color:#f92672">(</span><span style="">0x00007f5dedfe5000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	libdl.so.2 </span><span style="color:#f92672">=</span><span style="">&gt; /lib64/libdl.so.2 </span><span style="color:#f92672">(</span><span style="">0x00007f5dedde0000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	libutil.so.1 </span><span style="color:#f92672">=</span><span style="">&gt; /lib64/libutil.so.1 </span><span style="color:#f92672">(</span><span style="">0x00007f5dedbdd000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	libm.so.6 </span><span style="color:#f92672">=</span><span style="">&gt; /lib64/libm.so.6 </span><span style="color:#f92672">(</span><span style="">0x00007f5ded8db000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	libc.so.6 </span><span style="color:#f92672">=</span><span style="">&gt; /lib64/libc.so.6 </span><span style="color:#f92672">(</span><span style="">0x00007f5ded517000</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">	/lib64/ld-linux-x86-64.so.2 </span><span style="color:#f92672">(</span><span style="">0x0000561b940b0000</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#f92672">[</span><span style="">root@linux /tmp/new_folder</span><span style="color:#f92672">]</span><span style="">#</span></code></pre>
+</div>
+<h3 id="43-查询ascii编码表">43. 查询ascii编码表</h3>
+
+<p>速查编码信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">man ascii</span></code></pre>
+</div>
+<h3 id="44-iptable-内置防火墙">44. iptable 内置防火墙</h3>
 
 <p>iptables内置了4个表，即raw表、filter表、nat表和mangle表，默认操作filter表.</p>
 
@@ -813,12 +969,7 @@ output              postrouting         postrouting       output
 <code>MARK</code> 将封包标上某个代号，以便提供作为后续过滤的条件判断依据，进行完此处理动作后，将会继续比对其它规则。范例如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">iptables -t mangle -A PREROUTING -p tcp --dport </span><span style="color:#ae81ff">22</span><span style=""> -j MARK --set-mark </span><span style="color:#ae81ff">22</span></code></pre>
 </div>
-<h3 id="35-strace-跟踪系统调用">35. strace 跟踪系统调用</h3>
-
-<p>将<code>ls -rlt</code>的系统调用输出到<code>trace.txt</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">strace -ftT -o trace.txt ls -rlt</span></code></pre>
-</div>
-<h3 id="36-tcpdump-抓包">36. tcpdump 抓包</h3>
+<h3 id="45-tcpdump-抓包">45. tcpdump 抓包</h3>
 
 <p>常用表达式:<br />
 非 : ! or &ldquo;not&rdquo; (去掉双引号)<br />
@@ -840,24 +991,7 @@ output              postrouting         postrouting       output
 </span><span style="">-rw-r--r--. </span><span style="color:#ae81ff">1</span><span style=""> tcpdump tcpdump </span><span style="color:#ae81ff">1001078</span><span style=""> Jan </span><span style="color:#ae81ff">14</span><span style=""> </span><span style="color:#ae81ff">23</span><span style="">:33 abc
 </span><span style="">-rw-r--r--. </span><span style="color:#ae81ff">1</span><span style=""> tcpdump tcpdump  </span><span style="color:#ae81ff">647168</span><span style=""> Jan </span><span style="color:#ae81ff">14</span><span style=""> </span><span style="color:#ae81ff">23</span><span style="">:33 abc1</span></code></pre>
 </div>
-<h3 id="37-rsync文件">37. rsync文件</h3>
-
-<p>rsync [OPTION]&hellip; SRC [SRC]&hellip; DEST<br />
-在指定复制源时，路径是否有最后的 “/” 有不同的含义，例如：<br />
-/data ：表示将整个 /data 目录复制到目标目录<br />
-/data/ ：表示将 /data/ 目录中的所有内容复制到目标目录<br />
-<code>--stats</code> : 输出文件传输的状态<br />
-<code>--progress</code> : 输出文件传输的进度<br />
-<code>-a</code>归档模式, 递归且保留符号链接，保留权限信息，时间戳，以及owner,group信息<br />
-<code>-z</code>  打开压缩功能<br />
-<code>-v</code> verbose更多打印信息<br />
-本地同步</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rsync -azv /var/opt/installation/inventory/ /root/temp/</span></code></pre>
-</div>
-<p>从本地到远端</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rsync -avz /root/temp/ thegeekstuff@192.168.200.10:/home/thegeekstuff/temp/</span></code></pre>
-</div>
-<h3 id="38-dns查询工具">38. DNS查询工具</h3>
+<h3 id="46-dns查询工具">46. DNS查询工具</h3>
 
 <p>指定DNS服务器递归查</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig www.baidu.com @8.8.8.8
@@ -893,7 +1027,131 @@ output              postrouting         postrouting       output
 </div>
 <p>全过程迭代跟踪</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">dig +trace www.baidu.com</span></code></pre>
-</div></article>
+</div>
+<h3 id="47-ntp时间同步">47. NTP时间同步</h3>
+
+<p>ntpdate 手工校准时间, 加 <code>-q</code> 只查询, 不同步时间</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ntpdate ntp1.aliyun.com
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style=""> Jan </span><span style="color:#ae81ff">23</span><span style="">:18:51 ntpdate</span><span style="color:#f92672">[</span><span style="color:#ae81ff">18981</span><span style="color:#f92672">]</span><span style="">: adjust </span><span style="">time</span><span style=""> server </span><span style="color:#ae81ff">182</span><span style="">.92.12.11 offset </span><span style="color:#ae81ff">0</span><span style="">.000643 sec</span></code></pre>
+</div>
+<p>安装<code>ntpd</code>时查询ntp同步状态的命令为<code>ntpq -p</code><br />
+如果使用<code>chronyd</code>(centos7默认)是命令为<code>chronyc sources -v</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ chronyc sources -v
+</span><span style=""></span><span style="color:#ae81ff">210</span><span style=""> Number of </span><span style="">sources</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">
+</span><span style="">  .-- Source mode  </span><span style="color:#e6db74">&#39;^&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> server, </span><span style="color:#e6db74">&#39;=&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> peer, </span><span style="color:#e6db74">&#39;#&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">local</span><span style=""> clock.
+</span><span style=""> / .- Source state </span><span style="color:#e6db74">&#39;*&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> current synced, </span><span style="color:#e6db74">&#39;+&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> combined , </span><span style="color:#e6db74">&#39;-&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> not combined,
+</span><span style=""></span><span style="">|</span><span style=""> /   </span><span style="color:#e6db74">&#39;?&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> unreachable, </span><span style="color:#e6db74">&#39;x&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">time</span><span style=""> may be in error, </span><span style="color:#e6db74">&#39;~&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">time</span><span style=""> too variable.
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">                                                 .- xxxx </span><span style="color:#f92672">[</span><span style=""> yyyy </span><span style="color:#f92672">]</span><span style=""> +/- zzzz
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">      Reachability register </span><span style="color:#f92672">(</span><span style="">octal</span><span style="color:#f92672">)</span><span style=""> -.           </span><span style="">|</span><span style="">  </span><span style="">xxxx</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> adjusted offset,
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">      Log2</span><span style="color:#f92672">(</span><span style="">Polling interval</span><span style="color:#f92672">)</span><span style=""> --.      </span><span style="">|</span><span style="">          </span><span style="">|</span><span style="">  </span><span style="">yyyy</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> measured offset,
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">                                </span><span style="color:#ae81ff">\ </span><span style="">    </span><span style="">|</span><span style="">          </span><span style="">|</span><span style="">  </span><span style="">zzzz</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> estimated error.
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">                                 </span><span style="">|</span><span style="">    </span><span style="">|</span><span style="">           </span><span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span><span style="">MS Name/IP address         Stratum Poll Reach LastRx Last </span><span style="">sample</span><span style="">
+</span><span style=""></span><span style="color:#f92672">===============================================================================</span><span style="">
+</span><span style="">^* time5.aliyun.com              </span><span style="color:#ae81ff">2</span><span style="">   </span><span style="color:#ae81ff">6</span><span style="">    </span><span style="color:#ae81ff">37</span><span style="">    </span><span style="color:#ae81ff">41</span><span style="">  +2394ns</span><span style="color:#f92672">[</span><span style="">+1057us</span><span style="color:#f92672">]</span><span style=""> +/-   15ms
+</span><span style="">^- </span><span style="color:#ae81ff">120</span><span style="">.25.115.19                 </span><span style="color:#ae81ff">2</span><span style="">   </span><span style="color:#ae81ff">6</span><span style="">    </span><span style="color:#ae81ff">37</span><span style="">    </span><span style="color:#ae81ff">40</span><span style="">  -2559us</span><span style="color:#f92672">[</span><span style="">-2559us</span><span style="color:#f92672">]</span><span style=""> +/-   67ms</span></code></pre>
+</div>
+<h3 id="48-netstat查询网络连接信息">48. netstat查询网络连接信息</h3>
+
+<p>查看所有tcp下监听端口, p表示打印相应的进程</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -lntp</span></code></pre>
+</div>
+<p>查看所有已经建立的连接</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -antp</span></code></pre>
+</div>
+<p>查看路由表</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -rn</span></code></pre>
+</div>
+<p>查看网络统计信息进程</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">netstat -s</span></code></pre>
+</div>
+<h3 id="49-ethtool-网卡查询工具">49. ethtool 网卡查询工具</h3>
+
+<p><code>-i</code> 查网卡驱动信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ethtool -i  eth0
+</span><span style="">driver: virtio_net
+</span><span style="">version: </span><span style="color:#ae81ff">1</span><span style="">.0.0
+</span><span style="">firmware-version:
+</span><span style="">expansion-rom-version:
+</span><span style="">bus-info: </span><span style="color:#ae81ff">0000</span><span style="">:00:05.0
+</span><span style="">supports-statistics: no
+</span><span style="">supports-test: no
+</span><span style="">supports-eeprom-access: no
+</span><span style="">supports-register-dump: no
+</span><span style="">supports-priv-flags: no</span></code></pre>
+</div>
+<p>不跟参数,显示速率,全双工模式等信息(虚拟机下没有)<br />
+Link 为<code>yes</code>表示 网线连接正常</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ethtool eth0
+</span><span style="">Settings </span><span style="color:#66d9ef">for</span><span style=""> eth0:
+</span><span style="">	Link detected: yes</span></code></pre>
+</div>
+<h3 id="50-ip-网络维护">50. ip 网络维护</h3>
+
+<p>查看网卡状态和对应的IP信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip addr</span></code></pre>
+</div>
+<p>给接口eth0赋予地址10.211.55.10 掩码是255.255.255.0(24代表掩码中1的个数)，广播地址是10.211.55.255</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip addr add </span><span style="color:#ae81ff">10</span><span style="">.211.55.10/24 broadcast </span><span style="color:#ae81ff">10</span><span style="">.211.55.255 dev eth0</span></code></pre>
+</div>
+<p>删除eth0上的 10.211.55.10</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip addr del </span><span style="color:#ae81ff">10</span><span style="">.211.55.10/24 dev eth0</span></code></pre>
+</div>
+<p>查看路由表信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip route
+</span><span style="">default via </span><span style="color:#ae81ff">10</span><span style="">.211.55.1 dev eth0
+</span><span style=""></span><span style="color:#ae81ff">10</span><span style="">.211.55.0/24 dev eth0 proto kernel scope link src </span><span style="color:#ae81ff">10</span><span style="">.211.55.9
+</span><span style=""></span><span style="color:#ae81ff">192</span><span style="">.168.122.0/24 dev virbr0 proto kernel scope link src </span><span style="color:#ae81ff">192</span><span style="">.168.122.1</span></code></pre>
+</div>
+<p>查询目的地为<code>192.168.1.1</code>时选择的路由情况</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip route get </span><span style="color:#ae81ff">192</span><span style="">.168.1.1
+</span><span style=""></span><span style="color:#ae81ff">192</span><span style="">.168.1.1 via </span><span style="color:#ae81ff">10</span><span style="">.211.55.1 dev eth0 src </span><span style="color:#ae81ff">10</span><span style="">.211.55.9
+</span><span style="">    cache</span></code></pre>
+</div>
+<p>增加默认路由</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip route add default gw </span><span style="color:#ae81ff">20</span><span style="">.0.0.1</span></code></pre>
+</div>
+<p>策略性路由相对于传统的路由算法主要是引入了多路由表以及规则的概念。<br />
+例如一个子网通过一个路由器与外界相连，路由器与外界有两条线路相连，其中一条的速度比较快，一条的速度比较慢。对于子网内的大多数用户来说对速度并没有特殊的要求，所以可以让他们用比较慢的路由；但是子网内有一些特殊的用户却是对速度的要求比较苛刻，所以他们需要使用速度比较快的路由。如果使用一张路由表上述要求是无法实现的，而如果根据源地址或其它参数，对不同的用户使用不同的路由表，这样就可以大大提高路由器的性能。<br />
+优先级别越高的规则越先匹配（数值越小优先级别越高）。</p>
+
+<p>系统内置3张表:</p>
+
+<pre><code>表255 本地路由表（Local table）本地接口地址，广播地址，已及NAT地址都放在这个表。该路由表由系统自动维护，管理员不能直接修改。
+表254 主路由表（Main table）如果没有指明路由所属的表，所有的路由都默认都放在这个表里，route）所添加的路由都会加到这个表。
+表253 默认路由表（Default table）一般来说默认的路由都放在这张表，但是如果特别指明放的也可以是所有的网关路由。
+</code></pre>
+
+<p>查看路由规则</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip rule list
+</span><span style=""></span><span style="color:#ae81ff">0</span><span style="">:	from all lookup </span><span style="">local</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">32766</span><span style="">:	from all lookup main
+</span><span style=""></span><span style="color:#ae81ff">32767</span><span style="">:	from all lookup default</span></code></pre>
+</div>
+<p>规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip rule add </span><span style="color:#f92672">[</span><span style="">from </span><span style="color:#ae81ff">0</span><span style="">/0</span><span style="color:#f92672">]</span><span style=""> table </span><span style="color:#ae81ff">1</span><span style=""> pref </span><span style="color:#ae81ff">32800</span></code></pre>
+</div>
+<p>规则匹配的对象是IP为192.168.3.112，tos等于0x10的包，使用路由表2，这条规则的优先级是1500</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip rule add from </span><span style="color:#ae81ff">192</span><span style="">.168.3.112/32 </span><span style="color:#f92672">[</span><span style="">tos 0x10</span><span style="color:#f92672">]</span><span style=""> table </span><span style="color:#ae81ff">２</span><span style=""> pref </span><span style="color:#ae81ff">1500</span></code></pre>
+</div>
+<p>上面的规则是以源地址为关键字，作为是否匹配的依据的。除了源地址外，还可以用以下的信息：</p>
+
+<pre><code>From -- 源地址
+To -- 目的地址（这里是选择规则时使用，查找路由表时也使用）
+Tos -- IP包头的TOS（type of sevice）域
+Dev -- 物理接口
+Fwmark -- 防火墙参数
+</code></pre>
+
+<p>采取的动作除了指定表，还可以指定下面的动作：</p>
+
+<pre><code>Table 指明所使用的表
+Nat 透明网关
+Action prohibit 丢弃该包，并发送 COMM.ADM.PROHIITED的ICMP信息
+Reject 单纯丢弃该包
+Unreachable丢弃该包，并发送 NET UNREACHABLE的ICMP信息
+</code></pre></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
