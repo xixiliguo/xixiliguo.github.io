@@ -15,14 +15,20 @@
 
   
   <meta name="author" content="Peter Wang" />
-  <meta name="description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新. " />
+  <meta name="description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
+ 2018/01/12: 初稿
+ 
+" />
 
   
   
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@gohugoio" />
     <meta name="twitter:title" content="Linux 下常用命令与技巧汇总" />
-    <meta name="twitter:description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新. " />
+    <meta name="twitter:description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
+ 2018/01/12: 初稿
+ 
+" />
     <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
   
 
@@ -184,8 +190,13 @@
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
       <p class="post-meta">@Peter Wang · Jan 7, 2018 · 13 min read</p>
     </header>
-    <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
-</p>
+    <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
+
+<blockquote>
+<p>2018/01/12: 初稿</p>
+</blockquote>
+
+<p></p>
 
 <h3 id="1-查询系统准确的启动时间">1. 查询系统准确的启动时间</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">date -d </span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span><span style="">awk -F.date -d </span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span><span style="">awk -F. </span><span style="color:#e6db74">&#39;{print $1}&#39;</span><span style=""> /proc/uptime</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> second ago&#34;</span><span style=""> +</span><span style="color:#e6db74">&#34;%Y-%m-%d %H:%M:%S&#34;</span><span style="">
@@ -313,7 +324,7 @@ args 为具体的命令行参数</p>
 <h3 id="12-find删除查找到的文件">12. find删除查找到的文件</h3>
 
 <p>find命令经常会用到, <code>-type f</code>表示只返回文件, <code>-exec</code> 可将已找到的结果作为标准输入执行其他命令.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find ./ -type f -exec rm </span><span style="color:#f92672">{}</span><span style=""> </span><span style="color:#ae81ff">\;</span><span style="">    # 删除查找到的文件</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find &lt;PATH&gt; -type f -exec rm </span><span style="color:#f92672">{}</span><span style=""> </span><span style="color:#ae81ff">\;</span><span style="">    # 删除查找到的文件, 将 path 改为实际要查找的目录</span></code></pre>
 </div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find </span><span style="color:#f92672">[</span><span style="">PATH</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#f92672">[</span><span style="">option</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#f92672">[</span><span style="">action</span><span style="color:#f92672">]</span><span style="">  
 </span><span style="">
 </span><span style="">-mtime n : n为数字，意思为在n天之前的“一天内”被更改过的文件；  
@@ -338,9 +349,9 @@ args 为具体的命令行参数</p>
 </div>
 <h3 id="13-xargs-命令">13. xargs 命令</h3>
 
-<p>该命令可以将一个命令的输出作为参数传递给另一个命令。
+<p>该命令可以将一个命令的输出作为参数传递给另一个命令。<br />
 区别于管道符<code>|</code>是将将输出作为另一个命令的标准输入传递.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find. -name *.png -type f </span><span style="">|</span><span style=""> xargs tar -cvzf images.tar.gz</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find /tmp -name *.png -type f </span><span style="">|</span><span style=""> xargs tar -cvzf images.tar.gz</span></code></pre>
 </div>
 <p>默认是将内容放到参数的最后面, 如果要放到指定位置,需要使用 <code>-i</code> 和 <code>{}</code><br />
 如下所示，将第一个命令的输出放到<code>{}</code>出现的位置</p>
@@ -523,7 +534,9 @@ name是 文件夹(非mount point), 则显示所有将该文件夹作为正常文
 </div>
 <h3 id="26-dd-测试磁盘或者文件读写">26. dd 测试磁盘或者文件读写</h3>
 
-<p><code>if</code> 表示从哪个设备/文件读<br />
+<p>高危命令, <code>of</code>一定要指向正确的文件, 不要指 <code>/</code>, <code>/dev/vda</code>, <code>/dev/vda1</code>等系统重要设备.<br />
+该命令要在测试环境验证充分.<br />
+<code>if</code> 表示从哪个设备/文件读<br />
 <code>of</code> 表示写到哪个设备/文件<br />
 <code>bs</code> 表示一次读写多少字节. 也可以使用 1K, 1M这样带单位的<br />
 <code>count</code> 表示最多读写多少次.  总的读写量为  <code>bs * count</code><br />
@@ -832,16 +845,16 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </div>
 <h3 id="33-快速删除大量小文件">33. 快速删除大量小文件</h3>
 
-<p>使用<code>rsync</code>, 速度快但占用大量IO, 业务量低时使用</p>
+<p>使用<code>rsync</code>, 速度快但占用大量IO, 业务量低时使用. 高危命令</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">mkdir empty_dir
 </span><span style="">rsync -a --delete empty_dir/    yourdirectory/</span></code></pre>
 </div>
 <p>使用<code>find</code>, 速度慢但消耗IO少. <code>rm</code>会遇到<code>Argument list too long</code>报错</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find ./ -type f -exec rm </span><span style="color:#f92672">{}</span><span style=""> </span><span style="color:#ae81ff">\;</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">find /tmp -type f -exec rm </span><span style="color:#f92672">{}</span><span style=""> </span><span style="color:#ae81ff">\;</span><span style="">      #删除/tmp目录下所有文件</span></code></pre>
 </div>
 <h3 id="34-sysctl-管理系统参数">34. sysctl 管理系统参数</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">sysctl -a                                       </span><span style="color:#75715e">#打印当前参数
-</span><span style="color:#75715e"></span><span style="">sysctl -w net.ipv4.tcp_fin_timeout</span><span style="color:#f92672">=</span><span style="color:#ae81ff">30</span><span style="">           </span><span style="color:#75715e">#实时更新一个系统参数
+</span><span style="color:#75715e"></span><span style="">sysctl -w net.ipv4.tcp_fin_timeout</span><span style="color:#f92672">=</span><span style="color:#ae81ff">30</span><span style="">           </span><span style="color:#75715e">#实时更新一个系统参数, 高危. 要验证好
 </span><span style="color:#75715e"></span><span style="">sysctl -p                                       #读取/etc/sysctl.conf和 /etc/sysctl.d/下配置文件信息,使其生效  </span></code></pre>
 </div>
 <h3 id="35-清空文件内容">35. 清空文件内容</h3>
@@ -1151,7 +1164,12 @@ Nat 透明网关
 Action prohibit 丢弃该包，并发送 COMM.ADM.PROHIITED的ICMP信息
 Reject 单纯丢弃该包
 Unreachable丢弃该包，并发送 NET UNREACHABLE的ICMP信息
-</code></pre></article>
+</code></pre>
+
+<h3 id="51-who-查看当前登录用户">51. who 查看当前登录用户</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ who
+</span><span style="">root     pts/0        </span><span style="color:#ae81ff">2018</span><span style="">-01-17 </span><span style="color:#ae81ff">22</span><span style="">:28 </span><span style="color:#f92672">(</span><span style="color:#ae81ff">10</span><span style="">.211.55.2</span><span style="color:#f92672">)</span></code></pre>
+</div></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
