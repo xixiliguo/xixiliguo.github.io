@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ntp on 个人网站</title>
+    <link>https://xixiliguo.github.io/tags/ntp/</link>
+    <description>Recent content in Ntp on 个人网站</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
+    <lastBuildDate>Sun, 28 Jan 2018 15:02:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://xixiliguo.github.io/tags/ntp/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>NTP协议</title>
+      <link>https://xixiliguo.github.io/post/ntp/</link>
+      <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/ntp/</guid>
+      <description>&lt;p&gt;NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式
+&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

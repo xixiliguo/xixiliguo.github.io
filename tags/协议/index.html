@@ -5,7 +5,11 @@
   <meta charset="utf-8" />
 
   
-  <title>My personal Blog</title>
+  <title>
+  Tag → 协议
+  
+   | My personal Blog
+</title>
 
   
   
@@ -30,7 +34,7 @@
 <meta name="generator" content="Hugo 0.28" />
 
 
-<link rel="canonical" href="https://xixiliguo.github.io/" />
+<link rel="canonical" href="https://xixiliguo.github.io/tags/%E5%8D%8F%E8%AE%AE/" />
 <link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
 
 
@@ -65,6 +69,8 @@
 
 
 
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
 <link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
 
 
@@ -98,7 +104,7 @@
   <header class="site-header">
   <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
   
-  <h1 class="title">个人网站</h1>
+  <h2 class="title">个人网站</h2>
   
   <p class="subtitle">Stay Hungry. Stay Foolish.</p>
   <button class="menu-toggle" type="button">
@@ -175,7 +181,7 @@
 
   <section class="main post-list">
     <header class="list-header offscreen">
-      <h2 class="list-label">All Posts</h2>
+      <h2 class="list-label">Posts List</h2>
     </header>
     
     
@@ -189,108 +195,6 @@
   <p class="post-summary">NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式 </p>
   <footer class="post-footer">
     <a class="read-more" href="https://xixiliguo.github.io/post/ntp/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/linux-common-commands/" class="post-link">Linux 下常用命令与技巧汇总</a></h3>
-    <p class="post-meta">@Peter Wang · Jan 7, 2018 · 13 min read</p>
-  </header>
-  
-  <p class="post-summary">收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
- 2018/01/12: 初稿
- 
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/linux-common-commands/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/bandersnatch-pypi/" class="post-link">使用Bandersnatch搭建私有Pypi源</a></h3>
-    <p class="post-meta">@Peter Wang · Jan 2, 2018 · 2 min read</p>
-  </header>
-  
-  <p class="post-summary">经常使用python的公司,考虑到pypi.python.org不稳定,都会自己搭建私有的Pypi源.这里简单介绍下方法.
-
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/bandersnatch-pypi/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/cloud-init-2/" class="post-link">cloud-init学习笔记（二）</a></h3>
-    <p class="post-meta">@Peter Wang · Dec 10, 2017 · 1 min read</p>
-  </header>
-  
-  <p class="post-summary">cloud-init 源码结构 大部分代码存放于 /lib/python2.7/site-packages/cloudinit </p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/cloud-init-2/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/cloud-init-1/" class="post-link">cloud-init学习笔记（一）</a></h3>
-    <p class="post-meta">@Peter Wang · Oct 18, 2017 · 4 min read</p>
-  </header>
-  
-  <p class="post-summary">cloud-init介绍 目前大部分公有云（openstack, AWS, Aliyun）都在使用cloud-init, 已经成为虚拟机元数据管理和OS系统配置初始化的事实标准.最早cloud-init由ubuntu的母公司 Canonical 开发。主要思想是当用户首次创建虚拟机时，将前台设置的主机名，密码或者秘钥等存入metadata server(顾名思义，存放元数据的服务器）。在openstack环境下当cloud-init随虚拟机启动而运行时，通过http协议访问metadata server，获取这些信息并修改主机配置。完成系统的环境初始化。本文以openstack &#43; centos7 &#43; cloud-init 0.7.9 为例,分两篇介绍基本概念，工作原理和源码解读。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/cloud-init-1/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/linux-shadow/" class="post-link">Linux /etc/shadow 文件学习笔记</a></h3>
-    <p class="post-meta">@Peter Wang · Oct 11, 2017 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">Linux系统下，创建的用户信息如ID，家目录，默认shell保存在/etc/passwd下，该文件每行的第二位（以冒号分隔）表示密码。但真正的密码其实被加密后放在/etc/shadow里，/etc/passwd里只显示为x。本文主要介绍shadow文件各字段含义和相关的密码生命周期配置。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/linux-shadow/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/strings-algorithm-golang/" class="post-link">从Go标准库看字符串匹配算法</a></h3>
-    <p class="post-meta">@Peter Wang · Oct 2, 2017 · 2 min read</p>
-  </header>
-  
-  <p class="post-summary">Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现
-
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/strings-algorithm-golang/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/atop/" class="post-link">ATOP工作原理总结</a></h3>
-    <p class="post-meta">@Peter Wang · Mar 5, 2017 · 4 min read</p>
-  </header>
-  
-    <img class="post-cover" src="https://xixiliguo.github.io/img/atop.png" alt="ATOP工作原理总结">
-  
-  <p class="post-summary">ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。 </p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/atop/">Read More →</a>
   </footer>
 </article>
 

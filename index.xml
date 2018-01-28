@@ -23,6 +23,16 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>NTP协议</title>
+      <link>https://xixiliguo.github.io/post/ntp/</link>
+      <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/ntp/</guid>
+      <description>&lt;p&gt;NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式
+&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Linux 下常用命令与技巧汇总</title>
       <link>https://xixiliguo.github.io/post/linux-common-commands/</link>
       <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>

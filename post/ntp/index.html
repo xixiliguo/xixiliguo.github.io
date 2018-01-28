@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>NTP协议</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wang" />
+  <meta name="description" content="NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式 " />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="NTP协议" />
+    <meta name="twitter:description" content="NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式 " />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/ntp/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">NTP协议</h1>
+      <p class="post-meta">@Peter Wang · Jan 28, 2018 · 4 min read</p>
+    </header>
+    <article class="post-content"><p>NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式
+</p>
+
+<h2 id="时钟同步的过程">时钟同步的过程</h2>
+
+<ol>
+<li>A发送ntp消息到B, 消息里含发送时间戳 T1.<br /></li>
+<li>B收到ntp消息后, 将接受时间T2写入该消息体.<br /></li>
+<li>当B发送ntp响应消息给A时, 将发送时间T3也写入该消息体<br /></li>
+<li>A收到响应ntp消息的时间为T4<br /></li>
+</ol>
+
+<p>那么<br />
+round-trip 为: (T4 - T1) - (T3 - T2)<br />
+时间偏移为: ((T2 - T1) + (T3 - T4)) / 2</p>
+
+<p>ntp请求消息和响应消息格式完全一样, 使用udp协议. 默认的ntp服务器监听端口是123<br />
+如下chronyd(centos下默认的ntp软件)正在监听123端口</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ lsof -i:123
+</span><span style="">COMMAND  PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+</span><span style="">chronyd </span><span style="color:#ae81ff">2439</span><span style=""> chrony    3u  IPv4  </span><span style="color:#ae81ff">23270</span><span style="">      0t0  UDP *:ntp</span></code></pre>
+</div>
+<h2 id="ntp消息格式">ntp消息格式</h2>
+
+<p>ntp消息由消息头,扩展字段,可选的鉴权码组成. 在实际使用中, 一般只携带消息头. 如下是消息头的具体格式</p>
+
+<pre><code>     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |LI | VN  |Mode |    Stratum     |     Poll      |  Precision   |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Root Delay                            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Root Dispersion                       |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                          Reference ID                         |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                     Reference Timestamp (64)                  +
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                      Origin Timestamp (64)                    +
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                      Receive Timestamp (64)                   +
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                      Transmit Timestamp (64)                  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre>
+
+<p>时间格式有两种, 它们代表从1900年1月1号 0时 UTC时间至今的秒数</p>
+
+<ul>
+<li>NTP Timestamp Format<br />
+8个字节, 前32位表示秒数, 后32位表示 <code>1/2的32次方</code> 秒<br /></li>
+</ul>
+
+<pre><code>     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                            Seconds                            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                            Fraction                           |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre>
+
+<ul>
+<li>NTP Short Format<br />
+4个字节, 前16位表示秒数, 后16位表示 <code>1/2的16次方</code> 秒<br /></li>
+</ul>
+
+<pre><code>     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |          Seconds              |           Fraction            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre>
+
+<ul>
+<li>消息头各字段解释:<br /></li>
+</ul>
+
+<p>LI Leap Indicator (leap): 2比特, 用来警告是否有闰秒或者未和上级同步. 具体取值和含义如下:</p>
+
+<pre><code>    +-------+----------------------------------------+
+    | Value | Meaning                                |
+    +-------+----------------------------------------+
+    | 0     | no warning                             |
+    | 1     | last minute of the day has 61 seconds  |
+    | 2     | last minute of the day has 59 seconds  |
+    | 3     | unknown (clock unsynchronized)         |
+    +-------+----------------------------------------+
+</code></pre>
+
+<p>VN Version Number: 3比特,指定ntp版本
+Mode (mode): 3比特, 指定工作模式, 通常我们使用3,4 代表客户端-服务端模式</p>
+
+<pre><code>    +-------+--------------------------+
+    | Value | Meaning                  |
+    +-------+--------------------------+
+    | 0     | reserved                 |
+    | 1     | symmetric active         |
+    | 2     | symmetric passive        |
+    | 3     | client                   |
+    | 4     | server                   |
+    | 5     | broadcast                |
+    | 6     | NTP control message      |
+    | 7     | reserved for private use |
+    +-------+--------------------------+
+</code></pre>
+
+<p>Stratum (stratum): 8比特指定阶层. 通常Server更新该字段.<br />
+顶层分配为数字0。一个通过阶层n同步的服务器将运行在阶层n + 1。  阶层为0的是高精度计时设备，例如原子钟（如铯、铷）、GPS时钟或其他无线电时钟。它们生成非常精确的脉冲秒信号，触发所连接计算机上的中断和时间戳。阶层0设备也称为参考（基准）时钟. 阶层1服务器连接阶层0的设备, 它们也被称为主要（primary）时间服务器。
+<img src="https://xixiliguo.github.io/img/ntp.svg" alt="ntp阶层图" />
+更具体的取值含义如下:</p>
+
+<pre><code>    +--------+-----------------------------------------------------+
+    | Value  | Meaning                                             |
+    +--------+-----------------------------------------------------+
+    | 0      | unspecified or invalid                              |
+    | 1      | primary server (e.g., equipped with a GPS receiver) |
+    | 2-15   | secondary server (via NTP)                          |
+    | 16     | unsynchronized                                      |
+    | 17-255 | reserved                                            |
+    +--------+-----------------------------------------------------+
+</code></pre>
+
+<p>Poll: 8比特符号整数, 指示与下一次ntp同步的最短时间间隔. 值为4, 则表示16(2的4次方)秒<br />
+Precision: 8比特符号整数, 指示时间精度. log2 秒.  -18 为微妙<br />
+Root Delay: ntp服务器与上层参考时钟的 round-trip delay. 单位是 NTP Short Format<br />
+Root Dispersion: 单位是 NTP Short Format<br />
+Reference ID: 32比特指示服务端的参考时钟(即上层服务器信息). 即上层时钟源 . 当阶层为1时, 那么上层是原子钟等设备. 没IP, 所以使用ascii 字符 从阶层2开始, 表示IP地址.<br />
+Reference Timestamp: 指示服务端自身系统时间最后一次被设置的时间戳.通常每Poll一次更新一下<br />
+Origin Timestamp: 客户端发起时间<br />
+Receive Timestamp: 服务端接受时间<br />
+Transmit Timestamp: 服务端发送时间</p>
+
+<h2 id="抓包实例">抓包实例</h2>
+
+<p><code>ntpdate -q XX.XX.XX.XX</code> 查询与上层ntp服务器的时间偏移量. 不会更新.<br />
+<code>tcpdump -i eth0 port 123 -nnv</code> 抓取ntp的详细报文, 样例如下:</p>
+
+<pre><code>17:19:18.566860 IP (tos 0x0, ttl 45, id 33978, offset 0, flags [none], proto UDP (17), length 76)
+    1.80.235.52.31681 &gt; 192.168.1.247.123: NTPv4, length 48
+	Client, Leap indicator: clock unsynchronized (192), Stratum 0 (unspecified), poll 3 (8s), precision -6
+	Root Delay: 1.000000, Root dispersion: 1.000000, Reference-ID: (unspec)
+	  Reference Timestamp:  0.000000000
+	  Originator Timestamp: 0.000000000
+	  Receive Timestamp:    0.000000000
+	  Transmit Timestamp:   3726119958.485983999 (2018/01/28 17:19:18)
+	    Originator - Receive Timestamp:  0.000000000
+	    Originator - Transmit Timestamp: 3726119958.485983999 (2018/01/28 17:19:18)
+17:19:18.566899 IP (tos 0x0, ttl 64, id 38707, offset 0, flags [DF], proto UDP (17), length 76)
+    192.168.1.247.123 &gt; 1.80.235.52.31681: NTPv4, length 48
+	Server, Leap indicator:  (0), Stratum 3 (secondary reference), poll 3 (8s), precision -24
+	Root Delay: 0.005340, Root dispersion: 0.002105, Reference-ID: 182.92.12.11
+	  Reference Timestamp:  3726119511.971055101 (2018/01/28 17:11:51)
+	  Originator Timestamp: 3726119958.485983999 (2018/01/28 17:19:18)
+	  Receive Timestamp:    3726119958.566745462 (2018/01/28 17:19:18)
+	  Transmit Timestamp:   3726119958.566777029 (2018/01/28 17:19:18)
+	    Originator - Receive Timestamp:  +0.080761462
+	    Originator - Transmit Timestamp: +0.080793029
+</code></pre>
+
+<h2 id="相关软件">相关软件</h2>
+
+<p>chronyd是centos7引入的新的ntp软件, 代替老的ntpd<br />
+如下命令检测当前与上层ntp的同步状态</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ chronyc sources -v
+</span><span style=""></span><span style="color:#ae81ff">210</span><span style=""> Number of </span><span style="">sources</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">
+</span><span style="">  .-- Source mode  </span><span style="color:#e6db74">&#39;^&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> server, </span><span style="color:#e6db74">&#39;=&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> peer, </span><span style="color:#e6db74">&#39;#&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">local</span><span style=""> clock.
+</span><span style=""> / .- Source state </span><span style="color:#e6db74">&#39;*&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> current synced, </span><span style="color:#e6db74">&#39;+&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> combined , </span><span style="color:#e6db74">&#39;-&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> not combined,
+</span><span style=""></span><span style="">|</span><span style=""> /   </span><span style="color:#e6db74">&#39;?&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> unreachable, </span><span style="color:#e6db74">&#39;x&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">time</span><span style=""> may be in error, </span><span style="color:#e6db74">&#39;~&#39;</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">time</span><span style=""> too variable.
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">                                                 .- xxxx </span><span style="color:#f92672">[</span><span style=""> yyyy </span><span style="color:#f92672">]</span><span style=""> +/- zzzz
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">      Reachability register </span><span style="color:#f92672">(</span><span style="">octal</span><span style="color:#f92672">)</span><span style=""> -.           </span><span style="">|</span><span style="">  </span><span style="">xxxx</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> adjusted offset,
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">      Log2</span><span style="color:#f92672">(</span><span style="">Polling interval</span><span style="color:#f92672">)</span><span style=""> --.      </span><span style="">|</span><span style="">          </span><span style="">|</span><span style="">  </span><span style="">yyyy</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> measured offset,
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">                                </span><span style="color:#ae81ff">\ </span><span style="">    </span><span style="">|</span><span style="">          </span><span style="">|</span><span style="">  </span><span style="">zzzz</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> estimated error.
+</span><span style=""></span><span style="color:#f92672">||</span><span style="">                                 </span><span style="">|</span><span style="">    </span><span style="">|</span><span style="">           </span><span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span><span style="">MS Name/IP address         Stratum Poll Reach LastRx Last </span><span style="">sample</span><span style="">
+</span><span style=""></span><span style="color:#f92672">===============================================================================</span><span style="">
+</span><span style="">^* time5.aliyun.com              </span><span style="color:#ae81ff">2</span><span style="">  </span><span style="color:#ae81ff">10</span><span style="">   </span><span style="color:#ae81ff">377</span><span style="">   </span><span style="color:#ae81ff">733</span><span style="">   +165us</span><span style="color:#f92672">[</span><span style=""> +206us</span><span style="color:#f92672">]</span><span style=""> +/- 5534us
+</span><span style="">^- </span><span style="color:#ae81ff">120</span><span style="">.25.115.19                 </span><span style="color:#ae81ff">2</span><span style="">  </span><span style="color:#ae81ff">10</span><span style="">   </span><span style="color:#ae81ff">377</span><span style="">   </span><span style="color:#ae81ff">633</span><span style="">  -1155us</span><span style="color:#f92672">[</span><span style="">-1155us</span><span style="color:#f92672">]</span><span style=""> +/-   65ms</span></code></pre>
+</div></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/ntp"><span class="tag">NTP</span></a></li>
+        
+          <li><a href="https://xixiliguo.github.io/tags/%E5%8D%8F%E8%AE%AE"><span class="tag">协议</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2018 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>
