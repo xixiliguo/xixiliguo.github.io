@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
 
   
-  <title>NTP协议</title>
+  <title>理解NTP协议</title>
 
   
   
@@ -21,7 +21,7 @@
   
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="NTP协议" />
+    <meta name="twitter:title" content="理解NTP协议" />
     <meta name="twitter:description" content="NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式 " />
     <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
   
@@ -181,7 +181,7 @@
 
   <section class="main post-detail">
     <header class="post-header">
-      <h1 class="post-title">NTP协议</h1>
+      <h1 class="post-title">理解NTP协议</h1>
       <p class="post-meta">@Peter Wang · Jan 28, 2018 · 4 min read</p>
     </header>
     <article class="post-content"><p>NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式
@@ -317,7 +317,7 @@ Mode (mode): 3比特, 指定工作模式, 通常我们使用3,4 代表客户端-
 
 <p>Poll: 8比特符号整数, 指示与下一次ntp同步的最短时间间隔. 值为4, 则表示16(2的4次方)秒<br />
 Precision: 8比特符号整数, 指示时间精度. log2 秒.  -18 为微妙<br />
-Root Delay: ntp服务器与上层参考时钟的 round-trip delay. 单位是 NTP Short Format<br />
+Root Delay: 总的 round-trip delay到 Primary server. 单位是 NTP Short Format<br />
 Root Dispersion: 单位是 NTP Short Format<br />
 Reference ID: 32比特指示服务端的参考时钟(即上层服务器信息). 即上层时钟源 . 当阶层为1时, 那么上层是原子钟等设备. 没IP, 所以使用ascii 字符 从阶层2开始, 表示IP地址.<br />
 Reference Timestamp: 指示服务端自身系统时间最后一次被设置的时间戳.通常每Poll一次更新一下<br />
@@ -371,7 +371,12 @@ Transmit Timestamp: 服务端发送时间</p>
 </span><span style=""></span><span style="color:#f92672">===============================================================================</span><span style="">
 </span><span style="">^* time5.aliyun.com              </span><span style="color:#ae81ff">2</span><span style="">  </span><span style="color:#ae81ff">10</span><span style="">   </span><span style="color:#ae81ff">377</span><span style="">   </span><span style="color:#ae81ff">733</span><span style="">   +165us</span><span style="color:#f92672">[</span><span style=""> +206us</span><span style="color:#f92672">]</span><span style=""> +/- 5534us
 </span><span style="">^- </span><span style="color:#ae81ff">120</span><span style="">.25.115.19                 </span><span style="color:#ae81ff">2</span><span style="">  </span><span style="color:#ae81ff">10</span><span style="">   </span><span style="color:#ae81ff">377</span><span style="">   </span><span style="color:#ae81ff">633</span><span style="">  -1155us</span><span style="color:#f92672">[</span><span style="">-1155us</span><span style="color:#f92672">]</span><span style=""> +/-   65ms</span></code></pre>
-</div></article>
+</div>
+<h2 id="参考">参考</h2>
+
+<ul>
+<li>ntp4 RFC: <a href="https://tools.ietf.org/html/rfc5905">https://tools.ietf.org/html/rfc5905</a></li>
+</ul></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
