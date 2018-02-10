@@ -31,7 +31,8 @@
       <description>&lt;p&gt;收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;2018/01/12: 初稿&lt;/p&gt;
+&lt;p&gt;2018/01/12: 初稿&lt;br /&gt;
+2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>

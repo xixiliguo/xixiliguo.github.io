@@ -17,6 +17,7 @@
   <meta name="author" content="Peter Wang" />
   <meta name="description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
  2018/01/12: 初稿
+2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.
  
 " />
 
@@ -27,6 +28,7 @@
     <meta name="twitter:title" content="Linux 下常用命令与技巧汇总" />
     <meta name="twitter:description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
  2018/01/12: 初稿
+2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.
  
 " />
     <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
@@ -188,12 +190,13 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 13 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 14 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
 
 <blockquote>
-<p>2018/01/12: 初稿</p>
+<p>2018/01/12: 初稿<br />
+2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.</p>
 </blockquote>
 
 <p></p>
@@ -626,9 +629,13 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 <p>升级包</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm -Uvh abc.rpm</span></code></pre>
 </div>
+<p>查询本地包的信息,要加<code>-p</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm -ql -p abc.rpm</span></code></pre>
+</div>
 <h3 id="28-yum-安装-更新-卸载软件包">28. yum 安装/更新/卸载软件包</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">yum install a            </span><span style="color:#75715e">#安装软件包a   (加上-y选项，可以在安装软件包时，不弹出是否继续的提示)
 </span><span style="color:#75715e"></span><span style="">yum install xxx --downloadonly --downloaddir</span><span style="color:#f92672">=</span><span style="">/xxx  </span><span style="color:#75715e">#只下载,不安装.
+</span><span style="color:#75715e"></span><span style="">yum reinstall xxx        </span><span style="color:#75715e">#重装
 </span><span style="color:#75715e"></span><span style="">yum remove a             </span><span style="color:#75715e">#卸载软件包a
 </span><span style="color:#75715e"></span><span style="">yum groups list          </span><span style="color:#75715e">#查看已安装的软件组和可用的软件组
 </span><span style="color:#75715e"></span><span style="">yum groups  install </span><span style="color:#e6db74">&#34;Basic Web Server&#34;</span><span style="">    </span><span style="color:#75715e">#安装软件组
@@ -816,7 +823,7 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 <img src="https://xixiliguo.github.io/img/systemd_plot.svg" alt="启动瀑布图" /></p>
 
 <p>journalctl 相关操作</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">journalctl                       </span><span style="color:#75715e"># 查看所有日志（默认情况下 ，只保存本次启动的日志）
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">journalctl                       </span><span style="color:#75715e"># 查看所有日志（默认情况下 ，显示所有可以查看的日志）
 </span><span style="color:#75715e"></span><span style="">journalctl -k                    </span><span style="color:#75715e"># 查看内核日志（不显示应用日志）
 </span><span style="color:#75715e"></span><span style="">journalctl -b                    </span><span style="color:#75715e"># 查看系统本次启动的日志                 
 </span><span style="color:#75715e"></span><span style="">journalctl -b -1                 </span><span style="color:#75715e"># 查看上一次启动的日志（需更改设置）
@@ -1102,6 +1109,36 @@ Link 为<code>yes</code>表示 网线连接正常</p>
 </div>
 <h3 id="50-ip-网络维护">50. ip 网络维护</h3>
 
+<p>启用接口</p>
+
+<pre><code>ip link set &lt;接口名&gt; up
+</code></pre>
+
+<p>禁用接口</p>
+
+<pre><code>ip link set &lt;接口名&gt; down
+</code></pre>
+
+<p>设置接口MAC地址（设置前请先禁用接口）</p>
+
+<pre><code>ip link set &lt;接口名&gt; address &lt;值&gt;
+</code></pre>
+
+<p>设置接口MTU（设置前请先禁用接口）
+例：把ens33的MTU改成9000并检查。</p>
+
+<pre><code># ip link show dev ens33 #修改前
+
+2: ens33: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT qlen 1000
+    link/ether 88:32:9b:ca:3f:49 brd ff:ff:ff:ff:ff:ff
+# ip link set ens33 mtu 9000
+
+# ip link show dev ens33  #修改后
+
+2: ens33: &lt;BROADCAST,MULTICAST&gt; mtu 9000 qdisc pfifo_fast state DOWN mode DEFAULT qlen 1000
+    link/ether 88:32:9b:ca:3f:49 brd ff:ff:ff:ff:ff:ff
+</code></pre>
+
 <p>查看网卡状态和对应的IP信息</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip addr</span></code></pre>
 </div>
@@ -1169,7 +1206,70 @@ Unreachable丢弃该包，并发送 NET UNREACHABLE的ICMP信息
 <h3 id="51-who-查看当前登录用户">51. who 查看当前登录用户</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ who
 </span><span style="">root     pts/0        </span><span style="color:#ae81ff">2018</span><span style="">-01-17 </span><span style="color:#ae81ff">22</span><span style="">:28 </span><span style="color:#f92672">(</span><span style="color:#ae81ff">10</span><span style="">.211.55.2</span><span style="color:#f92672">)</span></code></pre>
-</div></article>
+</div>
+<h3 id="52-使用iftop查看主机实时网络流量">52. 使用iftop查看主机实时网络流量</h3>
+
+<p>类似top这样的交互式界面<br />
+监控网卡的实时流量,反向解析IP,同时还显示具体每个连接接受和发送的流量<br />
+注意显示流量的单位为b.  例如 <code>8Mb = 1MB</code>.  所有流量值都是 per second<br />
+按<code>n</code>关闭主机名解析, 按<code>N</code>关闭端口号解析, 按<code>p</code>显示连接的端口号
+直接运行<code>iftop</code>, 得到如下信息:</p>
+
+<blockquote>
+<p>第一行类似刻度尺的刻度，为显示流量图形的长条作标尺用的。<br />
+&lt;= =&gt;这两个左右箭头，表示的是流量的方向。<br />
+TX：发送流量<br />
+RX：接收流量<br />
+TOTAL：总流量<br />
+Cumm：运行iftop到目前时间的总流量<br />
+peak：流量峰值<br />
+rates：分别表示过去 2s 10s 40s 的平均流量</p>
+</blockquote>
+
+<p><img src="https://xixiliguo.github.io/img/iftop.png" alt="iftop交互图" /></p>
+
+<h3 id="53-bash相关环境变量">53. Bash相关环境变量</h3>
+
+<p>历史信息显示时间格式<br />
+如下设置后, 使用<code>history</code>就会显示具体命令的具体执行时间.<br />
+可以直接将其写在 .bashrc文件里</p>
+
+<pre><code>HISTTIMEFORMAT=&quot;%d/%m/%y %T &quot;
+</code></pre>
+
+<p>PS1变量
+设置登录提示符, 如下带颜色显示当前用户, 主机名和当前目录的绝对路径.</p>
+
+<pre><code>PS1=&quot;[\e[1;31m\u@\h \e[0;34m${PWD}\e[0m]\\$ &quot;
+</code></pre>
+
+<h3 id="54-查本机的公网ip">54. 查本机的公网IP</h3>
+
+<p>通常我们的主机都在内网,  访问互联网是都是换成公网IP后去连接的
+如下是查询我们主机的公网IP
+1. 打开百度 www.baidu.com
+2. 输出两个字符 <code>ip</code>, 敲回车
+3. 新页面显示的本机IP就是公网IP</p>
+
+<h3 id="55-查询linux系统的一些限制信息">55. 查询linux系统的一些限制信息</h3>
+
+<p>如下文章详细列举了redhat/centos各版本操作系统的重要限制信息.<br />
+比如ext4限制, 最大cpu, 最大Memory<br />
+<a href="https://access.redhat.com/articles/rhel-limits">https://access.redhat.com/articles/rhel-limits</a></p>
+
+<h3 id="56-判断虚拟化类型的n种方法">56. 判断虚拟化类型的N种方法</h3>
+
+<pre><code># dmidecode -s system-manufacturer
+OpenStack Foundation
+</code></pre>
+
+<pre><code># systemd-detect-virt
+kvm
+</code></pre>
+
+<pre><code># virt-what
+kvm
+</code></pre></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
