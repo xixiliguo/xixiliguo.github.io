@@ -327,8 +327,7 @@ Transmit Timestamp: 服务端发送时间</p>
 
 <h2 id="抓包实例">抓包实例</h2>
 
-<p><code>ntpdate -q XX.XX.XX.XX</code> 查询与上层ntp服务器的时间偏移量. 不会更新.<br />
-<code>tcpdump -i eth0 port 123 -nnv</code> 抓取ntp的详细报文, 样例如下:</p>
+<p><code>tcpdump -i eth0 port 123 -nnv</code> 抓取ntp的详细报文, 样例如下:</p>
 
 <pre><code>17:19:18.566860 IP (tos 0x0, ttl 45, id 33978, offset 0, flags [none], proto UDP (17), length 76)
     1.80.235.52.31681 &gt; 192.168.1.247.123: NTPv4, length 48
@@ -352,7 +351,7 @@ Transmit Timestamp: 服务端发送时间</p>
 	    Originator - Transmit Timestamp: +0.080793029
 </code></pre>
 
-<h2 id="相关软件">相关软件</h2>
+<h2 id="相关软件使用">相关软件使用</h2>
 
 <p>chronyd是centos7引入的新的ntp软件, 代替老的ntpd<br />
 如下命令检测当前与上层ntp的同步状态</p>
@@ -372,10 +371,44 @@ Transmit Timestamp: 服务端发送时间</p>
 </span><span style="">^* time5.aliyun.com              </span><span style="color:#ae81ff">2</span><span style="">  </span><span style="color:#ae81ff">10</span><span style="">   </span><span style="color:#ae81ff">377</span><span style="">   </span><span style="color:#ae81ff">733</span><span style="">   +165us</span><span style="color:#f92672">[</span><span style=""> +206us</span><span style="color:#f92672">]</span><span style=""> +/- 5534us
 </span><span style="">^- </span><span style="color:#ae81ff">120</span><span style="">.25.115.19                 </span><span style="color:#ae81ff">2</span><span style="">  </span><span style="color:#ae81ff">10</span><span style="">   </span><span style="color:#ae81ff">377</span><span style="">   </span><span style="color:#ae81ff">633</span><span style="">  -1155us</span><span style="color:#f92672">[</span><span style="">-1155us</span><span style="color:#f92672">]</span><span style=""> +/-   65ms</span></code></pre>
 </div>
+<p>使用ntpd软件包时检查ntp状态<br />
+when指多少秒后再一次同步<br />
+poll指下一次同步的时间间隔 单位:秒<br />
+reach 与上层服务器已成功连接的次数<br />
+delay 指RRT  单位: 毫秒<br />
+offset 指时间偏移值 单位: 毫秒</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ntpq -p
+</span><span style="">     remote           refid      st t when poll reach   delay   offset  </span><span style="">jitter</span><span style="">
+</span><span style=""></span><span style="color:#f92672">==============================================================================</span><span style="">
+</span><span style="">+time5.aliyun.co </span><span style="color:#ae81ff">10</span><span style="">.137.38.86     </span><span style="color:#ae81ff">2</span><span style=""> u   </span><span style="color:#ae81ff">11</span><span style="">   </span><span style="color:#ae81ff">64</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">   </span><span style="color:#ae81ff">25</span><span style="">.353  -113.04  </span><span style="color:#ae81ff">65</span><span style="">.276
+</span><span style="">*203.107.6.88    </span><span style="color:#ae81ff">10</span><span style="">.137.55.181    </span><span style="color:#ae81ff">2</span><span style=""> u    </span><span style="color:#ae81ff">9</span><span style="">   </span><span style="color:#ae81ff">64</span><span style="">    </span><span style="color:#ae81ff">1</span><span style="">   </span><span style="color:#ae81ff">45</span><span style="">.441  -148.44  </span><span style="color:#ae81ff">89</span><span style="">.070</span></code></pre>
+</div>
+<p><code>ntpdate -q XX.XX.XX.XX</code> 查询与上层ntp服务器的时间偏移量. 不会更新.  <code>-d</code> 打开Debug模式</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ntpdate -q ntp3.aliyun.com
+</span><span style="">server </span><span style="color:#ae81ff">203</span><span style="">.107.6.88, stratum </span><span style="color:#ae81ff">2</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">.797972, delay </span><span style="color:#ae81ff">0</span><span style="">.06859
+</span><span style=""></span><span style="color:#ae81ff">11</span><span style=""> Feb </span><span style="color:#ae81ff">23</span><span style="">:02:36 ntpdate</span><span style="color:#f92672">[</span><span style="color:#ae81ff">21763</span><span style="color:#f92672">]</span><span style="">: step </span><span style="">time</span><span style=""> server </span><span style="color:#ae81ff">203</span><span style="">.107.6.88 offset </span><span style="color:#ae81ff">0</span><span style="">.797972 sec</span></code></pre>
+</div>
+<p>ntp配置最佳实践:<br />
+假设ntp服务器为 ntp1.aliyun.com, 配置如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 上层服务器配置
+</span><span style="color:#75715e"></span><span style="">server ntp1.aliyun.com iburst 
+</span><span style="">restrict ntp1.aliyun.com nomodify notrap nopeer noquery
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e"># default 指所有IP, 首先默认显示连接无法执行任何操作
+</span><span style="color:#75715e"></span><span style="">restrict default kod nomodify notrap nopeer noquery
+</span><span style=""></span><span style="color:#75715e"># 针对ipv6的配置
+</span><span style="color:#75715e"></span><span style="">restrict -6 default kod nomodify notrap nopeer noquery
+</span><span style=""></span><span style="color:#75715e"># 配置内网IP可查询不可修改时间
+</span><span style="color:#75715e"></span><span style="">restrict xx.xx.xx.xx mask xx.xx.xx.xx  nomodify notrap nopeer</span></code></pre>
+</div>
+<p><code>man ntp_acc</code> 查看 restrict 各参数含义<br />
+<code>man ntp_clock</code> 查看 server 各参数含义</p>
+
 <h2 id="参考">参考</h2>
 
 <ul>
-<li>ntp4 RFC: <a href="https://tools.ietf.org/html/rfc5905">https://tools.ietf.org/html/rfc5905</a></li>
+<li>NTP4 RFC: <a href="https://tools.ietf.org/html/rfc5905">https://tools.ietf.org/html/rfc5905</a></li>
+<li>NTP Best Practice: <a href="https://tools.ietf.org/id/draft-reilly-ntp-bcp-01.html">https://tools.ietf.org/id/draft-reilly-ntp-bcp-01.html</a></li>
 </ul></article>
     <footer class="post-footer">
       
