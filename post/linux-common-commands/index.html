@@ -16,9 +16,7 @@
   
   <meta name="author" content="Peter Wang" />
   <meta name="description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
- 2018/01/12: 初稿
-2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.
- 
+
 " />
 
   
@@ -27,9 +25,7 @@
     <meta name="twitter:site" content="@gohugoio" />
     <meta name="twitter:title" content="Linux 下常用命令与技巧汇总" />
     <meta name="twitter:description" content="收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
- 2018/01/12: 初稿
-2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.
- 
+
 " />
     <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
   
@@ -190,14 +186,9 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 14 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 15 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
-
-<blockquote>
-<p>2018/01/12: 初稿<br />
-2018/02/11: 增加iftop命令, Bash变量, 虚拟化判断方法. 补充ip更多命令.</p>
-</blockquote>
 
 <p></p>
 
@@ -216,6 +207,8 @@ etime可以显示已经运行了多长时间<br />
 args 为具体的命令行参数</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ps -e -o pid,lstart,etime,args</span></code></pre>
 </div>
+<p><code>ps -efL</code> 加 <code>-L</code> 则显示线程</p>
+
 <h3 id="3-设置时间">3. 设置时间</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">date -s </span><span style="color:#e6db74">&#34;dd/mm/yyyy hh:mm:ss&#34;</span></code></pre>
 </div>
@@ -650,6 +643,13 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="color:#75715e"></span><span style="">yum search tree          </span><span style="color:#75715e">#从仓库中搜索关键词为tree的包
 </span><span style="color:#75715e"></span><span style="">yum </span><span style="">history</span><span style="">              #查看yum运行历史记录</span></code></pre>
 </div>
+<blockquote>
+<p>查找某个文件属于哪个包的方法有:<br />
+如果文件已经安装在本机, 则<code>rpm -qf xxx</code><br />
+如果文件没有在本机安装, 则<code>yum provides XXX</code>   XXX 可以是文件名, 也可以使用glob这样的通配符去查找<br />
+比如安装某rpm包, 提示文件没找到, 则可以使用 <code>yum provices xxx</code>.  比如文件名为 abc.txt, 用<code>yum provides *abc.txt</code>去查找</p>
+</blockquote>
+
 <p>查询当前在repo里指定包的所有可用版本, 可用于升级到特定版本. <code>yum update systemd</code>默认升级到最新版</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ yum list --showduplicates systemd
 </span><span style="">Installed Packages
@@ -1053,7 +1053,7 @@ output              postrouting         postrouting       output
 </div>
 <h3 id="47-ntp时间同步">47. NTP时间同步</h3>
 
-<p>ntpdate 手工校准时间, 加 <code>-q</code> 只查询, 不同步时间</p>
+<p>ntpdate 手工校准时间, 加 <code>-q</code> 只查询, 不同步时间,  加 <code>-d</code> 打开Debug模式, 但不真正更新时间</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ntpdate ntp1.aliyun.com
 </span><span style=""></span><span style="color:#ae81ff">15</span><span style=""> Jan </span><span style="color:#ae81ff">23</span><span style="">:18:51 ntpdate</span><span style="color:#f92672">[</span><span style="color:#ae81ff">18981</span><span style="color:#f92672">]</span><span style="">: adjust </span><span style="">time</span><span style=""> server </span><span style="color:#ae81ff">182</span><span style="">.92.12.11 offset </span><span style="color:#ae81ff">0</span><span style="">.000643 sec</span></code></pre>
 </div>
@@ -1163,7 +1163,7 @@ Link 为<code>yes</code>表示 网线连接正常</p>
 </span><span style="">    cache</span></code></pre>
 </div>
 <p>增加默认路由</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip route add default gw </span><span style="color:#ae81ff">20</span><span style="">.0.0.1</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip route add default via </span><span style="color:#ae81ff">20</span><span style="">.0.0.1</span></code></pre>
 </div>
 <p>策略性路由相对于传统的路由算法主要是引入了多路由表以及规则的概念。<br />
 例如一个子网通过一个路由器与外界相连，路由器与外界有两条线路相连，其中一条的速度比较快，一条的速度比较慢。对于子网内的大多数用户来说对速度并没有特殊的要求，所以可以让他们用比较慢的路由；但是子网内有一些特殊的用户却是对速度的要求比较苛刻，所以他们需要使用速度比较快的路由。如果使用一张路由表上述要求是无法实现的，而如果根据源地址或其它参数，对不同的用户使用不同的路由表，这样就可以大大提高路由器的性能。<br />
@@ -1181,6 +1181,9 @@ Link 为<code>yes</code>表示 网线连接正常</p>
 </span><span style=""></span><span style="color:#ae81ff">0</span><span style="">:	from all lookup </span><span style="">local</span><span style="">
 </span><span style=""></span><span style="color:#ae81ff">32766</span><span style="">:	from all lookup main
 </span><span style=""></span><span style="color:#ae81ff">32767</span><span style="">:	from all lookup default</span></code></pre>
+</div>
+<p>查看某一张表里的路由信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip route list table </span><span style="color:#ae81ff">0</span></code></pre>
 </div>
 <p>规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip rule add </span><span style="color:#f92672">[</span><span style="">from </span><span style="color:#ae81ff">0</span><span style="">/0</span><span style="color:#f92672">]</span><span style=""> table </span><span style="color:#ae81ff">1</span><span style=""> pref </span><span style="color:#ae81ff">32800</span></code></pre>
@@ -1290,7 +1293,101 @@ rates：分别表示过去 2s 10s 40s 的平均流量</p>
 </span><span style="">L3 cache:              3072K
 </span><span style="">NUMA node0 CPU</span><span style="color:#f92672">(</span><span style="">s</span><span style="color:#f92672">)</span><span style="">:     </span><span style="color:#ae81ff">0</span><span style="">,1
 </span><span style="">............</span></code></pre>
-</div></article>
+</div>
+<h3 id="58-taskset指定进程的cpu亲和性">58. taskset指定进程的CPU亲和性</h3>
+
+<p>返回的mask为十六进制, 3 代表 0x11 即绑定在cpu 0 和 1 上面. 最低位代表第一个cpu<br />
+taskset -p pid 返回pid对应进程当前的亲和性</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ taskset -p </span><span style="color:#ae81ff">691</span><span style="">
+</span><span style="">pid </span><span style="color:#ae81ff">691</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="">s current affinity mask: </span><span style="color:#ae81ff">3</span></code></pre>
+</div>
+<p><code>taskset -p mask pid</code>设置进程的cpu亲和性<br />
+也可以使用数字代替mask, 比如 <code>taskset -c 0,1 -p 1</code> 表示为pid为1的进程绑定cpu0和1</p>
+
+<p><code>taskset 1 ls</code> 执行ls命令是直接绑定到cpu0上.</p>
+
+<p><code>/proc/[pid]/status</code>也可以查询, 举例:</p>
+
+<blockquote>
+<p>Cpus_allowed:   3<br />
+Cpus_allowed_list:      0-1<br />
+解释:<br />
+Cpus_allowed:3指出该进程可以使用CPU的亲和性掩码,因为我们指定为两块CPU,所以这里就是3,如果该进程指定为4个CPU(如果有话),这里就是F(1111).<br />
+Cpus_allowed_list:0-1指出该进程可以使用CPU的列表,这里是0-1.</p>
+</blockquote>
+
+<p>进程运行时设置的亲和性并不影响其他线程, 如果要对java这样的多线程设置, 需要ps -efL 找到所有线程, 然后逐一设置<br />
+<code>taskset 1 java</code>启动java命令时的绑定, 会应用到所有线程, 因为cpu的亲和性具有继承性</p>
+
+<h3 id="59-linux系统最大文件数量">59. Linux系统最大文件数量</h3>
+
+<p><code>ulimit -n</code>返回当前user单进程可打开的最大进程数<br />
+<code>/proc/[pid]/limits</code> 查询该进程的资源限制数据<br />
+<code>ls -rlt /proc/[pid]/fd | wc -l</code> 查询该进程当前已打开的文件数<br />
+<code>lsof -p [pid] | wc -l</code> 也可查询, 但要过滤掉cwd, 动态库等</p>
+
+<p>查询整个OS当前的文件数使用情况:<br />
+file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /proc/sys/fs/file-max</code>提高</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/sys/fs/file-max
+</span><span style=""></span><span style="color:#ae81ff">97703</span></code></pre>
+</div>
+<p>file-nr是只读的, 第一个字段代表已分配(即已打开)文件数, 第二个字段从2.6开始一直为0, 第三个字段等于file-max</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/sys/fs/file-nr
+</span><span style=""></span><span style="color:#ae81ff">1344</span><span style="">	</span><span style="color:#ae81ff">0</span><span style="">	</span><span style="color:#ae81ff">97703</span></code></pre>
+</div>
+<p>列出每个进程的已打开的文件数, 用于找到当前哪个进程占用最多文件数<br />
+<code>-d</code> 用于排除cwd, 动态库之类的信息<br />
+<code>-n</code> 不用协议解析, 加快命令运行速度<br />
+<code>lsof -n -d0-999999 | awk '{print $2}' | sort | uniq -c | sort -k1 -n</code></p>
+
+<h3 id="60-ss-查询socket连接信息">60. ss 查询socket连接信息</h3>
+
+<p>类似于<code>netstat</code>, 使用了netlink, 性能更好</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ss -s                </span><span style="color:#75715e">#显示各socket的统计信息
+</span><span style="color:#75715e"></span><span style="">ss -ntlp             </span><span style="color:#75715e">#-n 不解析, -t 显示tcp连接  -l 显示监听socket, -p 显示使用的进程名
+</span><span style="color:#75715e"></span><span style="">ss -t -a             </span><span style="color:#75715e">#查看所有tcp连接, 不带-a则指显示 Established 连接
+</span><span style="color:#75715e"></span><span style="">ss -to               #查看tcp的keepalive信息</span></code></pre>
+</div>
+<p>更多使用介绍请参考: <a href="https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html">https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html</a></p>
+
+<h3 id="61-消除用户被锁的错误登录记录">61. 消除用户被锁的错误登录记录</h3>
+
+<p>通常管理员会配置pam_faillock或者pam_tally2, 当用户使用错误密码满足一定条件, 就将用户锁定一段时间. 如下是即时清除错误记录的命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">faillock --reset
+</span><span style="">pam_tally2 -r -u </span><span style="color:#f92672">[</span><span style="">username</span><span style="color:#f92672">]</span></code></pre>
+</div>
+<h3 id="62-估计rss总和的大小">62. 估计RSS总和的大小</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ps aux </span><span style="">|</span><span style=""> awk </span><span style="color:#e6db74">&#39;{sum+=$6} END {print sum / 1024}&#39;</span></code></pre>
+</div>
+<p>如下脚本也可以:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat rss.sh
+</span><span style=""></span><span style="color:#75715e">#/bin/bash
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span><span style=""> PROC in </span><span style="color:#e6db74">`</span><span style="">ls  /proc/</span><span style="">|</span><span style="">grep </span><span style="color:#e6db74">&#34;^[0-9]&#34;</span><span style="color:#e6db74">`</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">do</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">[</span><span style=""> -f /proc/</span><span style="">$PROC</span><span style="">/statm </span><span style="color:#f92672">]</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">then</span><span style="">
+</span><span style="">      </span><span style="">TEP</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">`</span><span style="">cat /proc/</span><span style="">$PROC</span><span style="">/statm </span><span style="">|</span><span style=""> awk </span><span style="color:#e6db74">&#39;{print ($2)}&#39;</span><span style="color:#e6db74">`</span><span style="">
+</span><span style="">      </span><span style="">RSS</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">`</span><span style="">expr </span><span style="">$RSS</span><span style=""> + </span><span style="">$TEP</span><span style="color:#e6db74">`</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">fi</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">done</span><span style="">
+</span><span style=""></span><span style="">RSS</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">`</span><span style="">expr </span><span style="">$RSS</span><span style=""> </span><span style="color:#ae81ff">\*</span><span style=""> </span><span style="color:#ae81ff">4</span><span style="color:#e6db74">`</span><span style="">
+</span><span style=""></span><span style="">echo</span><span style=""> </span><span style="">$RSS</span><span style="color:#e6db74">&#34;KB&#34;</span></code></pre>
+</div>
+<h3 id="63-文件系统修复">63. 文件系统修复</h3>
+
+<p>针对xfs, 使用<code>xfs_repair</code>命令:<br />
+<code>-n</code> 表示不修复, 只扫描并显示错误</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">xfs_repair -n -v /dev/mapper/vg-home</span></code></pre>
+</div>
+<p>不带<code>-n</code>, 执行修复. <code>-v</code>表示显示详情</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">xfs_repair -v /dev/mapper/vg-home</span></code></pre>
+</div>
+<p>最后方法：损失部分数据的修复方法<br />
+根据打印消息，修复失败时：<br />
+先执行xfs_repair -L /dev/sdd(清空日志，会丢失文件)，再执行xfs_repair /dev/sdd，再执行xfs_check /dev/sdd 检查文件系统是否修复成功。</p>
+
+<blockquote>
+<p>-L是修复xfs文件系统的最后手段，慎重选择，它会清空日志，会丢失用户数据和文件。</p>
+</blockquote></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
