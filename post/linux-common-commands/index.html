@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 15 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 16 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
 
@@ -881,6 +881,13 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 <p>统计命令进行的系统调用信息</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">strace -c ls</span></code></pre>
 </div>
+<p>跟踪具体的进程</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">strace -p </span><span style="color:#f92672">[</span><span style="">pid</span><span style="color:#f92672">]</span></code></pre>
+</div>
+<p>过滤系统调用</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">strace -e </span><span style="">trace</span><span style=""></span><span style="color:#f92672">=</span><span style="">open ls
+</span><span style="">strace -e </span><span style="">trace</span><span style=""></span><span style="color:#f92672">=</span><span style="">open,write ls</span></code></pre>
+</div>
 <h3 id="37-查看磁盘uuid和文件系统类型">37. 查看磁盘uuid和文件系统类型</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ lsblk -f
 </span><span style="">NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
@@ -1176,14 +1183,20 @@ Link 为<code>yes</code>表示 网线连接正常</p>
 表253 默认路由表（Default table）一般来说默认的路由都放在这张表，但是如果特别指明放的也可以是所有的网关路由。
 </code></pre>
 
-<p>查看路由规则</p>
+<p>查看路由规则, <code>32766</code>表示优先级, 越小优先级越高.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip rule list
 </span><span style=""></span><span style="color:#ae81ff">0</span><span style="">:	from all lookup </span><span style="">local</span><span style="">
 </span><span style=""></span><span style="color:#ae81ff">32766</span><span style="">:	from all lookup main
 </span><span style=""></span><span style="color:#ae81ff">32767</span><span style="">:	from all lookup default</span></code></pre>
 </div>
+<p>创建一个新的路由表, 原地址为<code>192.168.2.0/24</code>的消息全部路由到这张表里</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ </span><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#34;250 test&#34;</span><span style=""> &gt;&gt; /etc/iproute2/rt_tables
+</span><span style="">$ ip rule add from </span><span style="color:#ae81ff">192</span><span style="">.168.2.0/24 table test</span></code></pre>
+</div>
+<p>上面的配置如果要持久化, 可以将命令写入<code>/etc/rc.d/rc.local</code>, 并给该文件可执行权限. <code>chmod +x /etc/rc.d/rc.local</code></p>
+
 <p>查看某一张表里的路由信息</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip route list table </span><span style="color:#ae81ff">0</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip route list table main</span></code></pre>
 </div>
 <p>规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ip rule add </span><span style="color:#f92672">[</span><span style="">from </span><span style="color:#ae81ff">0</span><span style="">/0</span><span style="color:#f92672">]</span><span style=""> table </span><span style="color:#ae81ff">1</span><span style=""> pref </span><span style="color:#ae81ff">32800</span></code></pre>
@@ -1193,11 +1206,11 @@ Link 为<code>yes</code>表示 网线连接正常</p>
 </div>
 <p>上面的规则是以源地址为关键字，作为是否匹配的依据的。除了源地址外，还可以用以下的信息：</p>
 
-<pre><code>From -- 源地址
-To -- 目的地址（这里是选择规则时使用，查找路由表时也使用）
-Tos -- IP包头的TOS（type of sevice）域
-Dev -- 物理接口
-Fwmark -- 防火墙参数
+<pre><code>from -- 源地址
+to -- 目的地址（这里是选择规则时使用，查找路由表时也使用）
+tos -- IP包头的TOS（type of sevice）域
+dev -- 物理接口
+fwmark -- 防火墙参数
 </code></pre>
 
 <p>采取的动作除了指定表，还可以指定下面的动作：</p>
@@ -1387,7 +1400,11 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 
 <blockquote>
 <p>-L是修复xfs文件系统的最后手段，慎重选择，它会清空日志，会丢失用户数据和文件。</p>
-</blockquote></article>
+</blockquote>
+
+<h3 id="64-非交互式修改密码">64. 非交互式修改密码</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#34;Linux@123&#34;</span><span style=""> </span><span style="">|</span><span style="">passwd --stdin root</span></code></pre>
+</div></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
