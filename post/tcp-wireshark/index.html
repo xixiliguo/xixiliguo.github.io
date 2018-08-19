@@ -423,7 +423,7 @@ TCP 的那些事儿:<br />
 TCP/IP Guide:<br />
 <a href="http://www.tcpipguide.com/free/index.htm">http://www.tcpipguide.com/free/index.htm</a> 免费电子书</p>
 
-<h3 id="知识点记录">知识点记录</h3>
+<h3 id="问题记录">问题记录</h3>
 
 <ul>
 <li><p>网卡eth1收到包, 根据路由要从网卡eth0发出去, 但从抓包上却没有看到回包<br />
@@ -444,6 +444,9 @@ TCP/IP Guide:<br />
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">net.ipv4.conf.all.arp_announce </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">
 </span><span style="">net.ipv4.conf.all.arp_ignore </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span></code></pre>
 </div></li>
+
+<li><p>经常处理tcp各种超时问题, 如下文章总结了大部分tcp下的超时情况和对应的参数控制<br />
+<a href="http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/">http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/</a></p></li>
 </ul></article>
     <footer class="post-footer">
       
