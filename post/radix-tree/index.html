@@ -15,7 +15,8 @@
 
   
   <meta name="author" content="Peter Wang" />
-  <meta name="description" content="Cut out summary from your post content here.
+  <meta name="description" content="Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.
+Radix tree 是Trie的一种优化方式, 对空间进一步压缩.
 
 " />
 
@@ -24,7 +25,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@gohugoio" />
     <meta name="twitter:title" content="Radix Tree介绍与httprouter源码笔记" />
-    <meta name="twitter:description" content="Cut out summary from your post content here.
+    <meta name="twitter:description" content="Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.
+Radix tree 是Trie的一种优化方式, 对空间进一步压缩.
 
 " />
     <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
@@ -188,7 +190,8 @@
       <h1 class="post-title">Radix Tree介绍与httprouter源码笔记</h1>
       <p class="post-meta">@Peter Wang · Mar 23, 2019 · 1 min read</p>
     </header>
-    <article class="post-content"><p>Cut out summary from your post content here.</p>
+    <article class="post-content"><p>Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.<br />
+Radix tree 是Trie的一种优化方式, 对空间进一步压缩.</p>
 
 <p></p>
 
@@ -241,6 +244,8 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.</p>
 
 <p>如下左边是/sex,/sleep,/son的内部呈现, 右边是插入/seed 后内部的呈现<br />
 <img src="https://xixiliguo.github.io/img/insert-tree-node.jpg" alt="radix-tree" /></p>
+
+<p>代码实现主要是在<code>func (n *node) addRoute(path string, handle Handle)</code> 和  <code>func (n *node) insertChild(numParams uint8, path, fullPath string, handle Handle)</code>. 因为httproute加了很多对通配符路径的特殊处理, 可以先看<code>go-radix</code>了解下通用radix-tree的实现.</p>
 
 <h1 id="参考">参考:</h1>
 
