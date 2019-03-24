@@ -5,11 +5,7 @@
   <meta charset="utf-8" />
 
   
-  <title>
-  Tag → network
-  
-   | My personal Blog
-</title>
+  <title>TCP协议栈笔记</title>
 
   
   
@@ -19,14 +15,20 @@
 
   
   <meta name="author" content="Peter Wang" />
-  <meta name="description" content="Record my study" />
+  <meta name="description" content="记录自己对TCP协议栈的学习心得
+
+" />
 
   
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@gohugoio" />
-  <meta name="twitter:title" content="My personal Blog" />
-  <meta name="twitter:description" content="Record my study" />
-  <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="TCP协议栈笔记" />
+    <meta name="twitter:description" content="记录自己对TCP协议栈的学习心得
+
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
 
 
 
@@ -34,7 +36,7 @@
 <meta name="generator" content="Hugo 0.28" />
 
 
-<link rel="canonical" href="https://xixiliguo.github.io/tags/network/" />
+<link rel="canonical" href="https://xixiliguo.github.io/post/tcp/" />
 <link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
 
 
@@ -97,6 +99,8 @@
     
     <div class="suspension">
       <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
       
     </div>
     
@@ -179,29 +183,55 @@
   </nav>
 </header>
 
-  <section class="main post-list">
-    <header class="list-header offscreen">
-      <h2 class="list-label">Posts List</h2>
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">TCP协议栈笔记</h1>
+      <p class="post-meta">@Peter Wang · Mar 24, 2019 · 1 min read</p>
     </header>
-    
+    <article class="post-content"><p>记录自己对TCP协议栈的学习心得</p>
+
+<p></p>
+
+<ol>
+<li>client发送<code>syn</code>报文后,tcp状态为 syn-sent. 如果对端没有返回syn+ack, 则尝试发送<code>net.ipv4.tcp_syn_retries</code>次. 每次间隔2,4,8s&hellip;.<br /></li>
+<li>server收到<code>syn</code>后,状态变为 syn-recv, 放到半队列里,同时返回syn-ack. 这个队列的大小为 net.ipv4.tcp_max_syn_backlog. 是个全局的参数<br /></li>
+<li>当server收到ack后, 会检查全队列是否能放下. 这个大小为 min(backlog, net.core.somaxconn). 如果队列未满,则放进去, 状态变为 ESTABLISHED.  系统调用accept就是从这个全队列取已经三次握手成功的socket<br />
+如果全队列满:<br />
+当net.ipv4.tcp_abort_on_overflow为0, 则丢弃ack, 假定自己没有收到ack, 所以重发syn+ack, 重试次数为net.ipv4.tcp_synack_retries.<br />
+当net.ipv4.tcp_abort_on_overflow为1, 则收到ack后直接发rst终止连接<br /></li>
+<li>先close socket的会进入time-wait状态, 这个过2MSL会自动消失.<br />
+client和server同时打开时间戳时:<br />
+
+<ul>
+<li>net.ipv4.tcp_tw_recycle = 1, 可快速回收进入time-wait状态的socket. 对客户端和服务端都有效. 但在nat网络下可能会将正常的syn报文丢弃<br /></li>
+<li>net.ipv4.tcp_tw_reuse = 1, 可快速重用time-wait的socket. 只对客户端有效.作为客户端因为有端口65535问题，TIME_OUT过多直接影响处理能力，打开tw_reuse 即可解决<br /></li>
+<li>tcp_max_tw_buckets设置time-wait的上限, 一旦超过OS会立即清除.<br /></li>
+</ul></li>
+<li>当收到fin后, 回复ack后 socket进入close-wait状态. 此时需要程序运行close才会下发fin报文. 完成4次关闭<br /></li>
+<li>假设发送fin后, 没有收到对端的fin, 则socket进入 fin-wait-2状态. 如果一直没有收到对端的fin, 则经过<code>net.ipv4.tcp_fin_timeout</code>秒后自动消失<br /></li>
+</ol>
+
+<h1 id="参考">参考:</h1>
+
+<p><a href="https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt">https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt</a>
+<a href="https://www.jianshu.com/p/0d6243402987">https://www.jianshu.com/p/0d6243402987</a>
+<a href="https://www.codedump.info/post/20190227-tcp/">https://www.codedump.info/post/20190227-tcp/</a></p></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/tcp"><span class="tag">Tcp</span></a></li>
+        
+          <li><a href="https://xixiliguo.github.io/tags/tagb"><span class="tag">TagB</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
     
       
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/tcpdump-wireshark/" class="post-link">Tcpdump与Wireshark点滴记录</a></h3>
-    <p class="post-meta">@Peter Wang · Aug 16, 2018 · 3 min read</p>
-  </header>
-  
-  <p class="post-summary">记录Tcpdump相关知识和Wireshark技巧
-
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/tcpdump-wireshark/">Read More →</a>
-  </footer>
-</article>
-
-      
-    
     
   </section>
   <footer class="site-footer">

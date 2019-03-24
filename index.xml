@@ -23,6 +23,17 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>TCP协议栈笔记</title>
+      <link>https://xixiliguo.github.io/post/tcp/</link>
+      <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/tcp/</guid>
+      <description>&lt;p&gt;记录自己对TCP协议栈的学习心得&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Radix Tree介绍与httprouter源码笔记</title>
       <link>https://xixiliguo.github.io/post/radix-tree/</link>
       <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
@@ -35,12 +46,12 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
     </item>
     
     <item>
-      <title>TCP与Wireshark点滴记录</title>
-      <link>https://xixiliguo.github.io/post/tcp-wireshark/</link>
+      <title>Tcpdump与Wireshark点滴记录</title>
+      <link>https://xixiliguo.github.io/post/tcpdump-wireshark/</link>
       <pubDate>Thu, 16 Aug 2018 22:41:37 +0800</pubDate>
       
-      <guid>https://xixiliguo.github.io/post/tcp-wireshark/</guid>
-      <description>&lt;p&gt;记录TCP相关知识和Wireshark技巧&lt;/p&gt;
+      <guid>https://xixiliguo.github.io/post/tcpdump-wireshark/</guid>
+      <description>&lt;p&gt;记录Tcpdump相关知识和Wireshark技巧&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
     </item>

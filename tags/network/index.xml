@@ -13,12 +13,12 @@
     
     
     <item>
-      <title>TCP与Wireshark点滴记录</title>
-      <link>https://xixiliguo.github.io/post/tcp-wireshark/</link>
+      <title>Tcpdump与Wireshark点滴记录</title>
+      <link>https://xixiliguo.github.io/post/tcpdump-wireshark/</link>
       <pubDate>Thu, 16 Aug 2018 22:41:37 +0800</pubDate>
       
-      <guid>https://xixiliguo.github.io/post/tcp-wireshark/</guid>
-      <description>&lt;p&gt;记录TCP相关知识和Wireshark技巧&lt;/p&gt;
+      <guid>https://xixiliguo.github.io/post/tcpdump-wireshark/</guid>
+      <description>&lt;p&gt;记录Tcpdump相关知识和Wireshark技巧&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
     </item>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Tcpdump与Wireshark点滴记录</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wang" />
+  <meta name="description" content="记录Tcpdump相关知识和Wireshark技巧
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="Tcpdump与Wireshark点滴记录" />
+    <meta name="twitter:description" content="记录Tcpdump相关知识和Wireshark技巧
+
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/tcpdump-wireshark/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Tcpdump与Wireshark点滴记录</h1>
+      <p class="post-meta">@Peter Wang · Aug 16, 2018 · 3 min read</p>
+    </header>
+    <article class="post-content"><p>记录Tcpdump相关知识和Wireshark技巧</p>
+
+<p></p>
+
+<h2 id="tcpdump-基本介绍">tcpdump 基本介绍</h2>
+
+<h3 id="常用语法">常用语法</h3>
+
+<ul>
+<li>指定网卡(eth0), 如果要抓取所有网卡的包, 使用<code>any</code><br /></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0
+</span><span style="">tcpdump -i any</span></code></pre>
+</div>
+<ul>
+<li>使用<code>-nnv</code>, 不解析协议和端口,同时多打印写详细信息(IP头)</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 -nnv
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376: Flags </span><span style="color:#f92672">[</span><span style="">P.</span><span style="color:#f92672">]</span><span style="">, cksum 0x84ff </span><span style="color:#f92672">(</span><span style="">incorrect -&gt; 0x0ec3</span><span style="color:#f92672">)</span><span style="">, seq </span><span style="color:#ae81ff">935672</span><span style="">:935968, ack </span><span style="color:#ae81ff">761</span><span style="">, win </span><span style="color:#ae81ff">385</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">102595534</span><span style=""> ecr </span><span style="color:#ae81ff">1564236582</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">296</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:53:54.006694 IP </span><span style="color:#f92672">(</span><span style="">tos 0x10, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">59224</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto TCP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">6</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">52</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22: Flags </span><span style="color:#f92672">[</span><span style="">.</span><span style="color:#f92672">]</span><span style="">, cksum 0x8bf2 </span><span style="color:#f92672">(</span><span style="">correct</span><span style="color:#f92672">)</span><span style="">, ack </span><span style="color:#ae81ff">935672</span><span style="">, win </span><span style="color:#ae81ff">8139</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">1564236582</span><span style=""> ecr </span><span style="color:#ae81ff">102595534</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:53:54.006746 IP </span><span style="color:#f92672">(</span><span style="">tos 0x10, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">25202</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto TCP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">6</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">52</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22: Flags </span><span style="color:#f92672">[</span><span style="">.</span><span style="color:#f92672">]</span><span style="">, cksum 0x8adc </span><span style="color:#f92672">(</span><span style="">correct</span><span style="color:#f92672">)</span><span style="">, ack </span><span style="color:#ae81ff">935968</span><span style="">, win </span><span style="color:#ae81ff">8121</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">1564236582</span><span style=""> ecr </span><span style="color:#ae81ff">102595534</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:53:54.006895 IP </span><span style="color:#f92672">(</span><span style="">tos 0x10, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">57471</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto TCP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">6</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">924</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376: Flags </span><span style="color:#f92672">[</span><span style="">P.</span><span style="color:#f92672">]</span><span style="">, cksum 0x873f </span><span style="color:#f92672">(</span><span style="">incorrect -&gt; 0x2d02</span><span style="color:#f92672">)</span><span style="">, seq </span><span style="color:#ae81ff">935968</span><span style="">:936840, ack </span><span style="color:#ae81ff">761</span><span style="">, win </span><span style="color:#ae81ff">385</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">102595534</span><span style=""> ecr </span><span style="color:#ae81ff">1564236582</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">872</span></code></pre>
+</div>
+<ul>
+<li>使用<code>-e</code>可以打印MAC地址</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 -e
+</span><span style="">tcpdump: verbose output suppressed, use -v or -vv </span><span style="color:#66d9ef">for</span><span style=""> full protocol decode
+</span><span style="">listening on eth0, link-type EN10MB </span><span style="color:#f92672">(</span><span style="">Ethernet</span><span style="color:#f92672">)</span><span style="">, capture size </span><span style="color:#ae81ff">262144</span><span style=""> bytes
+</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:56:22.708510 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:13:d0:f5 </span><span style="color:#f92672">(</span><span style="">oui Unknown</span><span style="color:#f92672">)</span><span style=""> &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:08 </span><span style="color:#f92672">(</span><span style="">oui Unknown</span><span style="color:#f92672">)</span><span style="">, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">266</span><span style="">: linux.ssh &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376: Flags </span><span style="color:#f92672">[</span><span style="">P.</span><span style="color:#f92672">]</span><span style="">, seq </span><span style="color:#ae81ff">3187876880</span><span style="">:3187877080, ack </span><span style="color:#ae81ff">2645742059</span><span style="">, win </span><span style="color:#ae81ff">385</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">102744236</span><span style=""> ecr </span><span style="color:#ae81ff">1564384779</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">200</span></code></pre>
+</div>
+<ul>
+<li>使用<code>-w</code>将信息保存到文件, 下列命令将包信息保存到<code>abc.cap</code>. <code>-C</code> 配合<code>-w</code>使用, 进一步指定文件的最大size, 一旦超过, 会新建文件继续写入</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 -w abc.cap</span></code></pre>
+</div>
+<h3 id="常用过滤语法">常用过滤语法</h3>
+
+<p>不带过滤器, 则默认抓取指定网卡所有的包(接受和发送)</p>
+
+<ul>
+<li>抓取所有经过eth1，目的或源地址是192.168.1.1的网络数据</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 host </span><span style="color:#ae81ff">192</span><span style="">.168.1.1</span></code></pre>
+</div>
+<ul>
+<li>抓取所有经过eth1，目的或源网络为192.168.XXX.XXX的网络数据</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 net </span><span style="color:#ae81ff">192</span><span style="">.168</span></code></pre>
+</div>
+<ul>
+<li>指定源地址或者目的地址</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth1 src host </span><span style="color:#ae81ff">192</span><span style="">.168.1.1
+</span><span style="">tcpdump -i eth1 dst host </span><span style="color:#ae81ff">192</span><span style="">.168.1.1</span></code></pre>
+</div>
+<ul>
+<li>抓取所有经过eth1，目的或源端口是25的网络数据, 如果要指定过滤源端口, 可使用 <code>src port 25</code>. 目的端口类似</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 port </span><span style="color:#ae81ff">25</span></code></pre>
+</div>
+<ul>
+<li>抓取所有经过eth1的所有icmp包, tcp, arp包语法类似</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth1 arp
+</span><span style="">tcpdump -i eth1 ip
+</span><span style="">tcpdump -i eth1 tcp
+</span><span style="">tcpdump -i eth1 udp
+</span><span style="">tcpdump -i eth1 icmp</span></code></pre>
+</div>
+<ul>
+<li>逻辑表达式</li>
+</ul>
+
+<pre><code>非 : ! or &quot;not&quot; (去掉双引号)  
+且 : &amp;&amp; or &quot;and&quot;  
+或 : || or &quot;or&quot;
+
+多个表达式整体用单引号或者双引号引用起来, 单个最好用括号这样更清晰 
+</code></pre>
+
+<ul>
+<li>抓取所有经过eth1，目的网络是192.168，但目的主机不是192.168.1.200的TCP数据</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth1 </span><span style="color:#e6db74">&#39;((tcp) and ((dst net 192.168) and (not dst host 192.168.1.200)))&#39;</span></code></pre>
+</div>
+<blockquote>
+<p>详细的过滤指导请参考: <a href="https://wiki.wireshark.org/CaptureFilters">https://wiki.wireshark.org/CaptureFilters</a></p>
+</blockquote>
+
+<h2 id="wireshark-介绍">wireshark 介绍</h2>
+
+<h3 id="显示过滤器">显示过滤器</h3>
+
+<p>默认wireshark打开文件后,显示所有的包. 可以指定相应的显示过滤器, 显示特定部分</p>
+
+<ul>
+<li><p>比如想显示所有经过端口80的数据包, 使用 <code>tcp.port == 80</code></p></li>
+
+<li><p>显示所有经过 192.168这个网段的包,使用 <code>ip.addr == 192.168.0.0/16</code></p></li>
+
+<li><p>仍然可以组合多个过滤条件</p></li>
+</ul>
+
+<blockquote>
+<p>and, &amp;&amp;   逻辑与<br />
+or,  ||   逻辑或<br />
+not, !    逻辑否</p>
+</blockquote>
+
+<p>下面是具体的例子:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcp.port </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">80</span><span style=""> and ip.src </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">192</span><span style="">.168.2.1
+</span><span style="">not llc
+</span><span style="">http and frame</span><span style="color:#f92672">[</span><span style="color:#ae81ff">100</span><span style="">-199</span><span style="color:#f92672">]</span><span style=""> contains </span><span style="color:#e6db74">&#34;wireshark&#34;</span><span style="">
+</span><span style=""></span><span style="color:#f92672">(</span><span style="">ipx.src.net </span><span style="color:#f92672">==</span><span style=""> 0xbad </span><span style="color:#f92672">&amp;&amp;</span><span style=""> ipx.src.node </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">.0.0.0.0.1</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">||</span><span style=""> ip</span></code></pre>
+</div>
+<ul>
+<li>两个特殊的过滤操作<code>contains</code> 和 <code>match</code></li>
+</ul>
+
+<p><code>ip.addr contains &quot;192.168&quot;</code>是指过滤所有ip地址里包含&rdquo;192.168&rdquo;这几个字符的数据包<br />
+<code>http contains &quot;www.163.com&quot;</code> 过滤所有http消息里包含&rdquo;www.163.com&rdquo;字符串的数据包<br />
+<code>match</code> 用法类似, 不过它支持perl的正则表达式, 而且是大小写不敏感</p>
+
+<p><code>contains</code> 后面可以是带双引号的字符串, 字节数组, 单字节(类c语言风格). 其他的如&rdquo;tcp.port&rdquo; 也可以跟这些 下面的表达式都是正确的:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#e6db74">&#34;www.163.com&#34;</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">56</span><span style="">:98:47    </span><span style="color:#f92672">(</span><span style="">十六进制</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">68</span></code></pre>
+</div>
+<p>如下的过滤都是等价的:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;\x47ET&#34;</span><span style="">
+</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;GET&#34;</span><span style="">
+</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">47</span><span style="">.45.54
+</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">47</span><span style="">:45:54
+</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">47</span><span style="">-45-54</span></code></pre>
+</div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">frame.pkt_len &gt; </span><span style="color:#ae81ff">10</span><span style="">
+</span><span style="">frame.pkt_len &gt; </span><span style="color:#ae81ff">012</span><span style="">
+</span><span style="">frame.pkt_len &gt; 0xa
+</span><span style="">frame.pkt_len &gt; </span><span style="color:#e6db74">&#39;\n&#39;</span><span style="">
+</span><span style="">frame.pkt_len &gt; </span><span style="color:#e6db74">&#39;\xa&#39;</span><span style="">
+</span><span style="">frame.pkt_len &gt; </span><span style="color:#e6db74">&#39;\012&#39;</span></code></pre>
+</div>
+<ul>
+<li>还有很多切片,字节操作等高级操作, 可以进一步查看如下两个文档</li>
+</ul>
+
+<blockquote>
+<p><a href="https://wiki.wireshark.org/DisplayFilters">https://wiki.wireshark.org/DisplayFilters</a><br />
+<a href="https://www.wireshark.org/docs/man-pages/wireshark-filter.html">https://www.wireshark.org/docs/man-pages/wireshark-filter.html</a></p>
+</blockquote>
+
+<h3 id="三板斧">三板斧</h3>
+
+<p>处理linux主机性能问题, 我们通常有三个方面是必查的. CPU, 内存 和 IO 使用率<br />
+通过wireshark分析网络问题, 也有类似的3个必查项</p>
+
+<ul>
+<li>统计 &ndash;&gt; 对话</li>
+</ul>
+
+<p>已<code>TCP</code>为例, 每一行代表一个TCP连接.他统计了流量和速率(每个方向和两个方向交互的总和)
+<code>rel start</code> 是该连接上第一条TCP包与该cap文件的第一条数据的时间相对值, 勾选绝对开始时间, 可显示包发送的绝对时间. 例如<code>23:17:95</code></p>
+
+<p><img src="https://xixiliguo.github.io/img/wireshark_info.png" alt="统计--&gt;对话框" /></p>
+
+<ul>
+<li>分析 &ndash;&gt; 专家信息</li>
+</ul>
+
+<p>Wireshark会自动分析整个文件, 然后分严重等级罗列出每一项分析结果和对应出现的次数<br />
+一定要多关注错误和警告级别的, 根据出现的次数和文件总的<code>packet</code>数计算其出现的比例. 比如重传大于10%对性能影响就非常严重了</p>
+
+<p><img src="https://xixiliguo.github.io/img/wireshark_expertinfo.png" alt="分析 --&gt; 专家信息" /></p>
+
+<ul>
+<li>统计 &ndash;&gt; TCP流图形 &ndash;&gt; 时间序列(Steven)</li>
+</ul>
+
+<p>该图可以显示一个TCP连接上某个方向序列号的变化, 以此查看发送性能</p>
+
+<p><img src="https://xixiliguo.github.io/img/wireshark_tcpseq.png" alt="统计 --&gt; TCP流图形 --&gt; 时间序列" /></p>
+
+<h3 id="wireshark提示消息解释">Wireshark提示消息解释</h3>
+
+<ul>
+<li>[Packet size limited during capture]<br />
+表示该包没有抓全, 比如包是大小是1024, 结果tcpdump抓时只了1000. 通常这是抓包是<code>-s</code>值太小造成的</li>
+<li>[TCP Previous segment not captured]<br />
+TCP连接上后一包的seq大于前一个包的seq+eln, 说明中间缺失数据. 给出这个提示</li>
+<li>[TCP ACKed unseen segment]<br />
+该报文里的ACK确认的seq在整个抓包里没有找到<br /></li>
+<li>[TCP Out-of-Order]<br />
+后一个包的seq小于前一个包的seq+len, 认为乱序</li>
+<li>[TCP Dup ACK]<br />
+后一个包的ack和前一个包里的ack指一样.<br /></li>
+<li>[TCP Fast Retransmission]<br />
+当Dup ACK发生3次, 发送端启动快速重传</li>
+<li>[TCP Retransmission]<br />
+包丢且也没有触发Dup ACK, 则RTO超时过后启动重传</li>
+<li>[TCP zerowindow]<br />
+win为0, 表示接受方暂时无法接受新包</li>
+<li>[TCP window Full]<br />
+表示发送方已经将接受串口占满, 可对比接受方发的窗口和发送方的<code>byte in flight</code></li>
+</ul>
+
+<blockquote>
+<p>可进一步查看官方文档: <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html">https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html</a><br />
+有兴趣的话, 可以进一步查看源码: <a href="https://github.com/boundary/wireshark/blob/master/epan/dissectors/packet-tcp.c">https://github.com/boundary/wireshark/blob/master/epan/dissectors/packet-tcp.c</a></p>
+</blockquote>
+
+<h3 id="其他技巧">其他技巧</h3>
+
+<ul>
+<li><p>如果包在英国的某台服务器上生成, 在中国打开时, 会发现并不是英国当地的发生时间. 需要做timeshift<br />
+在<code>编辑 --&gt; 时间平移</code> 将时间通过<code>08:00:00</code>或者<code>-08:00:00</code>这样的格式进行调整</p></li>
+
+<li><p>推荐两个讲解Wireshark的书:<br />
+&lt;&lt; Wireshark网络分析就这么简单&gt;&gt; 和 &lt;&lt; Wireshark网络分析的艺术 &gt;&gt;</p></li>
+</ul>
+
+<h2 id="tcp协议">TCP协议</h2>
+
+<h3 id="知识学习">知识学习</h3>
+
+<p>这块非常复杂, 推荐如下书籍或文章:
+TCP/IP详解卷1<br />
+TCP 的那些事儿:<br />
+<a href="https://coolshell.cn/articles/11564.html">https://coolshell.cn/articles/11564.html</a><br />
+<a href="https://coolshell.cn/articles/11609.html">https://coolshell.cn/articles/11609.html</a><br />
+TCP/IP Guide:<br />
+<a href="http://www.tcpipguide.com/free/index.htm">http://www.tcpipguide.com/free/index.htm</a> 免费电子书</p>
+
+<h3 id="问题记录">问题记录</h3>
+
+<ul>
+<li><p>网卡eth1收到包, 根据路由要从网卡eth0发出去, 但从抓包上却没有看到回包<br />
+通过参数<code>net.ipv4.conf.all.rp_filter</code>空值.<br />
+默认为1, 是严格模式, 不允许回程路由和先前的不一样<br />
+具体解释看: <a href="https://access.redhat.com/solutions/53031">https://access.redhat.com/solutions/53031</a></p></li>
+
+<li><p>NAT场景下内网机器配置所有消息转发到一台nat服务器上, 但有时通过<code>ip route get xxx</code> 会显示路由指向默认网关. 并且有<code>cache redirect</code>字样<br />
+路由分为静态路由和动态的.  动态是通过智能学的, 例如<code>icmp</code>的重定向会影响的动态路由. NAT场景下要关闭ICMP的重定向功能</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">net.ipv4.conf.all.accept_redirects</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">net.ipv4.conf.all.secure_redirects</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">net.ipv4.conf.all.send_redirects</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span></code></pre>
+</div></li>
+
+<li><p>多网卡一般配置不同的网段, 但有时会将同一网段的IP配置在两个网卡上, 这样回复消息只会从一个网卡出去. 需要通过策略路由解决:<br />
+为每一个网卡配置单独的路由表<br />
+默认任意一个网卡会对自己所有的 ip 地址在 ARP 请求上作出响应, 所有对端学到的这两个IP的mac地址可能是一样的, 解决方案如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">net.ipv4.conf.all.arp_announce </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">net.ipv4.conf.all.arp_ignore </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span></code></pre>
+</div></li>
+
+<li><p>经常处理tcp各种超时问题, 如下文章总结了大部分tcp下的超时情况和对应的参数控制<br />
+<a href="http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/">http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/</a></p></li>
+</ul></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/network"><span class="tag">NetWork</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>
