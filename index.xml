@@ -23,6 +23,17 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>Linux 网卡多队列介绍</title>
+      <link>https://xixiliguo.github.io/post/multi-queue/</link>
+      <pubDate>Sun, 07 Apr 2019 10:05:29 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/multi-queue/</guid>
+      <description>&lt;p&gt;单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>TCP协议栈笔记</title>
       <link>https://xixiliguo.github.io/post/tcp/</link>
       <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>

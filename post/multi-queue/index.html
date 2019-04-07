@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Linux 网卡多队列介绍</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wang" />
+  <meta name="description" content="单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="Linux 网卡多队列介绍" />
+    <meta name="twitter:description" content="单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.
+
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/multi-queue/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Linux 网卡多队列介绍</h1>
+      <p class="post-meta">@Peter Wang · Apr 7, 2019 · 2 min read</p>
+    </header>
+    <article class="post-content"><p>单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.</p>
+
+<p></p>
+
+<p>通常情况下, 每张网卡有一个队列(queue), 所有收到的包从这个队列入, 内核从这个队列里取数据处理. 该队列其实是ring buffer(环形队列), 内核如果取数据不及时, 则会存在丢包的情况.<br />
+一个CPU处理一个队列的数据, 这个叫中断. 默认是cpu0(第一个CPU)处理. 一旦流量特别大, 这个CPU负载很高, 性能存在瓶颈. 所以网卡开发了多队列功能, 即一个网卡有多个队列, 收到的包根据TCP四元组信息hash后放入其中一个队列, 后面该链接的所有包都放入该队列. 每个队列对应不同的中断, 使用irqbalance将不同的中断绑定到不同的核. 充分利用了多核并行处理特性. 提高了效率.</p>
+
+<h3 id="多网卡队列实现图例">多网卡队列实现图例</h3>
+
+<pre><code>             普通单队列                                   
+   +-----------------------------+                        
+   | queue                       |                        
+   |                             |                        
+   |   +----------+  +----------+|           +---------+  
+   |   |  packet  |  |  packet  ||----------&gt;|  CPU 0  |  
+   |   +----------+  +----------+|           +---------+  
+   +-----------------------------+                        
+                                                    
+                             开启多网卡队列               
+                                                        
+    +----------------------------+                       
+    | queue                      |                       
+    |                            |                       
+    |  +----------+ +----------+ |           +---------+ 
+    |  |  packet  | |  packet  | |---------&gt; |  CPU 0  | 
+    |  +----------+ +----------+ |           +---------+ 
+    +----------------------------+           +---------+ 
+                                             |  CPU 1  |  
+                                             +---------+  
+                                             +---------+  
+    +----------------------------+           |  CPU 2  |  
+    | queue                      |           +---------+  
+    |                            |                        
+    |  +----------+ +----------+ |           +---------+  
+    |  |  packet  | |  packet  | |---------&gt; |  CPU 3  |  
+    |  +----------+ +----------+ |           +---------+  
+    +----------------------------+                        
+</code></pre>
+
+<h3 id="检查中断与对应的cpu关系">检查中断与对应的CPU关系</h3>
+
+<p>如下显示, 第一列是中断号, 后面两列是对应CPU处理该中断的次数, virtio-input和 virtio-output为网卡队列的中断
+可见大部分包被CPU1处理</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># cat /proc/interrupts | egrep &#39;CPU|virtio.*(input|output)&#39;
+</span><span style="color:#75715e"></span><span style="">           CPU0       CPU1
+</span><span style=""> </span><span style="color:#ae81ff">27</span><span style="">:          </span><span style="color:#ae81ff">7</span><span style="">      </span><span style="color:#ae81ff">89632</span><span style="">   PCI-MSI-edge      virtio3-input.0
+</span><span style=""> </span><span style="color:#ae81ff">30</span><span style="">:          </span><span style="color:#ae81ff">2</span><span style="">          </span><span style="color:#ae81ff">0</span><span style="">   PCI-MSI-edge      virtio3-output.0
+</span><span style=""> </span><span style="color:#ae81ff">31</span><span style="">:          </span><span style="color:#ae81ff">7</span><span style="">      </span><span style="color:#ae81ff">23319</span><span style="">   PCI-MSI-edge      virtio3-input.1
+</span><span style=""> </span><span style="color:#ae81ff">32</span><span style="">:          </span><span style="color:#ae81ff">2</span><span style="">          </span><span style="color:#ae81ff">0</span><span style="">   PCI-MSI-edge      virtio3-output.1</span></code></pre>
+</div>
+<p>查询具体中断所绑定的CPU信息<br />
+smp_affinity_list显示CPU序号. 比如 0 代表 CPU0, 2代表 CPU2
+smp_affinity 是十六进制显示. 比如 2 为10, 代表 CPU1 (第二个CPU)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># for i in {30..32}; do echo -n &#34;Interrupt $i is allowed on CPUs &#34;; cat /proc/irq/$i/smp_affinity_list; done
+</span><span style="color:#75715e"></span><span style="">Interrupt </span><span style="color:#ae81ff">30</span><span style=""> is allowed on CPUs </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Interrupt </span><span style="color:#ae81ff">31</span><span style=""> is allowed on CPUs </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">Interrupt </span><span style="color:#ae81ff">32</span><span style=""> is allowed on CPUs </span><span style="color:#ae81ff">0</span></code></pre>
+</div>
+<h3 id="rps-xps-rfs">RPS, XPS, RFS</h3>
+
+<p>之前谈的多网卡队列需要硬件实现, RPS则是软件实现,将包让指定的CPU去处理中断.<br />
+配置文件为<code>/sys/class/net/eth*/queues/rx*/rps_cpus</code>. 默认为0, 表示不启动RPS
+如果要让该队列被CPU0,1处理, 则设置 echo &ldquo;3&rdquo; &gt; /sys/class/net/eth<em>/queues/rx</em>/rps_cpus,  3代表十六进制表示11, 即指CPU0和CPU1<br />
+在开启多网卡队列RSS时, 已经起到了均衡的作用.  RPS则可以在队列数小于CPU数时, 进一步提升性能. 因为进一步利用所有CPU.
+RFS则进一步扩展RPS的能力, 它会分析并将包发往最合适的CPU(程序运行所在的CPU).
+检查当前RPS, RFS开启情况:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># for i in $(ls -1 /sys/class/net/eth*/queues/rx*/rps_*); do echo -n &#34;${i}:  &#34;  ; cat ${i}; done
+</span><span style="color:#75715e"></span><span style="">/sys/class/net/eth0/queues/rx-0/rps_cpus:  </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">/sys/class/net/eth0/queues/rx-0/rps_flow_cnt:  </span><span style="color:#ae81ff">4096</span><span style="">
+</span><span style="">/sys/class/net/eth0/queues/rx-1/rps_cpus:  </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">/sys/class/net/eth0/queues/rx-1/rps_flow_cnt:  </span><span style="color:#ae81ff">4096</span><span style="">
+</span><span style=""></span><span style="color:#75715e"># cat /proc/sys/net/core/rps_sock_flow_entries
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">8192</span></code></pre>
+</div>
+<p>XPS是将发送包指定到CPU, 通常和同一队列的rps和xps配置一致.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># for i in $(ls -1 /sys/class/net/eth*/queues/tx*/xps_cpus); do echo -n &#34;${i}:  &#34;  ; cat ${i}; done
+</span><span style="color:#75715e"></span><span style="">/sys/class/net/eth0/queues/tx-0/xps_cpus:  </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">/sys/class/net/eth0/queues/tx-1/xps_cpus:  </span><span style="color:#ae81ff">3</span></code></pre>
+</div>
+<h3 id="根据top输出查看软中断负载">根据top输出查看软中断负载</h3>
+
+<p>top进入交互式界面后, 按1 显示所有cpu的负载. si 是软中断的CPU使用率. 如果高比如50%, 说明该CPU忙于处理中断, 通常就是收发网络IO</p>
+
+<pre><code>top - 18:58:33 up 16 days, 19:58,  2 users,  load average: 0.00, 0.01, 0.05
+Tasks:  89 total,   2 running,  87 sleeping,   0 stopped,   0 zombie
+%Cpu0  :  1.3 us,  0.0 sy,  0.0 ni, 98.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu1  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  3880032 total,  2911912 free,   199600 used,   768520 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  3411892 avail Mem
+</code></pre>
+
+<h3 id="参考">参考</h3>
+
+<p><a href="https://www.kernel.org/doc/Documentation/IRQ-affinity.txt">https://www.kernel.org/doc/Documentation/IRQ-affinity.txt</a><br />
+<a href="https://www.kernel.org/doc/Documentation/networking/scaling.txt">https://www.kernel.org/doc/Documentation/networking/scaling.txt</a><br />
+<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-networking-configuration_tools#sect-Red_Hat_Enterprise_Linux-Performance_Tuning_Guide-Configuration_tools-Configuring_Receive_Packet_Steering_RPS">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/sect-red_hat_enterprise_linux-performance_tuning_guide-networking-configuration_tools#sect-Red_Hat_Enterprise_Linux-Performance_Tuning_Guide-Configuration_tools-Configuring_Receive_Packet_Steering_RPS</a><br />
+<a href="https://lwn.net/Articles/370153/">https://lwn.net/Articles/370153/</a><br />
+<a href="https://lwn.net/Articles/412062/">https://lwn.net/Articles/412062/</a></p></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/rss"><span class="tag">RSS</span></a></li>
+        
+          <li><a href="https://xixiliguo.github.io/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97"><span class="tag">多网卡队列</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>
