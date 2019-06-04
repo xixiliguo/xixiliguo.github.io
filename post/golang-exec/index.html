@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Golang os/exec 实现</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wangbo" />
+  <meta name="description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="Golang os/exec 实现" />
+    <meta name="twitter:description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.
+
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/golang-exec/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Golang os/exec 实现</h1>
+      <p class="post-meta">@Peter Wangbo · Jun 2, 2019 · 2 min read</p>
+    </header>
+    <article class="post-content"><p>os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.</p>
+
+<p></p>
+
+<h1 id="基本使用">基本使用</h1>
+
+<p>如果要运行<code>ls -rlt</code>,代码如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;log&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;os/exec&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;ls&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;-rlt&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">stdoutStderr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">CombinedOutput</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>如果要运行<code>ls -rlt /root/*.go</code>, 使用<code>cmd := exec.Command(&quot;ls&quot;, &quot;-rlt&quot;, &quot;/root/*.go&quot;)</code>是错误的.<br />
+因为底层是直接使用系统调用<code>execve</code>的.它并不会向Shell那样解析通配符. 变通方案为golang执行bash命令, 如:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;log&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;os/exec&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;bash&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;-c&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ls -rlt /root/*.go&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">stdoutStderr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">CombinedOutput</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<h1 id="源码分析">源码分析</h1>
+
+<p>一. os/exec是高阶库,大概的调用关系如下:</p>
+
+<pre><code>                                                                 
+                         +----------------+                      
+                         | (*Cmd).Start() |                      
+                         +----------------+                      
+                                 |                               
+                                 v                               
+  +-------------------------------------------------------------+
+  | os.StartProcess(name string, argv []string, attr *ProcAttr) |
+  +-------------------------------------------------------------+
+                                 |                               
+                                 v                               
+          +-------------------------------------------+          
+          | syscall.StartProcess(name, argv, sysattr) |          
+          +-------------------------------------------+          
+</code></pre>
+
+<p>二. (*Cmd).Start()主要处理如何与创建后的通信. 比如如何将一个文件内容作为子进程的标准输入, 如何获取子进程的标准输出.<br />
+这里主要是通过pipe实现, 如下是处理子进程标准输入的具体代码注释.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// 该函数返回子进程标准输入对应的文件信息. 在fork/exec后子进程里面将其对应的文件描述符设置为0
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">c</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">Cmd</span><span style="">)</span><span style=""> </span><span style="color:#a6e22e">stdin</span><span style="">()</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">f</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">File</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// 如果没有定义的标准输入来源, 则默认是/dev/null
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Stdin</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">f</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Open</span><span style="">(</span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">DevNull</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#66d9ef">return</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">return</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// 如果定义子进程的标准输入为父进程已打开的文件, 则直接返回
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">ok</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Stdin</span><span style="">.(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">File</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">ok</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// 如果是其他的,比如实现了io.Reader的一段字符串, 则通过pipe从父进程传入子进程
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// 创建pipe, 成功execve后,在父进程里关闭读. 从父进程写, 从子进程读.
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// 一旦父进程获取子进程的结果, 即子进程运行结束, 在父进程里关闭写.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">pr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pw</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Pipe</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">return</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pr</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterWait</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterWait</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pw</span><span style="">)</span><span style="">
+</span><span style="">    
+</span><span style="">    </span><span style="color:#75715e">// 通过goroutine将c.Stdin的数据写入到pipe的写端
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">goroutine</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">goroutine</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">()</span><span style=""> </span><span style="color:#66d9ef">error</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">io</span><span style="">.</span><span style="color:#a6e22e">Copy</span><span style="">(</span><span style="color:#a6e22e">pw</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Stdin</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">skip</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">skipStdinCopyError</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">skip</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">skip</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">pw</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">();</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">
+</span><span style="">	</span><span style="">})</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">pr</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>三. golang里使用<code>os.OpenFile</code>打开的文件默认是`close-on-exec&rdquo;<br />
+除非它被指定为子进程的标准输入,标准输出或者标准错误输出, 否则在子进程里会被close掉.</p>
+
+<p><code>file_unix.go</code>里是打开文件的逻辑:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// openFileNolog is the Unix implementation of OpenFile.
+</span><span style="color:#75715e">// Changes here should be reflected in openFdAt, if relevant.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">openFileNolog</span><span style="">(</span><span style="color:#a6e22e">name</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">flag</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">perm</span><span style=""> </span><span style="color:#a6e22e">FileMode</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">File</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">setSticky</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">false</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">!</span><span style="color:#a6e22e">supportsCreateWithStickyBit</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">flag</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">O_CREATE</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">perm</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ModeSticky</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">Stat</span><span style="">(</span><span style="color:#a6e22e">name</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">IsNotExist</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">setSticky</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">e</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">r</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">e</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">Open</span><span style="">(</span><span style="color:#a6e22e">name</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">flag</span><span style="">|</span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">O_CLOEXEC</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">syscallMode</span><span style="">(</span><span style="color:#a6e22e">perm</span><span style="">))</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">e</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#66d9ef">break</span><span style="">
+</span><span style="">		</span><span style="">}</span></code></pre>
+</div>
+<p>如果要让子进程继承指定的文件, 需要使用<code>ExtraFiles</code>字段</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">a</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Create</span><span style="">(</span><span style="color:#e6db74">&#34;abc&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;ls&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;-rlt&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">ExtraFiles</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">ExtraFiles</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">a</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">stdoutStderr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">CombinedOutput</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>四. 当父进程内存特别大的时候, fork/exec的性能非常差, golang使用clone系统调优并大幅优化性能. 代码如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#a6e22e">locked</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">runtime</span><span style="">.</span><span style="color:#a6e22e">GOARCH</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;amd64&#34;</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">CLONE_NEWUSER</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">:</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">r1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">rawVforkSyscall</span><span style="">(</span><span style="color:#a6e22e">SYS_CLONE</span><span style="">,</span><span style=""> </span><span style="">uintptr</span><span style="">(</span><span style="color:#a6e22e">SIGCHLD</span><span style="">|</span><span style="color:#a6e22e">CLONE_VFORK</span><span style="">|</span><span style="color:#a6e22e">CLONE_VM</span><span style="">)|</span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">runtime</span><span style="">.</span><span style="color:#a6e22e">GOARCH</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;s390x&#34;</span><span style="">:</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">r1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">RawSyscall6</span><span style="">(</span><span style="color:#a6e22e">SYS_CLONE</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="">uintptr</span><span style="">(</span><span style="color:#a6e22e">SIGCHLD</span><span style="">)|</span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">default</span><span style="">:</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">r1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">RawSyscall6</span><span style="">(</span><span style="color:#a6e22e">SYS_CLONE</span><span style="">,</span><span style=""> </span><span style="">uintptr</span><span style="">(</span><span style="color:#a6e22e">SIGCHLD</span><span style="">)|</span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span></code></pre>
+</div>
+<p>网上有很多关于讨论该性能的文章:<br />
+<a href="https://zhuanlan.zhihu.com/p/47940999">https://zhuanlan.zhihu.com/p/47940999</a><br />
+<a href="https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/">https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/</a><br />
+<a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a></p>
+
+<p>五. 父进程使用pipe,来探测在创建子进程<code>execve</code>时是否有异常.<br />
+在 <code>syscall/exec_unix.go</code>中. 如果<code>execve</code>成功,则该pipe因close-on-exec在子进程里自动关闭.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#75715e">// Acquire the fork lock so that no other threads
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// create new fds that are not yet close-on-exec
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// before we fork.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">ForkLock</span><span style="">.</span><span style="color:#a6e22e">Lock</span><span style="">()</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Allocate child status pipe close on exec.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">forkExecPipe</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[:]);</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">goto</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Kick off child.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">pid</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">forkAndExecInChild</span><span style="">(</span><span style="color:#a6e22e">argv0p</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">argvp</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">envvp</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">chroot</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">dir</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">attr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sys</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">])</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">Errno</span><span style="">(</span><span style="color:#a6e22e">err1</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">goto</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">ForkLock</span><span style="">.</span><span style="color:#a6e22e">Unlock</span><span style="">()</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Read child error status from pipe.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">Close</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">])</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">n</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">readlen</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#66d9ef">byte</span><span style="">)(</span><span style="color:#a6e22e">unsafe</span><span style="">.</span><span style="color:#a6e22e">Pointer</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">err1</span><span style="">)),</span><span style=""> </span><span style="">int</span><span style="">(</span><span style="color:#a6e22e">unsafe</span><span style="">.</span><span style="color:#a6e22e">Sizeof</span><span style="">(</span><span style="color:#a6e22e">err1</span><span style="">)))</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">Close</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">])</span></code></pre>
+</div>
+<p>六. 当子进程运行完后, 使用系统调用<code>wait4</code>回收资源, 可获取<code>exit code</code>,<code>信号</code>和<code>rusage</code>使用量等信息.<br />
+七. 有超时机制, 如果例子是子进程在5分钟没有运行时也返回.  不会长时间阻塞进程.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;context&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;os/exec&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;time&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">ctx</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">cancel</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">WithTimeout</span><span style="">(</span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">Background</span><span style="">(),</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Minute</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">cancel</span><span style="">()</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">CommandContext</span><span style="">(</span><span style="color:#a6e22e">ctx</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;sleep&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;5&#34;</span><span style="">).</span><span style="color:#a6e22e">Run</span><span style="">();</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#75715e">// This will fail after 100 milliseconds. The 5 second sleep
+</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#75715e">// will be interrupted.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>具体是使用<code>context</code>库实现超时机制.  一旦时间达到,就给子进程发送<code>kill</code>信号,强制中止它.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">ctx</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">waitDone</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">make</span><span style="">(</span><span style="color:#66d9ef">chan</span><span style=""> </span><span style="color:#66d9ef">struct</span><span style="">{})</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#66d9ef">select</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">ctx</span><span style="">.</span><span style="color:#a6e22e">Done</span><span style="">():</span><span style="">
+</span><span style="">				</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Process</span><span style="">.</span><span style="color:#a6e22e">Kill</span><span style="">()</span><span style="">
+</span><span style="">			</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">waitDone</span><span style="">:</span><span style="">
+</span><span style="">			</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="">}()</span><span style="">
+</span><span style="">	</span><span style="">}</span></code></pre>
+</div>
+<p>八. 假设调用一个脚本A, A有会调用B. 如果此时golang程序超时kill掉A, 那么B就变为pid为1的进程的子进程.<br />
+有时这并不是我们所希望的.因为真正导致长时间没返回结果的可能是B进程.所有更希望将A和B同时杀掉.<br />
+在传统的C代码里,我们通常<code>fork</code>进程后运行<code>setsid</code>来解决. 对应golang的代码为:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">ctx</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">cancel</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">WithTimeout</span><span style="">(</span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">Background</span><span style="">(),</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Minute</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">cancel</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">CommandContext</span><span style="">(</span><span style="color:#a6e22e">ctx</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;sleep&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;5&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">SysProcAttr</span><span style="">.</span><span style="color:#a6e22e">Setsid</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">Run</span><span style="">();</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#75715e">// This will fail after 100 milliseconds. The 5 second sleep
+</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#75715e">// will be interrupted.
+</span><span style="color:#75715e"></span><span style="">	</span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/os/exec"><span class="tag">Os/Exec</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>

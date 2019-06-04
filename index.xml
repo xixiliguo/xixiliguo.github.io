@@ -23,6 +23,17 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>Golang os/exec 实现</title>
+      <link>https://xixiliguo.github.io/post/golang-exec/</link>
+      <pubDate>Sun, 02 Jun 2019 23:22:44 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/golang-exec/</guid>
+      <description>&lt;p&gt;os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Linux 网卡多队列介绍</title>
       <link>https://xixiliguo.github.io/post/multi-queue/</link>
       <pubDate>Sun, 07 Apr 2019 10:05:29 +0800</pubDate>

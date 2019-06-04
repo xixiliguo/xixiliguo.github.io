@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/golang-exec/</loc>
+    <lastmod>2019-06-02T23:22:44+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/multi-queue/</loc>
     <lastmod>2019-04-07T10:05:29+08:00</lastmod>
   </url>
@@ -163,8 +168,14 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/os/exec/</loc>
+    <lastmod>2019-06-02T23:22:44+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2019-04-07T10:05:29+08:00</lastmod>
+    <lastmod>2019-06-02T23:22:44+08:00</lastmod>
     <priority>0</priority>
   </url>
   

@@ -6,7 +6,8 @@
 
   
   <title>
-  Posts
+  Tag → os/exec
+  
    | My personal Blog
 </title>
 
@@ -18,16 +19,14 @@
 
   
   <meta name="author" content="Peter Wang" />
-  <meta name="description" content="" />
+  <meta name="description" content="Record my study" />
 
   
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="Posts" />
-    <meta name="twitter:description" content="" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@gohugoio" />
+  <meta name="twitter:title" content="My personal Blog" />
+  <meta name="twitter:description" content="Record my study" />
+  <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
 
 
 
@@ -35,7 +34,7 @@
 <meta name="generator" content="Hugo 0.28" />
 
 
-<link rel="canonical" href="https://xixiliguo.github.io/post/" />
+<link rel="canonical" href="https://xixiliguo.github.io/tags/os/exec/" />
 <link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
 
 
@@ -189,59 +188,20 @@
       
         <article class="post-entry">
   <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/linux-shadow/" class="post-link">Linux /etc/shadow 文件学习笔记</a></h3>
-    <p class="post-meta">@Peter Wang · Oct 11, 2017 · 3 min read</p>
+    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/golang-exec/" class="post-link">Golang os/exec 实现</a></h3>
+    <p class="post-meta">@Peter Wangbo · Jun 2, 2019 · 2 min read</p>
   </header>
   
-  <p class="post-summary">Linux系统下，创建的用户信息如ID，家目录，默认shell保存在/etc/passwd下，该文件每行的第二位（以冒号分隔）表示密码。但真正的密码其实被加密后放在/etc/shadow里，/etc/passwd里只显示为x。本文主要介绍shadow文件各字段含义和相关的密码生命周期配置。
-</p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/linux-shadow/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/strings-algorithm-golang/" class="post-link">从Go标准库看字符串匹配算法</a></h3>
-    <p class="post-meta">@Peter Wang · Oct 2, 2017 · 2 min read</p>
-  </header>
-  
-  <p class="post-summary">Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现
+  <p class="post-summary">os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.
 
 </p>
   <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/strings-algorithm-golang/">Read More →</a>
-  </footer>
-</article>
-
-      
-        <article class="post-entry">
-  <header class="post-header">
-    <h3 class="post-title"><a href="https://xixiliguo.github.io/post/atop/" class="post-link">ATOP工作原理总结</a></h3>
-    <p class="post-meta">@Peter Wang · Mar 5, 2017 · 4 min read</p>
-  </header>
-  
-    <img class="post-cover" src="https://xixiliguo.github.io/img/atop.png" alt="ATOP工作原理总结">
-  
-  <p class="post-summary">ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 CPU，Memory，Disk，Network 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。 </p>
-  <footer class="post-footer">
-    <a class="read-more" href="https://xixiliguo.github.io/post/atop/">Read More →</a>
+    <a class="read-more" href="https://xixiliguo.github.io/post/golang-exec/">Read More →</a>
   </footer>
 </article>
 
       
     
-    
-      <footer class="list-footer">
-        <nav class="pagination">
-          <h3 class="offscreen">Pagination</h3>
-          
-            <a class="pagination-previous" href="https://xixiliguo.github.io/post/">← Newer Posts</a>
-          
-          
-        </nav>
-      </footer>
     
   </section>
   <footer class="site-footer">
