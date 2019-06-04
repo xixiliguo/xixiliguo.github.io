@@ -769,8 +769,14 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="color:#75715e"></span><span style="">systemctl set-default multi-user.target  </span><span style="color:#75715e"># 设置系统默认的target为 多用户模式
 </span><span style="color:#75715e"></span><span style="">systemctl list-dependencies multi-user.target  </span><span style="color:#75715e">#查看该target下所有的unit
 </span><span style="color:#75715e"></span><span style="">systemctl list-dependencies sshd   </span><span style="color:#75715e"># 查看一个service所依赖的所有unit
-</span><span style="color:#75715e"></span><span style="">systemctl cat sshd              #查看service的配置参数</span></code></pre>
+</span><span style="color:#75715e"></span><span style="">systemctl cat sshd              </span><span style="color:#75715e">#查看service的配置文件
+</span><span style="color:#75715e"></span><span style="">systemctl show sshd             #查看service的配置参数, 不带 service则显示默认的配置. 可用来查询nofile, noproc等限制资源参数</span></code></pre>
 </div>
+<blockquote>
+<p>/etc/security/limits.conf无法设置systemd服务的资源限制. 参见:<br />
+<a href="http://smilejay.com/2016/06/centos-7-systemd-conf-limits/">http://smilejay.com/2016/06/centos-7-systemd-conf-limits/</a></p>
+</blockquote>
+
 <p>列出当前旧的LSB脚本</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ systemctl </span><span style="">|</span><span style=""> grep LSB
 </span><span style="">  network.service       loaded active running   LSB: Bring up/down networking
