@@ -14,7 +14,7 @@
 
 
   
-  <meta name="author" content="Peter Wangbo" />
+  <meta name="author" content="Peter Wang" />
   <meta name="description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.
 
 " />
@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Golang os/exec 实现</h1>
-      <p class="post-meta">@Peter Wangbo · Jun 2, 2019 · 2 min read</p>
+      <p class="post-meta">@Peter Wang · Jun 2, 2019 · 2 min read</p>
     </header>
     <article class="post-content"><p>os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.</p>
 
@@ -347,7 +347,7 @@
 <a href="https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/">https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/</a><br />
 <a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a></p>
 
-<p>五. 父进程使用pipe,来探测在创建子进程<code>execve</code>时是否有异常.<br />
+<p>五. 父进程使用pipe来探测在创建子进程<code>execve</code>时是否有异常.<br />
 在 <code>syscall/exec_unix.go</code>中. 如果<code>execve</code>成功,则该pipe因close-on-exec在子进程里自动关闭.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#75715e">// Acquire the fork lock so that no other threads
 </span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// create new fds that are not yet close-on-exec
@@ -373,7 +373,7 @@
 </span><span style="">	</span><span style="color:#a6e22e">Close</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">])</span></code></pre>
 </div>
 <p>六. 当子进程运行完后, 使用系统调用<code>wait4</code>回收资源, 可获取<code>exit code</code>,<code>信号</code>和<code>rusage</code>使用量等信息.<br />
-七. 有超时机制, 如果例子是子进程在5分钟没有运行时也返回.  不会长时间阻塞进程.</p>
+七. 有超时机制, 如下例子是子进程在5分钟没有运行时也返回.  不会长时间阻塞进程.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
 </span><span style="">
 </span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
