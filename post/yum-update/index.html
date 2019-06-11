@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>使用Yum 升级OS</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wang" />
+  <meta name="description" content="主要介绍使用yum 升级OS软件包的一些细节
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="使用Yum 升级OS" />
+    <meta name="twitter:description" content="主要介绍使用yum 升级OS软件包的一些细节
+
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/yum-update/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">使用Yum 升级OS</h1>
+      <p class="post-meta">@Peter Wang · Jun 12, 2019 · 1 min read</p>
+    </header>
+    <article class="post-content"><p>主要介绍使用yum 升级OS软件包的一些细节</p>
+
+<p></p>
+
+<h1 id="repo源">Repo源</h1>
+
+<p>每个源下面有个<code>repodata</code>这个文件夹, 该文件夹存放着软件包的元数据(包名,路径,版本,依赖关系)<br />
+比如<code>https://mirrors.tuna.tsinghua.edu.cn/centos/7.6.1810/os/x86_64/</code><br />
+下面的repodata里 <code>25cd2c29e5adb2b6f8a5b091237dd9f760e97815b37f2557f2cd1c12a5f294f0-primary.xml.gz</code> 文件就是元数据文件</p>
+
+<h1 id="升级前检查">升级前检查</h1>
+
+<ul>
+<li>检查repo里是否有当前OS已安装的软件包. 方便回退</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --orphans</span></code></pre>
+</div>
+<ul>
+<li>检查本地rpm数据库是否由依赖问题, 相当于升级前校验</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --problems</span></code></pre>
+</div>
+<ul>
+<li>模拟<code>yum update</code>但不真正升级, 检查是否报错. 相当于dry-run. 原理是对每次确认选择都是<code>no</code></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">yum update --assumeno </span></code></pre>
+</div>
+<p>使用<code>echo $?</code>检查上述命令的返回码. 非零表明有异常.</p>
+
+<h1 id="升级">升级</h1>
+
+<ul>
+<li>升级命令</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">yum update -y</span></code></pre>
+</div>
+<h1 id="升级后检查">升级后检查</h1>
+
+<ul>
+<li>检查哪些进程需要重启,才能使用新的软件包或者库<br />
+原理:<br />
+在<code>/proc</code>下遍历所有<code>pid</code>下面的<code>smaps</code>文件, 获取所有打开文件的信息<br />
+检查这些文件对应的rpm包的安装时间<br />
+和<code>stat /proc/[pid]</code>的时间对比, 如果rpm的时间晚,则打印出来<br /></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span><span style=""> : /usr/lib/systemd/systemd --system --deserialize </span><span style="color:#ae81ff">16</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">443</span><span style=""> : login -- root
+</span><span style=""></span><span style="color:#ae81ff">3838</span><span style=""> : sshd: root@pts/3
+</span><span style=""></span><span style="color:#ae81ff">1009</span><span style=""> : /sbin/dhclient -H localhost -1 -q -lf /var/lib/dhclient/dhclient--eth0.lease -pf /var/run/dhclient-eth0.pid eth0
+</span><span style=""></span><span style="color:#ae81ff">2221</span><span style=""> : sshd: root@pts/0</span></code></pre>
+</div>
+<ul>
+<li>检查是否重启OS才能使相应更新后的软件包生效. 当然OS能正常运行.只是不重启无法使用新的功能或者特性.<br />
+原理是检查升级的包是否在如下列表里<br /></li>
+</ul>
+
+<pre><code> 'kernel', 'glibc', 'linux-firmware', 'systemd', 'udev',
+ `openssl-libs', 'gnutls', 'dbus'
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting -r
+</span><span style="color:#75715e"></span><span style="">Core libraries or services have been updated:
+</span><span style="">  systemd -&gt; </span><span style="color:#ae81ff">219</span><span style="">-62.el7_6.6
+</span><span style="">
+</span><span style="">Reboot is required to ensure that your system benefits from these updates.
+</span><span style="">More information:
+</span><span style="">https://access.redhat.com/solutions/27943</span></code></pre>
+</div>
+<p>如下命令打印哪些服务需要重启</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting -s
+</span><span style="color:#75715e"></span><span style="">network.service</span></code></pre>
+</div>
+<h1 id="回退">回退</h1>
+
+<p>使用<code>yum history</code>查询要回退事务的ID, 比如<code>213</code>. 然后运行<code>yum history undo 213</code><br />
+具体原理待补充</p></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/yum"><span class="tag">Yum</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>

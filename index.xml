@@ -23,6 +23,17 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>使用Yum 升级OS</title>
+      <link>https://xixiliguo.github.io/post/yum-update/</link>
+      <pubDate>Wed, 12 Jun 2019 00:12:08 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/yum-update/</guid>
+      <description>&lt;p&gt;主要介绍使用yum 升级OS软件包的一些细节&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Golang os/exec 实现</title>
       <link>https://xixiliguo.github.io/post/golang-exec/</link>
       <pubDate>Sun, 02 Jun 2019 23:22:44 +0800</pubDate>
