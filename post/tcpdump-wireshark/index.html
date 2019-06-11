@@ -432,7 +432,12 @@ TCP/IP Guide:<br />
 <li><p>网卡eth1收到包, 根据路由要从网卡eth0发出去, 但从抓包上却没有看到回包<br />
 通过参数<code>net.ipv4.conf.all.rp_filter</code>空值.<br />
 默认为1, 是严格模式, 不允许回程路由和先前的不一样<br />
-具体解释看: <a href="https://access.redhat.com/solutions/53031">https://access.redhat.com/solutions/53031</a></p></li>
+具体解释看:<br />
+<a href="https://access.redhat.com/solutions/53031">https://access.redhat.com/solutions/53031</a><br />
+<a href="https://www.slashroot.in/linux-kernel-rpfilter-settings-reverse-path-filtering">https://www.slashroot.in/linux-kernel-rpfilter-settings-reverse-path-filtering</a><br />
+同时可以打开内核参数<code>net.ipv4.conf.all.log_martians</code>,将OS认为的martians报文打印到系统日志里<br />
+具体解释:<br />
+<a href="https://serverfault.com/questions/570980/what-is-the-usefulness-of-logging-of-martians-packet-e-g-net-ipv4-conf-all-lo">https://serverfault.com/questions/570980/what-is-the-usefulness-of-logging-of-martians-packet-e-g-net-ipv4-conf-all-lo</a></p></li>
 
 <li><p>NAT场景下内网机器配置所有消息转发到一台nat服务器上, 但有时通过<code>ip route get xxx</code> 会显示路由指向默认网关. 并且有<code>cache redirect</code>字样<br />
 路由分为静态路由和动态的.  动态是通过智能学的, 例如<code>icmp</code>的重定向会影响的动态路由. NAT场景下要关闭ICMP的重定向功能</p>

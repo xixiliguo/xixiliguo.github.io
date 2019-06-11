@@ -1410,7 +1410,43 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 
 <h3 id="64-非交互式修改密码">64. 非交互式修改密码</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#34;Linux@123&#34;</span><span style=""> </span><span style="">|</span><span style="">passwd --stdin root</span></code></pre>
-</div></article>
+</div>
+<h3 id="66-udev管理">66. udev管理</h3>
+
+<p>查询设备的信息, 主要是环境变量</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">udevadm info /dev/sda1
+</span><span style="">P: /devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda1
+</span><span style="">N: sda1
+</span><span style="">S: disk/by-id/ata-CentOS_Linux-0_SSD_FFACPKN8NC9MK3EX3N4R-part1
+</span><span style="">S: disk/by-uuid/5de1c8df-9b03-4830-9b56-b96a2290b78f
+</span><span style="">E: </span><span style="">DEVLINKS</span><span style=""></span><span style="color:#f92672">=</span><span style="">/dev/disk/by-id/ata-CentOS_Linux-0_SSD_FFACPKN8NC9MK3EX3N4R-part1 /dev/disk/by-uuid/5de1c8df-9b03-4830-9b56-b96a2290b78f
+</span><span style="">E: </span><span style="">DEVNAME</span><span style=""></span><span style="color:#f92672">=</span><span style="">/dev/sda1
+</span><span style="">E: </span><span style="">DEVPATH</span><span style=""></span><span style="color:#f92672">=</span><span style="">/devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda1
+</span><span style="">E: </span><span style="">DEVTYPE</span><span style=""></span><span style="color:#f92672">=</span><span style="">partition
+</span><span style="">E: </span><span style="">ID_ATA</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">E: </span><span style="">ID_ATA_ROTATION_RATE_RPM</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">E: </span><span style="">ID_ATA_SATA</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">E: </span><span style="">ID_ATA_SATA_SIGNAL_RATE_GEN1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span></code></pre>
+</div>
+<p>加参数<code>-a</code>, 主要是设备的属性.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">udevadm info -a /dev/sda1
+</span><span style="">P: /devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda1
+</span><span style="">N: sda1
+</span><span style="">S: disk/by-id/ata-CentOS_Linux-0_SSD_FFACPKN8NC9MK3EX3N4R-part1
+</span><span style="">S: disk/by-uuid/5de1c8df-9b03-4830-9b56-b96a2290b78f
+</span><span style="">E: </span><span style="">DEVLINKS</span><span style=""></span><span style="color:#f92672">=</span><span style="">/dev/disk/by-id/ata-CentOS_Linux-0_SSD_FFACPKN8NC9MK3EX3N4R-part1 /dev/disk/by-uuid/5de1c8df-9b03-4830-9b56-b96a2290b78f
+</span><span style="">E: </span><span style="">DEVNAME</span><span style=""></span><span style="color:#f92672">=</span><span style="">/dev/sda1
+</span><span style="">E: </span><span style="">DEVPATH</span><span style=""></span><span style="color:#f92672">=</span><span style="">/devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda1
+</span><span style="">E: </span><span style="">DEVTYPE</span><span style=""></span><span style="color:#f92672">=</span><span style="">partition
+</span><span style="">E: </span><span style="">ID_ATA</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">E: </span><span style="">ID_ATA_ROTATION_RATE_RPM</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">E: </span><span style="">ID_ATA_SATA</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">E: </span><span style="">ID_ATA_SATA_SIGNAL_RATE_GEN1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span></code></pre>
+</div>
+<p><code>udevadmin monitor</code>用于实时监控udev实践,定位热插拔设备时特别有用.</p>
+
+<p>修改<code>/etc/udev/udev.conf</code>里的<code>udev_log=&quot;debug&quot;</code>可以打开更详细的日志<br />
+使用<code>journalctl -u systemd-udevd</code>查看</p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
