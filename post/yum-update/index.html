@@ -263,7 +263,21 @@
 <h1 id="回退">回退</h1>
 
 <p>使用<code>yum history</code>查询要回退事务的ID, 比如<code>213</code>. 然后运行<code>yum history undo 213</code><br />
-具体原理待补充</p></article>
+具体原理待补充</p>
+
+<h1 id="其他">其他</h1>
+
+<p>查询本地软件包来自哪个repo</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># find-repos-of-install kernel
+</span><span style="color:#75715e"></span><span style="">Loaded plugins: fastestmirror
+</span><span style="">kernel-3.10.0-123.el7.x86_64 from repo anaconda
+</span><span style="">kernel-3.10.0-957.21.2.el7.x86_64 from repo updates</span></code></pre>
+</div>
+<p>使用<code>yum repolist -v</code>查询repo详情</p>
+
+<h1 id="参考">参考</h1>
+
+<p><a href="https://access.redhat.com/solutions/64069">https://access.redhat.com/solutions/64069</a></p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
