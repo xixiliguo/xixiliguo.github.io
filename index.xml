@@ -23,6 +23,16 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>Libvirt Network 笔记</title>
+      <link>https://xixiliguo.github.io/post/libvirt-network/</link>
+      <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/libvirt-network/</guid>
+      <description>&lt;p&gt;学习libvirt的网络实现方式,记录一些笔记
+&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>使用Yum 升级OS</title>
       <link>https://xixiliguo.github.io/post/yum-update/</link>
       <pubDate>Wed, 12 Jun 2019 00:12:08 +0800</pubDate>

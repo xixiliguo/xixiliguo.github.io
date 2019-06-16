@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
-    <lastBuildDate>Wed, 12 Jun 2019 00:12:08 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 16 Jun 2019 21:00:55 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Libvirt Network 笔记</title>
+      <link>https://xixiliguo.github.io/post/libvirt-network/</link>
+      <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/libvirt-network/</guid>
+      <description>&lt;p&gt;学习libvirt的网络实现方式,记录一些笔记
+&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>使用Yum 升级OS</title>
