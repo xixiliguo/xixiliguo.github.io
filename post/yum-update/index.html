@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">使用Yum 升级OS</h1>
-      <p class="post-meta">@Peter Wang · Jun 12, 2019 · 1 min read</p>
+      <p class="post-meta">@Peter Wang · Jun 12, 2019 · 4 min read</p>
     </header>
     <article class="post-content"><p>主要介绍使用yum 升级OS软件包的一些细节</p>
 
@@ -198,15 +198,267 @@
 比如<code>https://mirrors.tuna.tsinghua.edu.cn/centos/7.6.1810/os/x86_64/</code><br />
 下面的repodata里 <code>25cd2c29e5adb2b6f8a5b091237dd9f760e97815b37f2557f2cd1c12a5f294f0-primary.xml.gz</code> 文件就是元数据文件</p>
 
+<h1 id="rpm相关操作">rpm相关操作</h1>
+
+<h2 id="rpmsave与rpmnew">rpmsave与rpmnew</h2>
+
+<p>rpm的spec文件里可以指定新版配置文件的升级方式<br />
+默认升级时旧版本有改动,则用新版本替换旧版本的文件. 旧版本的文件改名为XXXX.rpmsave<br />
+如果spec文件里指定为<code>%config(noreplace)</code>, 则升级时旧版本有改动, 保留旧文件,新版本文件改为XXXX.rpmnew</p>
+
+<p>卸载时对于<code>%config(noreplace)</code>的文件,如果有改动,则不会删除,改名为XXXX.rpmsave</p>
+
+<p><a href="https://blog.csdn.net/xukunddp/article/details/6409795">https://blog.csdn.net/xukunddp/article/details/6409795</a> 有相关解释</p>
+
+<p>如果没有spec文件, 可通过如下步骤从已安装的软件包确认下配置文件的覆盖方式<br />
+比较文件的flags是否 第5个Bit位位1.   即 XX &amp; (1&lt;&lt;4) 是否非0<br />
+显示<code>/etc/pam.d/sshd</code>,<code>/etc/ssh/sshd_config</code>,<code>/etc/sysconfig/sshd</code>的属性是 %config(noreplace)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --qf &#39;[%{filenames}: %{fileflags}\n]&#39; openssh-server
+</span><span style="color:#75715e"></span><span style="">/etc/pam.d/sshd: </span><span style="color:#ae81ff">17</span><span style="">
+</span><span style="">/etc/ssh/sshd_config: </span><span style="color:#ae81ff">17</span><span style="">
+</span><span style="">/etc/sysconfig/sshd: </span><span style="color:#ae81ff">17</span><span style="">
+</span><span style="">/usr/lib/systemd/system/sshd-keygen.service: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/lib/systemd/system/sshd.service: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/lib/systemd/system/sshd.socket: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/lib/systemd/system/sshd@.service: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/lib64/fipscheck/sshd.hmac: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/libexec/openssh/sftp-server: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/sbin/sshd: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/sbin/sshd-keygen: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">/usr/share/man/man5/moduli.5.gz: </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">/usr/share/man/man5/sshd_config.5.gz: </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">/usr/share/man/man8/sftp-server.8.gz: </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">/usr/share/man/man8/sshd.8.gz: </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">/var/empty/sshd: </span><span style="color:#ae81ff">0</span></code></pre>
+</div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># grep -r RPMFILE_NOREPLACE /usr/include/
+</span><span style="color:#75715e"></span><span style="">/usr/include/rpm/rpmfi.h:    </span><span style="">RPMFILE_NOREPLACE</span><span style="">	</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style=""> &lt;&lt;  </span><span style="color:#ae81ff">4</span><span style="color:#f92672">)</span><span style="">,	/*!&lt; from %%config</span><span style="color:#f92672">(</span><span style="">noreplace</span><span style="color:#f92672">)</span><span style=""> */</span></code></pre>
+</div>
+<p>参考: <a href="https://www.redhat.com/archives/rpm-list/2003-October/msg00140.html">https://www.redhat.com/archives/rpm-list/2003-October/msg00140.html</a></p>
+
+<h2 id="查询依赖关系">查询依赖关系</h2>
+
+<p>检查软件提供哪些capability</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --provides openssh-server
+</span><span style="color:#75715e"></span><span style="">config</span><span style="color:#f92672">(</span><span style="">openssh-server</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
+</span><span style="">openssh-server </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
+</span><span style="">openssh-server</span><span style="color:#f92672">(</span><span style="">x86-64</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7</span></code></pre>
+</div>
+<p>检查软件需要哪些capability</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --requires openssh-server
+</span><span style="color:#75715e"></span><span style="">/bin/bash
+</span><span style="">/bin/sh
+</span><span style="">/bin/sh
+</span><span style="">/bin/sh
+</span><span style="">/bin/sh
+</span><span style="">/usr/sbin/useradd
+</span><span style="">config</span><span style="color:#f92672">(</span><span style="">openssh-server</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
+</span><span style="">fipscheck-lib</span><span style="color:#f92672">(</span><span style="">x86-64</span><span style="color:#f92672">)</span><span style=""> &gt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">.3.0
+</span><span style="">libaudit.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.14</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.16</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.17</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.2.5</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.3</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.3.4</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.4</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.8</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcom_err.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcrypt.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcrypt.so.1</span><span style="color:#f92672">(</span><span style="">GLIBC_2.2.5</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcrypto.so.10</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcrypto.so.10</span><span style="color:#f92672">(</span><span style="">OPENSSL_1.0.1_EC</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcrypto.so.10</span><span style="color:#f92672">(</span><span style="">OPENSSL_1.0.2</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libcrypto.so.10</span><span style="color:#f92672">(</span><span style="">libcrypto.so.10</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libdl.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libfipscheck.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libgssapi_krb5.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libgssapi_krb5.so.2</span><span style="color:#f92672">(</span><span style="">gssapi_krb5_2_MIT</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libk5crypto.so.3</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libkrb5.so.3</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libkrb5.so.3</span><span style="color:#f92672">(</span><span style="">krb5_3_MIT</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">liblber-2.4.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libldap-2.4.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libpam.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libpam.so.0</span><span style="color:#f92672">(</span><span style="">LIBPAM_1.0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libresolv.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libselinux.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libsystemd.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libsystemd.so.0</span><span style="color:#f92672">(</span><span style="">LIBSYSTEMD_209</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libutil.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libutil.so.1</span><span style="color:#f92672">(</span><span style="">GLIBC_2.2.5</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libwrap.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">libz.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="">openssh</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
+</span><span style="">pam &gt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">.0.1-3
+</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">CompressedFileNames</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="">.0.4-1
+</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">FileDigests</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style="">.6.0-1
+</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">PayloadFilesHavePrefix</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style="">.0-1
+</span><span style="">rtld</span><span style="color:#f92672">(</span><span style="">GNU_HASH</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">systemd-units
+</span><span style="">systemd-units
+</span><span style="">systemd-units
+</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">PayloadIsXz</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="">.2-1</span></code></pre>
+</div>
+<p>根据capability,查询哪个包提供</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --whatprovides pam
+</span><span style="color:#75715e"></span><span style="">pam-1.1.8-22.el7.x86_64
+</span><span style=""></span><span style="color:#75715e"># rpm -q --whatprovides libsystemd.so.0\(\)\(64bit\)
+</span><span style="color:#75715e"></span><span style="">systemd-libs-219-62.el7_6.6.x86_64</span></code></pre>
+</div>
+<p>查询哪个包需要某个特定的capability</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --whatrequires pam
+</span><span style="color:#75715e"></span><span style="">passwd-0.79-4.el7.x86_64
+</span><span style="">cronie-1.4.11-20.el7_6.x86_64
+</span><span style="">util-linux-2.23.2-59.el7_6.1.x86_64
+</span><span style="">openssh-server-7.4p1-16.el7.x86_64
+</span><span style="">authconfig-6.2.8-30.el7.x86_64
+</span><span style=""></span><span style="color:#75715e"># rpm -q --whatrequires libsystemd.so.0\(\)\(64bit\)
+</span><span style="color:#75715e"></span><span style="">dbus-libs-1.10.24-13.el7_6.x86_64
+</span><span style="">dbus-1.10.24-13.el7_6.x86_64
+</span><span style="">polkit-0.112-18.el7_6.1.x86_64
+</span><span style="">util-linux-2.23.2-59.el7_6.1.x86_64
+</span><span style="">openssh-server-7.4p1-16.el7.x86_64
+</span><span style="">rsyslog-8.24.0-34.el7.x86_64
+</span><span style="">procps-ng-3.3.10-23.el7.x86_64</span></code></pre>
+</div>
+<p>如果要查询本地rpm软件包的信息, 需要使用<code>-p</code><br />
+比如之前是<code>rpm -ql bpftool</code>, 要改为<code>rpm -ql -p bpftool-3.10.0-957.el7.x86_64.rpm</code></p>
+
+<h2 id="spec文件">SPEC文件</h2>
+
+<p>rpm的构建过程需要源代码和<code>spec</code>文件.
+<code>spec</code>文件用于描述rpm的元数据信息和指导如何编译,打包,封装为二进制的rpm文件</p>
+
+<p>跟着如下教程, 自己可以从xxx.src.rpm编译出xxx.rpm文件.  常用于问题定位,增加日志等.<br />
+<a href="https://blog.packagecloud.io/eng/2015/04/20/working-with-source-rpms/">https://blog.packagecloud.io/eng/2015/04/20/working-with-source-rpms/</a></p>
+
+<p>下面两篇文章介绍了SPEC的语法:<br />
+<a href="https://fedoraproject.org/wiki/How_to_create_am_RPM_package/zh-cn">https://fedoraproject.org/wiki/How_to_create_am_RPM_package/zh-cn</a><br />
+<a href="https://rpm-packaging-guide.github.io">https://rpm-packaging-guide.github.io</a></p>
+
+<h2 id="其他">其他</h2>
+
+<p>本地rpm包解压缩</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm2cpio xxx.rpm </span><span style="">|</span><span style=""> cpio -div</span></code></pre>
+</div>
+<h1 id="yum相关操作">yum相关操作</h1>
+
+<p>查询特定软件依赖哪些包</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># yum deplist rsync
+</span><span style="color:#75715e"></span><span style="">Loaded plugins: fastestmirror
+</span><span style="">Loading mirror speeds from cached hostfile
+</span><span style=""> * base: mirrors.cqu.edu.cn
+</span><span style=""> * extras: mirror.jdcloud.com
+</span><span style=""> * updates: mirrors.aliyun.com
+</span><span style="">package: rsync.x86_64 </span><span style="color:#ae81ff">3</span><span style="">.1.2-6.el7_6.1
+</span><span style="">  dependency: /bin/sh
+</span><span style="">   provider: bash.x86_64 </span><span style="color:#ae81ff">4</span><span style="">.2.46-31.el7
+</span><span style="">  dependency: libacl.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: libacl.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.2.51-14.el7
+</span><span style="">  dependency: libacl.so.1</span><span style="color:#f92672">(</span><span style="">ACL_1.0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: libacl.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.2.51-14.el7
+</span><span style="">  dependency: libattr.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: libattr.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.4.46-13.el7
+</span><span style="">  dependency: libattr.so.1</span><span style="color:#f92672">(</span><span style="">ATTR_1.0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: libattr.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.4.46-13.el7
+</span><span style="">  dependency: libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.15</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: glibc.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.17-260.el7_6.5
+</span><span style="">  dependency: libpopt.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: popt.x86_64 </span><span style="color:#ae81ff">1</span><span style="">.13-16.el7
+</span><span style="">  dependency: libpopt.so.0</span><span style="color:#f92672">(</span><span style="">LIBPOPT_0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: popt.x86_64 </span><span style="color:#ae81ff">1</span><span style="">.13-16.el7
+</span><span style="">  dependency: rtld</span><span style="color:#f92672">(</span><span style="">GNU_HASH</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">   provider: glibc.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.17-260.el7_6.5
+</span><span style="">   provider: glibc.i686 </span><span style="color:#ae81ff">2</span><span style="">.17-260.el7_6.5
+</span><span style="">  dependency: systemd-units
+</span><span style="">   provider: systemd.x86_64 </span><span style="color:#ae81ff">219</span><span style="">-62.el7_6.6
+</span><span style="">  dependency: zlib
+</span><span style="">   provider: zlib.x86_64 </span><span style="color:#ae81ff">1</span><span style="">.2.7-18.el7
+</span><span style="">   provider: zlib.i686 </span><span style="color:#ae81ff">1</span><span style="">.2.7-18.el7</span></code></pre>
+</div>
+<h2 id="history相关操作">history相关操作</h2>
+
+<p><a href="https://www.cyberciti.biz/faq/yum-history-command">https://www.cyberciti.biz/faq/yum-history-command</a></p>
+
+<h2 id="yum-update">yum update</h2>
+
+<p>没有指定的软件包,则升级所有软件, 主要逻辑代码在<code>/usr/lib/python2.7/site-packages/yum/__init__.py</code><br />
+加<code>-v</code>可打印详细的日志<br />
+1. 使用rpm模块, 通过<code>dbMatch</code>获取已安装软件的所有信息<br />
+2. 连接repo, 获取所有availble 的软件包信息<br />
+3. 精简newpkg的列表,比如只保留软件包的最新版本<br />
+4. 完成依赖关系检查, 主要是检查依赖项和冲突项<br />
+5. 用户确认OK后,执行下载,升级操作</p>
+
+<p>如下下yum的包状态, 打印Debug日志时可以对照分析</p>
+
+<pre><code>           i = the package will be installed
+           u = the package will be an update
+           e = the package will be erased
+           r = the package will be reinstalled
+           d = the package will be a downgrade
+           o = the package will be obsoleting another package
+           ud = the package will be updated
+           od = the package will be obsoleted
+</code></pre>
+
+<h2 id="yum-downgrade">yum downgrade</h2>
+
+<p><code>yum history undo</code>, 这里undo的是升级事务, 则内部调用的是<code>yum downgrader</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">for</span><span style=""> </span><span style="">pkg</span><span style=""> </span><span style="color:#f92672">in</span><span style=""> </span><span style="">transaction</span><span style="color:#f92672">.</span><span style="">trans_data</span><span style="">:</span><span style="">
+</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">pkg</span><span style="color:#f92672">.</span><span style="">state</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Updated&#39;</span><span style="">:</span><span style="">
+</span><span style="">                </span><span style="color:#66d9ef">try</span><span style="">:</span><span style="">
+</span><span style="">                    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">self</span><span style="color:#f92672">.</span><span style="">downgrade</span><span style="">(</span><span style="">pkgtup</span><span style="color:#f92672">=</span><span style="">pkg</span><span style="color:#f92672">.</span><span style="">pkgtup</span><span style="">):</span><span style="">
+</span><span style="">                        </span><span style="">done</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">True</span><span style="">
+</span><span style="">                </span><span style="color:#66d9ef">except</span><span style=""> </span><span style="">yum</span><span style="color:#f92672">.</span><span style="">Errors</span><span style="color:#f92672">.</span><span style="">DowngradeError</span><span style="">:</span><span style="">
+</span><span style="">                    </span><span style="">self</span><span style="color:#f92672">.</span><span style="">logger</span><span style="color:#f92672">.</span><span style="">critical</span><span style="">(</span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Failed to downgrade: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span><span style="">),</span><span style=""> </span><span style="">pkg</span><span style="">)</span></code></pre>
+</div>
+<p>加<code>-v</code>可打印详细的日志<br />
+主要是删除已安装的包, 然后<code>yum update</code>指定的新包.<br />
+这里删除已安装的包, 很容易删掉其他依赖包. 导致问题.  如下是删除包的一些描述</p>
+
+<pre><code>Are  used  to  remove  the  specified packages from the system as well as removing any packages which depend on the package being removed. remove operates on
+              groups, files, provides and filelists just like the &quot;install&quot; command.(See Specifying package names for more information)
+
+              Note that &quot;yum&quot; is included in the protected_packages configuration, by default.  So you can't accidentally remove yum itself.
+
+              The remove_leaf_only configuration changes the behaviour of this command to only remove packages which aren't required by something else.
+
+              The clean_requirements_on_remove configuration changes the behaviour of this command to also remove packages that are only dependencies of this package.
+
+              Because remove does a lot of work to make it as easy as possible to use, there are also a few specific remove commands &quot;remove-n&quot;, &quot;remove-na&quot;  and  &quot;remove-
+              nevra&quot;. These only work on package names, and do not process wildcards etc.
+</code></pre>
+
+<h2 id="其他-1">其他</h2>
+
+<p><code>yum list installed</code>的结果并不等于<code>rpm -qa</code>. <code>rpm -qa</code>会多<code>gpg-pubkey</code>这个软件包. 解释如下:<br />
+<a href="https://unix.stackexchange.com/questions/190203/what-are-gpg-pubkey-packages">https://unix.stackexchange.com/questions/190203/what-are-gpg-pubkey-packages</a></p>
+
+<p>可以使用python库<code>rpm</code>来比较软件包的版本. <code>rpm.labelCompare((an,av,ar),(bn,bv,br))</code><br />
+返回值1 表示a较新. 0 相等. -1 b较新. 下面是具体的例子:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># python
+</span><span style="color:#75715e"></span><span style="">Python </span><span style="color:#ae81ff">2</span><span style="">.7.5 </span><span style="color:#f92672">(</span><span style="">default, Apr  </span><span style="color:#ae81ff">9</span><span style=""> </span><span style="color:#ae81ff">2019</span><span style="">, </span><span style="color:#ae81ff">14</span><span style="">:30:50</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#f92672">[</span><span style="">GCC </span><span style="color:#ae81ff">4</span><span style="">.8.5 </span><span style="color:#ae81ff">20150623</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Red Hat </span><span style="color:#ae81ff">4</span><span style="">.8.5-36</span><span style="color:#f92672">)]</span><span style=""> on linux2
+</span><span style="">Type </span><span style="color:#e6db74">&#34;help&#34;</span><span style="">, </span><span style="color:#e6db74">&#34;copyright&#34;</span><span style="">, </span><span style="color:#e6db74">&#34;credits&#34;</span><span style=""> or </span><span style="color:#e6db74">&#34;license&#34;</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> more information.
+</span><span style="">&gt;&gt;&gt; import rpm
+</span><span style="">&gt;&gt;&gt; rpm.labelCompare</span><span style="color:#f92672">((</span><span style="color:#e6db74">&#34;systemd&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;219&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;62.el7_6.6&#34;</span><span style="color:#f92672">)</span><span style="">,</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;systemd&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;219&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;63.el7_6.6&#34;</span><span style="color:#f92672">))</span><span style="">
+</span><span style="">-1
+</span><span style="">&gt;&gt;&gt; exit</span><span style="color:#f92672">()</span></code></pre>
+</div>
+<p><a href="https://stackoverflow.com/questions/3206319/how-do-i-compare-rpm-versions-in-python">https://stackoverflow.com/questions/3206319/how-do-i-compare-rpm-versions-in-python</a></p>
+
 <h1 id="升级前检查">升级前检查</h1>
 
 <ul>
-<li>检查repo里是否有当前OS已安装的软件包. 方便回退</li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --orphans</span></code></pre>
-</div>
-<ul>
-<li>检查本地rpm数据库是否由依赖问题, 相当于升级前校验</li>
+<li><p>检查repo里是否有当前OS已安装的软件包. 方便回退.<br />
+以下两个命令等价</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --orphans
+</span><span style="">yum list extras</span></code></pre>
+</div></li>
+
+<li><p>检查本地rpm数据库是否由依赖问题, 相当于升级前校验</p></li>
 </ul>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --problems</span></code></pre>
 </div>
@@ -265,7 +517,7 @@
 <p>使用<code>yum history</code>查询要回退事务的ID, 比如<code>213</code>. 然后运行<code>yum history undo 213</code><br />
 具体原理待补充</p>
 
-<h1 id="其他">其他</h1>
+<h1 id="其他-2">其他</h1>
 
 <p>查询本地软件包来自哪个repo</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># find-repos-of-install kernel
@@ -277,7 +529,10 @@
 
 <h1 id="参考">参考</h1>
 
-<p><a href="https://access.redhat.com/solutions/64069">https://access.redhat.com/solutions/64069</a></p></article>
+<p>How to use yum history to roll back an update in Red Hat Enterprise Linux 6 , 7<br />
+<a href="https://access.redhat.com/solutions/64069">https://access.redhat.com/solutions/64069</a><br />
+How to use yum to downgrade or rollback some package updates<br />
+<a href="https://access.redhat.com/solutions/29617">https://access.redhat.com/solutions/29617</a></p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
