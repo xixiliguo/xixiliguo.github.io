@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 16 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 17 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
 
@@ -585,6 +585,13 @@ name是 文件夹(非mount point), 则显示所有将该文件夹作为正常文
 </span><span style="color:#75715e"></span><span style="">        systemctl try-restart sshd.service &gt;/dev/null </span><span style="color:#ae81ff">2</span><span style="">&gt;</span><span style="">&amp;</span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">||</span><span style=""> :
 </span><span style=""></span><span style="color:#66d9ef">fi</span><span style=""></span></code></pre>
 </div>
+<p>查询包,自定义输出的格式和地段</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm -qa --queryformat </span><span style="color:#e6db74">&#34;%-35{NAME} %{VERSION} %{RELEASE} %{INSTALLTIME:date}\n&#34;</span><span style="">
+</span><span style="">jzlib                               </span><span style="color:#ae81ff">1</span><span style="">.1.1 </span><span style="color:#ae81ff">6</span><span style="">.el7 Thu </span><span style="color:#ae81ff">27</span><span style=""> Jun </span><span style="color:#ae81ff">2019</span><span style=""> </span><span style="color:#ae81ff">11</span><span style="">:30:01 AM HKT
+</span><span style="">nss                                 </span><span style="color:#ae81ff">3</span><span style="">.36.0 </span><span style="color:#ae81ff">7</span><span style="">.1.el7_6 Tue </span><span style="color:#ae81ff">11</span><span style=""> Jun </span><span style="color:#ae81ff">2019</span><span style=""> </span><span style="color:#ae81ff">11</span><span style="">:13:42 PM HKT
+</span><span style="">hamcrest                            </span><span style="color:#ae81ff">1</span><span style="">.3 </span><span style="color:#ae81ff">6</span><span style="">.el7 Thu </span><span style="color:#ae81ff">27</span><span style=""> Jun </span><span style="color:#ae81ff">2019</span><span style=""> </span><span style="color:#ae81ff">11</span><span style="">:30:01 AM HKT
+</span><span style="">dhcp-libs                           </span><span style="color:#ae81ff">4</span><span style="">.2.5 </span><span style="color:#ae81ff">68</span><span style="">.el7.centos.1 Tue </span><span style="color:#ae81ff">11</span><span style=""> Jun </span><span style="color:#ae81ff">2019</span><span style=""> </span><span style="color:#ae81ff">11</span><span style="">:13:43 PM HKT</span></code></pre>
+</div>
 <p>查询当前包的changelog. 常用于查看已解决的CVE列表</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm -q --changelog openssh-server</span></code></pre>
 </div>
@@ -980,6 +987,9 @@ output              postrouting         postrouting       output
                     forward
 </code></pre>
 
+<p>查询表中的规则,当时打印匹配该规则的包和字节数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">iptables -nvL</span></code></pre>
+</div>
 <p><code>REJECT</code>   拦阻该数据包，并返回数据包通知对方，可以返回的数据包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是tcp-reset（这个数据包包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。 范例如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">iptables -A  INPUT -p TCP --dport </span><span style="color:#ae81ff">22</span><span style=""> -j REJECT --reject-with ICMP echo-reply</span></code></pre>
 </div>
@@ -1446,7 +1456,67 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <p><code>udevadmin monitor</code>用于实时监控udev实践,定位热插拔设备时特别有用.</p>
 
 <p>修改<code>/etc/udev/udev.conf</code>里的<code>udev_log=&quot;debug&quot;</code>可以打开更详细的日志<br />
-使用<code>journalctl -u systemd-udevd</code>查看</p></article>
+使用<code>journalctl -u systemd-udevd</code>查看</p>
+
+<h3 id="67-一条命令启动web服务器">67. 一条命令启动web服务器</h3>
+
+<p>查询设备的信息, 主要是环境变量</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">python -m SimpleHTTPServer </span><span style="color:#ae81ff">8000</span></code></pre>
+</div>
+<h3 id="68-dpkg包管理命令">68. dpkg包管理命令</h3>
+
+<p>查询所有包</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">dpkg -l</span></code></pre>
+</div>
+<p>查询某个文件属于哪个包</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dpkg -S /usr/bin/growpart
+</span><span style="">cloud-guest-utils: /usr/bin/growpart</span></code></pre>
+</div>
+<h3 id="69-主机安全入侵盘查">69. 主机安全入侵盘查</h3>
+
+<p>检查<code>LD_PRELOAD</code>环境变量<br />
+使用<code>vi</code>打开<code>ld.so.preload</code>这个文件是否有内容<br />
+使用<code>cat /proc/$$/mountinfo</code> 或者<code>cat /proc/mounts</code> 看<code>proc</code> 是否被挂载到其他目录<br />
+使用<code>strace</code>检查普通命令的系统调用<br />
+如下个三个安全相关的分析案例:<br />
+<a href="https://www.anquanke.com/post/id/160843">https://www.anquanke.com/post/id/160843</a><br />
+<a href="https://superuser.com/questions/1183037/what-is-does-ld-so-preload-do">https://superuser.com/questions/1183037/what-is-does-ld-so-preload-do</a><br />
+<a href="https://www.jianshu.com/p/31e487daa79d">https://www.jianshu.com/p/31e487daa79d</a></p>
+
+<h3 id="70-top命令">70. top命令</h3>
+
+<p>top默认3秒刷新一次信息, 导致一些即时启动并结束的进程无法观察到, 可以用如下参数指定间隔:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">top -d </span><span style="color:#ae81ff">0</span><span style="">.1</span></code></pre>
+</div>
+<p>上面是以100ms为间隔, 也可进入交互模式后按<code>d</code>进行动态调整<br />
+交互模式下按<code>1</code>显示每个cpu的使用率信息, 按<code>M</code> 进程按内存排序, 按<code>H</code>显示线程信息</p>
+
+<h3 id="71-ping命令">71. ping命令</h3>
+
+<p><code>-i</code>指定两次ping之前的间隔, 默认是1s</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ping -i </span><span style="color:#ae81ff">0</span><span style="">.1 www.163.com</span></code></pre>
+</div>
+<p><code>-s</code>指定ping包的大小, 默认是64bytes</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ping -s </span><span style="color:#ae81ff">1024</span><span style=""> www.163.com
+</span><span style="">PING z163ipv6.v.bsgslb.cn </span><span style="color:#f92672">(</span><span style="color:#ae81ff">117</span><span style="">.23.1.15</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#ae81ff">1024</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1052</span><span style="color:#f92672">)</span><span style=""> bytes of data.
+</span><span style=""></span><span style="color:#ae81ff">1032</span><span style=""> bytes from </span><span style="color:#ae81ff">117</span><span style="">.23.1.15: </span><span style="">icmp_seq</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style=""> </span><span style="">ttl</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">128</span><span style=""> </span><span style="">time</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">7</span><span style="">.03 ms
+</span><span style=""></span><span style="color:#ae81ff">1032</span><span style=""> bytes from </span><span style="color:#ae81ff">117</span><span style="">.23.1.15: </span><span style="">icmp_seq</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style=""> </span><span style="">ttl</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">128</span><span style=""> </span><span style="">time</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">7</span><span style="">.77 ms</span></code></pre>
+</div>
+<h3 id="72-ping和curl常见的网络报错">72. ping和curl常见的网络报错</h3>
+
+<p>ping <ip>报错：<br />
+<code>connect: Network is unreachable</code> 原因是OS里没有相关路由导致<br />
+<code>From 192.168.100.1 icmp_seq=1 Destination Port Unreachable</code> 原因是收到icmp reponse, 端口不可达， 中间设备或者iptable reject</p>
+
+<p>cur <ip>一些报错:<br />
+<code>curl: (7) Failed to connect to 114.114.114.114: Network is unreachable</code> 原因是OS里没有相关路由导致
+很快返回<code>curl: (7) Failed connect to 114.114.114.114:80; Connection refused</code> 因为Curl收到icmp 应答消息 80端口不可达， 可能是中间设备iptable发送或者收到服务端rst消息， 80端口没有处于监听状态</p>
+
+<h3 id="73-统计所有进程占用的物理内存">73. 统计所有进程占用的物理内存</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 使用 grep 查找 Pss 指标后，再用 awk 计算累加值
+</span><span style="color:#75715e"></span><span style="">$ grep Pss /proc/</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="">-9</span><span style="color:#f92672">]</span><span style="">*/smaps </span><span style="">|</span><span style=""> awk </span><span style="color:#e6db74">&#39;{total+=$2}; END {printf &#34;%d kB\n&#34;, total }&#39;</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">391266</span><span style=""> kB</span></code></pre>
+</div></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
@@ -1458,7 +1528,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>616</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

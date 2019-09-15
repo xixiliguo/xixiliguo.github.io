@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">使用Yum 升级OS</h1>
-      <p class="post-meta">@Peter Wang · Jun 12, 2019 · 4 min read</p>
+      <p class="post-meta">@Peter Wang · Jun 12, 2019 · 5 min read</p>
     </header>
     <article class="post-content"><p>主要介绍使用yum 升级OS软件包的一些细节</p>
 
@@ -198,17 +198,36 @@
 比如<code>https://mirrors.tuna.tsinghua.edu.cn/centos/7.6.1810/os/x86_64/</code><br />
 下面的repodata里 <code>25cd2c29e5adb2b6f8a5b091237dd9f760e97815b37f2557f2cd1c12a5f294f0-primary.xml.gz</code> 文件就是元数据文件</p>
 
+<h2 id="创建repo源的操作">创建Repo源的操作</h2>
+
+<p>已<code>/opt/mirrors/CentOS7</code>为例:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">mkdir -p CentOS7/Packages</span></code></pre>
+</div>
+<p>将所有软件rpm包上传到文件夹<code>Packages</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">cd</span><span style=""> /opt/mirrors/CentOS7
+</span><span style="">createrepo .</span></code></pre>
+</div>
+<p>该操作会生成<code>yum</code>会用到的元数据,并放入到<code>repodata</code>目录.<br />
+并不一定非要创建<code>Packages</code>目录, <code>createrepo</code>会自动查找指定目录及其子目录. <code>Packages</code>是个很好的约定,方便管理<br />
+rpm包是集合, 含有二进制文件, 版本信息, 依赖关系等. <code>createrepo</code>通过读取每个rpm的信息,并生成元数据.<br />
+这样<code>yum</code>在分析时只需要下载元数据,就可以得知该源有哪个软件,什么版本等.不必每次下载源里的包.</p>
+
+<p>我们使用<code>yum checkupdate</code>等命令时, 假设访问<code>xxx/CentOS7</code>, <code>yum</code>会检查是否有<code>xxx/CentOS7/repodata</code>这个目录,并获取相应的元数据.</p>
+
 <h1 id="rpm相关操作">rpm相关操作</h1>
 
 <h2 id="rpmsave与rpmnew">rpmsave与rpmnew</h2>
 
 <p>rpm的spec文件里可以指定新版配置文件的升级方式<br />
 默认升级时旧版本有改动,则用新版本替换旧版本的文件. 旧版本的文件改名为XXXX.rpmsave<br />
-如果spec文件里指定为<code>%config(noreplace)</code>, 则升级时旧版本有改动, 保留旧文件,新版本文件改为XXXX.rpmnew</p>
+如果spec文件里指定为<code>%config(noreplace)</code>, 则升级时旧版本有改动, 保留旧文件,新版本文件改为XXXX.rpmnew<br />
+这里的改动指新版本的rpm里对比旧版本rpm里的默认文件.  并非拿可能被用户修改过的文件和新版本里的文件对比<br />
+如果文件不存在(比如人为删除), 升级时会重新生成该文件， 不管是configfile还是 noconfigfile</p>
 
 <p>卸载时对于<code>%config(noreplace)</code>的文件,如果有改动,则不会删除,改名为XXXX.rpmsave</p>
 
-<p><a href="https://blog.csdn.net/xukunddp/article/details/6409795">https://blog.csdn.net/xukunddp/article/details/6409795</a> 有相关解释</p>
+<p><a href="https://blog.csdn.net/xukunddp/article/details/6409795">https://blog.csdn.net/xukunddp/article/details/6409795</a> 有相关解释<br />
+<a href="https://www.cl.cam.ac.uk/~jw35/docs/rpm_config.html">https://www.cl.cam.ac.uk/~jw35/docs/rpm_config.html</a>  描述了各种改动场景下的结果</p>
 
 <p>如果没有spec文件, 可通过如下步骤从已安装的软件包确认下配置文件的覆盖方式<br />
 比较文件的flags是否 第5个Bit位位1.   即 XX &amp; (1&lt;&lt;4) 是否非0<br />
@@ -325,6 +344,13 @@
 <p>如果要查询本地rpm软件包的信息, 需要使用<code>-p</code><br />
 比如之前是<code>rpm -ql bpftool</code>, 要改为<code>rpm -ql -p bpftool-3.10.0-957.el7.x86_64.rpm</code></p>
 
+<p>如果要查询的包,文件或者capability, 不在本地已安装的包里, 可以使用<code>repoquery</code>从已知源中查询<br />
+例如查询哪个包提供了<code>strace</code>这个capability:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ repoquery --whatprovides strace
+</span><span style="">strace-0:4.12-9.el7.x86_64</span></code></pre>
+</div>
+<p>repoquery不仅支持从源中查,还会从本地已安装的信息来查.</p>
+
 <h2 id="spec文件">SPEC文件</h2>
 
 <p>rpm的构建过程需要源代码和<code>spec</code>文件.
@@ -343,6 +369,18 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm2cpio xxx.rpm </span><span style="">|</span><span style=""> cpio -div</span></code></pre>
 </div>
 <h1 id="yum相关操作">yum相关操作</h1>
+
+<p><code>yum</code>的主要代码在<code>/usr/lib/python2.7/site-packages/yum/</code><br />
+<code>class YumBase</code> 是主要的类, 含大部分操作</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">YumBase</span><span style="">(</span><span style="">depsolve</span><span style="color:#f92672">.</span><span style="">Depsolve</span><span style="">):</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;This is a primary structure and base class. It houses the
+</span><span style="color:#e6db74">    objects and methods needed to perform most things in yum. It is
+</span><span style="color:#e6db74">    almost an abstract class in that you will need to add your own
+</span><span style="color:#e6db74">    class above it for most real use.
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span></code></pre>
+</div>
+<p>yum所有的操作,都是分析具体的操作(删除,更新,新安装),进而分析相关的依赖, 比如更新时,检查依赖是否满足,不满足也要将依赖的包进程更新.<br />
+分析完后将对应包和状态(比如updated, erase等)放入事务中,然后执行具体的操作</p>
 
 <p>查询特定软件依赖哪些包</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># yum deplist rsync
@@ -381,9 +419,18 @@
 
 <p><a href="https://www.cyberciti.biz/faq/yum-history-command">https://www.cyberciti.biz/faq/yum-history-command</a></p>
 
+<h2 id="yum-update-与-yum-update-to-的区别">yum update 与 yum update-to 的区别</h2>
+
+<p>yum 有两种升级命令， yum update 和 yum update-to<br />
+yum update kernel 会升级Repo里的最新版<br />
+yum update kernel-3.10.0-327.62.59.83.h108.x86_64 会升级到指定版本。 但如果这个指定版本就是当前已安装的版本， 则自动升级到repo里的最新版。</p>
+
+<p>yum update-to kernel-3.10.0-327.62.59.83.h108.x86_64 升级到指定版本， 如果这个指定版本就是当前已安装的版本， 则不升级<br />
+但是yum update-to kernel则会升级多个高版本的内核。 因为yum update-to 一般要求就是软件包的版本信息</p>
+
 <h2 id="yum-update">yum update</h2>
 
-<p>没有指定的软件包,则升级所有软件, 主要逻辑代码在<code>/usr/lib/python2.7/site-packages/yum/__init__.py</code><br />
+<p>没有指定的软件包,则升级所有软件, 主要逻辑代码在<code>/usr/lib/python2.7/site-packages/yum/__init__.py</code>里类<code>YumBase</code>的函数<code>update</code><br />
 加<code>-v</code>可打印详细的日志<br />
 1. 使用rpm模块, 通过<code>dbMatch</code>获取已安装软件的所有信息<br />
 2. 连接repo, 获取所有availble 的软件包信息<br />
@@ -405,7 +452,8 @@
 
 <h2 id="yum-downgrade">yum downgrade</h2>
 
-<p><code>yum history undo</code>, 这里undo的是升级事务, 则内部调用的是<code>yum downgrader</code></p>
+<p><code>yum history undo</code>, 这里undo的是升级事务, 则内部调用的是<code>yum downgrader</code><br />
+主要执行入口在类<code>YumBase</code>的函数<code>history_redo</code></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">for</span><span style=""> </span><span style="">pkg</span><span style=""> </span><span style="color:#f92672">in</span><span style=""> </span><span style="">transaction</span><span style="color:#f92672">.</span><span style="">trans_data</span><span style="">:</span><span style="">
 </span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">pkg</span><span style="color:#f92672">.</span><span style="">state</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Updated&#39;</span><span style="">:</span><span style="">
 </span><span style="">                </span><span style="color:#66d9ef">try</span><span style="">:</span><span style="">
@@ -456,12 +504,15 @@
 以下两个命令等价</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --orphans
 </span><span style="">yum list extras</span></code></pre>
-</div></li>
+</div>
+<p>代码看是通过<code>/usr/share/yum-cli/cli.py</code>里类<code>YumBaseCli</code>的函数<code>returnPkgLists</code>, 进一步调用类<code>YumBase</code>的函数<code>doPackageLists</code> 实现</p></li>
 
 <li><p>检查本地rpm数据库是否由依赖问题, 相当于升级前校验</p></li>
 </ul>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --problems</span></code></pre>
 </div>
+<p>通过<code>rpmdb.check_dependencies()</code>实现</p>
+
 <ul>
 <li>模拟<code>yum update</code>但不真正升级, 检查是否报错. 相当于dry-run. 原理是对每次确认选择都是<code>no</code></li>
 </ul>
@@ -479,18 +530,56 @@
 <h1 id="升级后检查">升级后检查</h1>
 
 <ul>
-<li>检查哪些进程需要重启,才能使用新的软件包或者库<br />
-原理:<br />
-在<code>/proc</code>下遍历所有<code>pid</code>下面的<code>smaps</code>文件, 获取所有打开文件的信息<br />
-检查这些文件对应的rpm包的安装时间<br />
-和<code>stat /proc/[pid]</code>的时间对比, 如果rpm的时间晚,则打印出来<br /></li>
-</ul>
+<li><p>检查哪些进程需要重启,才能使用新的软件包或者库</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting
 </span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span><span style=""> : /usr/lib/systemd/systemd --system --deserialize </span><span style="color:#ae81ff">16</span><span style="">
 </span><span style=""></span><span style="color:#ae81ff">443</span><span style=""> : login -- root
 </span><span style=""></span><span style="color:#ae81ff">3838</span><span style=""> : sshd: root@pts/3
 </span><span style=""></span><span style="color:#ae81ff">1009</span><span style=""> : /sbin/dhclient -H localhost -1 -q -lf /var/lib/dhclient/dhclient--eth0.lease -pf /var/run/dhclient-eth0.pid eth0
 </span><span style=""></span><span style="color:#ae81ff">2221</span><span style=""> : sshd: root@pts/0</span></code></pre>
+</div></li>
+</ul>
+
+<p>原理:<br />
+在<code>/proc</code>下遍历所有<code>pid</code>下面的<code>smaps</code>文件, 获取所有打开文件的信息<br />
+检查这些文件对应的rpm包的安装时间<br />
+和进程的启动时间对比, 如果rpm的时间晚,则打印出来<br />
+具体可以查看<code>/usr/bin/needs-restarting</code>, 它是一个py脚本</p>
+
+<p>细节:<br />
+通过<code>/proc/[pid]/stat</code>下的信息和os的<code>boot_time</code>来计算进程的启动时间</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span><span style=""> </span><span style="color:#a6e22e">get_process_time</span><span style="">(</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="">boot_time</span><span style="">):</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{}</span><span style="">
+</span><span style="">    </span><span style="">ps_stat</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">open</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;/proc/</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">/stat&#34;</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="">pid</span><span style="">)</span><span style="color:#f92672">.</span><span style="">read</span><span style="">()</span><span style="color:#f92672">.</span><span style="">strip</span><span style="">()</span><span style="">
+</span><span style="">    </span><span style="color:#75715e"># Filename of the executable might contain spaces, so we throw it away</span><span style="">
+</span><span style="">    </span><span style="">ps_stat</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">ps_stat</span><span style="">[</span><span style="">ps_stat</span><span style="color:#f92672">.</span><span style="">rfind</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;)&#39;</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">:]</span><span style="color:#f92672">.</span><span style="">split</span><span style="">()</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;utime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">11</span><span style="">])</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;stime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">12</span><span style="">])</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;cutime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">13</span><span style="">])</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;cstime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">14</span><span style="">])</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;start_time&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">boot_time</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">19</span><span style="">])</span><span style="">
+</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;state&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;R&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Running&#39;</span><span style="">),</span><span style="">
+</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;S&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Sleeping&#39;</span><span style="">),</span><span style="">
+</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;D&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Uninterruptible&#39;</span><span style="">),</span><span style="">
+</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Z&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Zombie&#39;</span><span style="">),</span><span style="">
+</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;T&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Traced/Stopped&#39;</span><span style="">)</span><span style="">
+</span><span style="">                   </span><span style="">}</span><span style="color:#f92672">.</span><span style="">get</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Unknown&#39;</span><span style="">))</span></code></pre>
+</div>
+<p>通过rpmdb库里的<code>searchFiles</code>函数获取打开文件对应的包, 进而获取安装时间,即<code>installtime</code></p>
+
+<p>进程属于哪个systemd service的方法是 获取该pid的cgroup, 如果有<code>name=systemd</code>则说明它是一个服务, 然后已<code>/</code>为分隔符后的最后一个字段就是对应的service</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/3656/cgroup
+</span><span style=""></span><span style="color:#ae81ff">11</span><span style="">:blkio:/
+</span><span style=""></span><span style="color:#ae81ff">10</span><span style="">:cpuset:/
+</span><span style=""></span><span style="color:#ae81ff">9</span><span style="">:net_prio,net_cls:/
+</span><span style=""></span><span style="color:#ae81ff">8</span><span style="">:perf_event:/
+</span><span style=""></span><span style="color:#ae81ff">7</span><span style="">:hugetlb:/
+</span><span style=""></span><span style="color:#ae81ff">6</span><span style="">:freezer:/
+</span><span style=""></span><span style="color:#ae81ff">5</span><span style="">:memory:/
+</span><span style=""></span><span style="color:#ae81ff">4</span><span style="">:devices:/
+</span><span style=""></span><span style="color:#ae81ff">3</span><span style="">:pids:/
+</span><span style=""></span><span style="color:#ae81ff">2</span><span style="">:cpuacct,cpu:/
+</span><span style=""></span><span style="color:#ae81ff">1</span><span style="">:name</span><span style="color:#f92672">=</span><span style="">systemd:/system.slice/sshd.service</span></code></pre>
 </div>
 <ul>
 <li>检查是否重启OS才能使相应更新后的软件包生效. 当然OS能正常运行.只是不重启无法使用新的功能或者特性.<br />
@@ -515,7 +604,7 @@
 <h1 id="回退">回退</h1>
 
 <p>使用<code>yum history</code>查询要回退事务的ID, 比如<code>213</code>. 然后运行<code>yum history undo 213</code><br />
-具体原理待补充</p>
+先查询指定的事务里的包状态信息, 然后反方向生成事务, 再次执行. 比如之前是更新, 那么新事务就是卸载新包,安装旧包</p>
 
 <h1 id="其他-2">其他</h1>
 
