@@ -343,6 +343,10 @@
 </span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
 </div>
+<p>关于文件描述符和系统级的文件打开表的关系, 可参见文章 <a href="https://www.cnblogs.com/Orgliny/articles/5699479.html">https://www.cnblogs.com/Orgliny/articles/5699479.html</a><br />
+如果两个文件描述符指向同一个文件打开项, 则共享打开的标志, 偏移量. (close-exec 是进程级文件描述符里的标志)<br />
+每次<code>open</code>都会创建一个新的文件打开项, 所以同一个进程打开同一个文件两次, 那么文件打开项是不一样的. 不共享偏移量等信息</p>
+
 <p>四. 当父进程内存特别大的时候, fork/exec的性能非常差, golang使用clone系统调优并大幅优化性能. 主要思路是创建的子进程和父进程初始时共用堆栈,fork则是复制一份堆栈. 具体代码如下:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#a6e22e">locked</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="">{</span><span style="">
@@ -358,7 +362,8 @@
 <a href="https://zhuanlan.zhihu.com/p/47940999">https://zhuanlan.zhihu.com/p/47940999</a><br />
 <a href="https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/">https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/</a><br />
 <a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a><br />
-如果是C语言, 可以使用<code>posix_spawn</code>代替<code>fork/exec</code>.</p>
+如果是C语言, 可以使用<code>posix_spawn</code>代替<code>fork/exec</code>.<br />
+<code>posix_spawn_file_actions_adddup2</code>,<code>posix_spawn_file_actions_addclose</code>,<code>posix_spawn_file_actions_addopen</code>等可以操作继承的文件描述符, 达到改变子进程0,1,2等目的.  详细的参考代码可见 <a href="https://github.com/rtomayko/posix-spawn/blob/master/ext/posix-spawn.c">https://github.com/rtomayko/posix-spawn/blob/master/ext/posix-spawn.c</a></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
 </span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
 </span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
@@ -476,9 +481,9 @@
 </span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;fork/exec:  %d times:  %f seconds per one count</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">loop</span><span style="">,</span><span style=""> </span><span style="">duration</span><span style="">);</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
 </div>
-<p>五. 父进程使用pipe来探测在创建子进程<code>execve</code>时是否有异常.<br />
-在 <code>syscall/exec_unix.go</code>中.<br />
-如果<code>execve</code>成功,则该pipe因close-on-exec在子进程里自动关闭.  父进程从pipe读到的长度为0<br />
+<p>五. 父进程使用pipe来探测在创建子进程execve时是否有异常.<br />
+在 syscall/exec_unix.go中.<br />
+如果execve成功,则该pipe因close-on-exec在子进程里自动关闭. 父进程从pipe读到的长度为0<br />
 如果有异常, 则将错误写入pipd的写端, 父进程读到长度非0的信息, 然后进行下一步处理</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#75715e">// Acquire the fork lock so that no other threads
 </span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// create new fds that are not yet close-on-exec
