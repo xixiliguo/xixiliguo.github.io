@@ -357,8 +357,125 @@
 <p>网上有很多关于讨论该性能的文章:<br />
 <a href="https://zhuanlan.zhihu.com/p/47940999">https://zhuanlan.zhihu.com/p/47940999</a><br />
 <a href="https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/">https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/</a><br />
-<a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a></p>
-
+<a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a><br />
+如果是C语言, 可以使用<code>posix_spawn</code>代替<code>fork/exec</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;spawn.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/wait.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;time.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">extern</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">**</span><span style="">environ</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">run_cmd_posix_spawn</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">argv</span><span style="">[])</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">pid_t</span><span style=""> </span><span style="">pid</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">status</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">status</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">posix_spawn</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">NULL</span><span style="">,</span><span style=""> </span><span style="">NULL</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">,</span><span style=""> </span><span style="">environ</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">status</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#75715e">// printf(&#34;Child pid: %i\n&#34;, pid);
+</span><span style="color:#75715e"></span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">waitpid</span><span style="">(</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">status</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">{</span><span style="">
+</span><span style="">            </span><span style="color:#75715e">// printf(&#34;Child exited with status %i\n&#34;, status);
+</span><span style="color:#75715e"></span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">        </span><span style="">{</span><span style="">
+</span><span style="">            </span><span style="">perror</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;waitpid&#34;</span><span style="">);</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;posix_spawn: %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">status</span><span style="">));</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">run_cmd_fork_exec</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">argv</span><span style="">[])</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">pid_t</span><span style=""> </span><span style="">pid</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">status</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">pid</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">fork</span><span style="">();</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">pid</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#75715e">// printf(&#34;Child process pid = %u\n&#34;, getpid());
+</span><span style="color:#75715e"></span><span style="">        </span><span style="">execv</span><span style="">(</span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">argv</span><span style="">);</span><span style="">
+</span><span style="">        </span><span style="">exit</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#75715e">// printf(&#34;Parent process\n&#34;);
+</span><span style="color:#75715e"></span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">waitpid</span><span style="">(</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">status</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">WIFEXITED</span><span style="">(</span><span style="">status</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#f92672">!</span><span style="">WEXITSTATUS</span><span style="">(</span><span style="">status</span><span style="">))</span><span style="">
+</span><span style="">            </span><span style="">{</span><span style="">
+</span><span style="">                </span><span style="color:#75715e">// printf(&#34;program execution successfull\n&#34;);
+</span><span style="color:#75715e"></span><span style="">            </span><span style="">}</span><span style="">
+</span><span style="">            </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">WIFEXITED</span><span style="">(</span><span style="">status</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">WEXITSTATUS</span><span style="">(</span><span style="">status</span><span style="">))</span><span style="">
+</span><span style="">            </span><span style="">{</span><span style="">
+</span><span style="">                </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">WEXITSTATUS</span><span style="">(</span><span style="">status</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">127</span><span style="">)</span><span style="">
+</span><span style="">                </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">                    </span><span style="color:#75715e">// execv failed
+</span><span style="color:#75715e"></span><span style="">                    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;execv failed</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">                </span><span style="">}</span><span style="">
+</span><span style="">                </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">                    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;program terminated normally,&#34;</span><span style="">
+</span><span style="">                           </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34; but returned a non-zero status</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">            </span><span style="">}</span><span style="">
+</span><span style="">            </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">                </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;program didn&#39;t terminate normally</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">        </span><span style="">{</span><span style="">
+</span><span style="">            </span><span style="color:#75715e">// waitpid() failed
+</span><span style="color:#75715e"></span><span style="">            </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;waitpid() failed</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">(</span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">argc</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">argv</span><span style="">[])</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Run command: &#34;</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">NULL</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s &#34;</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="">i</span><span style="">]);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">clock_t</span><span style=""> </span><span style="">start</span><span style="">,</span><span style=""> </span><span style="">finish</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">double</span><span style=""> </span><span style="">duration</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">loop</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">10000</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">start</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="">run_cmd_posix_spawn</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">]);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">finish</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
+</span><span style="">    </span><span style="">duration</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">double</span><span style="">)(</span><span style="">finish</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">start</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">CLOCKS_PER_SEC</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;posix_spawn:  %d times:  %f seconds per one count</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">loop</span><span style="">,</span><span style=""> </span><span style="">duration</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">start</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="">run_cmd_fork_exec</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">]);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">finish</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
+</span><span style="">    </span><span style="">duration</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">double</span><span style="">)(</span><span style="">finish</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">start</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">CLOCKS_PER_SEC</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;fork/exec:  %d times:  %f seconds per one count</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">loop</span><span style="">,</span><span style=""> </span><span style="">duration</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p>五. 父进程使用pipe来探测在创建子进程<code>execve</code>时是否有异常.<br />
 在 <code>syscall/exec_unix.go</code>中.<br />
 如果<code>execve</code>成功,则该pipe因close-on-exec在子进程里自动关闭.  父进程从pipe读到的长度为0<br />
