@@ -197,6 +197,8 @@
 </span><span style=""></span><span style="color:#ae81ff">2018</span><span style="">-01-17 </span><span style="color:#ae81ff">22</span><span style="">:27:55</span></code></pre>
 </div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">who -b
 </span><span style="">         system boot  </span><span style="color:#ae81ff">2018</span><span style="">-01-17 </span><span style="color:#ae81ff">22</span><span style="">:27</span></code></pre>
+</div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">uptime -s
+</span><span style=""></span><span style="color:#ae81ff">2019</span><span style="">-09-04 </span><span style="color:#ae81ff">00</span><span style="">:40:58</span></code></pre>
 </div>
 <h3 id="2-查询所有进程的准确启动时间和运行时长">2. 查询所有进程的准确启动时间和运行时长</h3>
 
@@ -776,6 +778,9 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="color:#75715e"></span><span style="">systemctl set-default multi-user.target  </span><span style="color:#75715e"># 设置系统默认的target为 多用户模式
 </span><span style="color:#75715e"></span><span style="">systemctl list-dependencies multi-user.target  </span><span style="color:#75715e">#查看该target下所有的unit
 </span><span style="color:#75715e"></span><span style="">systemctl list-dependencies sshd   </span><span style="color:#75715e"># 查看一个service所依赖的所有unit
+</span><span style="color:#75715e"></span><span style="">systemctl list-dependencies --reverse sshd   </span><span style="color:#75715e"># 查看哪个unit依赖该服务
+</span><span style="color:#75715e"></span><span style="">systemctl list-dependencies --before sshd   </span><span style="color:#75715e"># 查看所有unit after sshd, 也就是 sshd 配置里的before=
+</span><span style="color:#75715e"></span><span style="">systemctl list-dependencies --after sshd   </span><span style="color:#75715e"># 查看所有unit before sshd
 </span><span style="color:#75715e"></span><span style="">systemctl cat sshd              </span><span style="color:#75715e">#查看service的配置文件
 </span><span style="color:#75715e"></span><span style="">systemctl show sshd             #查看service的配置参数, 不带 service则显示默认的配置. 可用来查询nofile, noproc等限制资源参数</span></code></pre>
 </div>
@@ -1165,6 +1170,26 @@ Link 为<code>yes</code>表示 网线连接正常</p>
     link/ether 88:32:9b:ca:3f:49 brd ff:ff:ff:ff:ff:ff
 </code></pre>
 
+<p>查看网卡的详细信息, 比如是bridge还是veth等类型</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip --details link
+</span><span style="">ip link  show </span><span style="">type</span><span style=""> bridge  #显示所有的桥接设备</span></code></pre>
+</div>
+<p>下面脚本可以显示每个链路的类型, 除了以太网</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">!/bin/bash
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e"># Arguments: $1: Interface (&#39;grep&#39;-regexp).
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#75715e"># Static list of types (from `ip link help`):
+</span><span style="color:#75715e"></span><span style="">TYPES</span><span style=""></span><span style="color:#f92672">=(</span><span style="">bond bond_slave bridge dummy gre gretap ifb ip6gre ip6gretap ip6tnl ipip ipoib ipvlan macvlan macvtap nlmon sit vcan veth vlan vti vxlan tun tap</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">iface</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="">$1</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">type</span><span style=""> in </span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span><span style="">TYPES</span><span style="">[@]</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style="">
+</span><span style="">  ip link show </span><span style="">type</span><span style=""> </span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span><span style="">type</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style=""> </span><span style="">|</span><span style=""> grep -E </span><span style="color:#e6db74">&#39;^[0-9]+:&#39;</span><span style=""> </span><span style="">|</span><span style=""> cut -d </span><span style="color:#e6db74">&#39;:&#39;</span><span style=""> -f </span><span style="color:#ae81ff">2</span><span style=""> </span><span style="">|</span><span style=""> sed </span><span style="color:#e6db74">&#39;s|^[[:space:]]*||&#39;</span><span style=""> </span><span style="">|</span><span style=""> </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">read</span><span style=""> _if</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style="">
+</span><span style="">    </span><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span><span style="">_if</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span><span style="">type</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">done</span><span style=""> </span><span style="">|</span><span style=""> grep </span><span style="color:#e6db74">&#34;^</span><span style="color:#e6db74">${</span><span style="">iface</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">done</span><span style=""></span></code></pre>
+</div>
 <p>查看网卡状态和对应的IP信息</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ip addr</span></code></pre>
 </div>
@@ -1247,7 +1272,8 @@ Unreachable丢弃该包，并发送 NET UNREACHABLE的ICMP信息
 <p>类似top这样的交互式界面<br />
 监控网卡的实时流量,反向解析IP,同时还显示具体每个连接接受和发送的流量<br />
 注意显示流量的单位为b.  例如 <code>8Mb = 1MB</code>.  所有流量值都是 per second<br />
-按<code>n</code>关闭主机名解析, 按<code>N</code>关闭端口号解析, 按<code>p</code>显示连接的端口号
+按<code>n</code>关闭主机名解析, 按<code>N</code>关闭端口号解析, 按<code>p</code>显示连接的端口号<br />
+<code>iftop -f &quot;port 22&quot;</code>过滤只显示端口为22的连接的流量信息, 过滤语法跟<code>tcpdump</code>一样<br />
 直接运行<code>iftop</code>, 得到如下信息:</p>
 
 <blockquote>
@@ -1491,6 +1517,10 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <p>上面是以100ms为间隔, 也可进入交互模式后按<code>d</code>进行动态调整<br />
 交互模式下按<code>1</code>显示每个cpu的使用率信息, 按<code>M</code> 进程按内存排序, 按<code>H</code>显示线程信息</p>
 
+<p>top进程级的默认字段如果不够, 可以按<code>f</code>选择要显示的字段,比如<code>last cpu used</code>, 然后按<code>q</code>返回显示<br />
+<code>f</code>后不仅可以增加,删除,调整字段顺序, 还可以按<code>s</code>将当前选中的字段作为排序的字段.  比如按内存排序<br />
+如果要过滤进程, 比如只显示cmdline 包含字符abc的进程, 按<code>o</code>后输入<code>COMMAND=abc</code>, 碰到java这种进程, 可以按<code>c</code>显示完整的命令行</p>
+
 <h3 id="71-ping命令">71. ping命令</h3>
 
 <p><code>-i</code>指定两次ping之前的间隔, 默认是1s</p>
@@ -1516,7 +1546,20 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 使用 grep 查找 Pss 指标后，再用 awk 计算累加值
 </span><span style="color:#75715e"></span><span style="">$ grep Pss /proc/</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="">-9</span><span style="color:#f92672">]</span><span style="">*/smaps </span><span style="">|</span><span style=""> awk </span><span style="color:#e6db74">&#39;{total+=$2}; END {printf &#34;%d kB\n&#34;, total }&#39;</span><span style="">
 </span><span style=""></span><span style="color:#ae81ff">391266</span><span style=""> kB</span></code></pre>
-</div></article>
+</div>
+<h3 id="74-不同os的文件编码">74. 不同OS的文件编码</h3>
+
+<p>linux显示文件内容的编码方式</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ file -i old.txt
+</span><span style="">old.txt: text/plain</span><span style="">;</span><span style=""> </span><span style="">charset</span><span style=""></span><span style="color:#f92672">=</span><span style="">us-ascii</span></code></pre>
+</div>
+<p>将文件abc.txt 编码方式从iso8859-1改为utf-8</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">iconv -f iso8859-1 -t utf-8 abc.txt &gt; abc.txt.utf8</span></code></pre>
+</div>
+<p>讲当前文件夹所有文件的文件名编码从GBK改为UTF-8, <code>-r</code>表示递归所有子文件夹</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">convmv -f GBk -t UTF-8 --notest -r *，这</span></code></pre>
+</div>
+<p>参考: <a href="http://kuring.me/post/windows_linux_code/">http://kuring.me/post/windows_linux_code/</a></p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
@@ -1528,7 +1571,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>650</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>653</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
