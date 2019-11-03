@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/runc/</loc>
+    <lastmod>2019-11-03T10:31:44+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/libvirt-network/</loc>
     <lastmod>2019-06-16T21:00:55+08:00</lastmod>
   </url>
@@ -124,6 +129,12 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/docker/</loc>
+    <lastmod>2019-11-03T10:31:44+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/tags/golang/</loc>
     <lastmod>2017-10-02T09:48:04+08:00</lastmod>
     <priority>0</priority>
@@ -197,7 +208,7 @@
   
   <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2019-06-16T21:00:55+08:00</lastmod>
+    <lastmod>2019-11-03T10:31:44+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -228,6 +239,12 @@
   <url>
     <loc>https://xixiliguo.github.io/tags/rss/</loc>
     <lastmod>2019-04-07T10:05:29+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/runc/</loc>
+    <lastmod>2019-11-03T10:31:44+08:00</lastmod>
     <priority>0</priority>
   </url>
   
