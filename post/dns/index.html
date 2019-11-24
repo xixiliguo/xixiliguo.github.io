@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>DNS学习总结</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wangbo" />
+  <meta name="description" content="这里记录了自己学习DNS协议中总结和对一些e问题的思考
+
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="DNS学习总结" />
+    <meta name="twitter:description" content="这里记录了自己学习DNS协议中总结和对一些e问题的思考
+
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/dns/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">DNS学习总结</h1>
+      <p class="post-meta">@Peter Wangbo · Nov 24, 2019 · 3 min read</p>
+    </header>
+    <article class="post-content"><p>这里记录了自己学习DNS协议中总结和对一些e问题的思考</p>
+
+<p></p>
+
+<h1 id="dns协议">DNS协议</h1>
+
+<p>DNS默认使用UDP协议,发消息到服务器的53端口. UDP不需要TCP那样三个握手建立连接. 效率更高. 简单地请求,然后收到回复.<br />
+根域名有13台, 这是因为早期协议涉及时, 规定dns数据包最大512个字节(不含IP层和MAC层). 最多就只能容纳13个信息. 具体见下面文章所诉<br />
+<a href="https://www.apnic.net/get-ip/faqs/rootservers/">https://www.apnic.net/get-ip/faqs/rootservers/</a><br />
+<a href="https://miek.nl/2013/november/10/why-13-dns-root-servers/">https://miek.nl/2013/november/10/why-13-dns-root-servers/</a><br />
+确实根域名有13个IP, 但后面每个IP并不指向一个服务器. 这里采用了BGP的任播机制, 访问IP, 路由器会路由到距离你最近的一台服务器. 指根DNS服务器的负载均衡技术<br />
+单播,多播,广播和任播技术介绍参见: <a href="https://www.hi-linux.com/posts/26571.html">https://www.hi-linux.com/posts/26571.html</a></p>
+
+<h1 id="resolv-conf文件解析">resolv.conf文件解析</h1>
+
+<p><code>/etc/resolv.conf</code>详细配置解析参见<code>man 5 resolv.conf</code>, 它属于glibc的一部分. 如果程序发消息到DNS服务器请求域名解析,则该文件的所有配置文件不生效. 比如<code>dig</code>直接和DNS服务器交互. <code>ping,curl,wget</code>则使用<code>glibc</code>库<br />
+默认timeout为5, attempts为2, 意思是在放弃该连接,尝试下一个DNS服务器前等待超时时间为5s,  尝试2遍后放弃. 其中一遍表示轮询完一遍所有的DNS服务器失败<br />
+假设配置文件如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># cat /etc/resolv.conf
+</span><span style="color:#75715e"></span><span style="">options single-request-reopen
+</span><span style=""></span><span style="">;</span><span style=""> generated by /usr/sbin/dhclient-script
+</span><span style="">search localdomain
+</span><span style="">nameserver </span><span style="color:#ae81ff">114</span><span style="">.114.114.117
+</span><span style="">nameserver </span><span style="color:#ae81ff">114</span><span style="">.114.114.113</span></code></pre>
+</div>
+<p>下面是<code>ping www.baid1xe21.com1</code>的报文交互. 可以看到放弃两个NS后,还根据search的配置尝试使用<code>www.baid1xe21.com1.localdomain</code>获取解析</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># tcpdump -i eth0 -eennvv udp
+</span><span style="color:#75715e"></span><span style="">tcpdump: listening on eth0, link-type EN10MB </span><span style="color:#f92672">(</span><span style="">Ethernet</span><span style="color:#f92672">)</span><span style="">, capture size </span><span style="color:#ae81ff">262144</span><span style=""> bytes
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:12.576101 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">46506</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.52434 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270e -&gt; 0x20fb!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:17.581591 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">37849</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.55684 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270a -&gt; 0x144d!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:22.588076 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">52914</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.52434 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270e -&gt; 0x20fb!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:27.593191 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">47412</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.55684 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270a -&gt; 0x144d!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:32.598796 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">60578</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.53255 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x271a -&gt; 0x09f4!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:37.605004 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">52533</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.50522 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x2716 -&gt; 0x14a5!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:42.609907 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">3384</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.53255 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x271a -&gt; 0x09f4!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:47.616265 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">52752</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.50522 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x2716 -&gt; 0x14a5!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span></code></pre>
+</div>
+<p>通过<code>strace</code>观测到的系统调用如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ae81ff">17</span><span style="">:38:46 close</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="color:#f92672">)</span><span style="">                       </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000263&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 socket</span><span style="color:#f92672">(</span><span style="">AF_INET, SOCK_DGRAM</span><span style="">|</span><span style="">SOCK_CLOEXEC</span><span style="">|</span><span style="">SOCK_NONBLOCK, IPPROTO_IP</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000222&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 connect</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="color:#f92672">{</span><span style="">sa_family</span><span style=""></span><span style="color:#f92672">=</span><span style="">AF_INET, </span><span style="">sin_port</span><span style=""></span><span style="color:#f92672">=</span><span style="">htons</span><span style="color:#f92672">(</span><span style="color:#ae81ff">53</span><span style="color:#f92672">)</span><span style="">, </span><span style="">sin_addr</span><span style=""></span><span style="color:#f92672">=</span><span style="">inet_addr</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;10.211.54.2&#34;</span><span style="color:#f92672">)}</span><span style="">, </span><span style="color:#ae81ff">16</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000280&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000173&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000147&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.006352&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 socket</span><span style="color:#f92672">(</span><span style="">AF_INET, SOCK_DGRAM</span><span style="">|</span><span style="">SOCK_CLOEXEC</span><span style="">|</span><span style="">SOCK_NONBLOCK, IPPROTO_IP</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000306&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 connect</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="color:#f92672">{</span><span style="">sa_family</span><span style=""></span><span style="color:#f92672">=</span><span style="">AF_INET, </span><span style="">sin_port</span><span style=""></span><span style="color:#f92672">=</span><span style="">htons</span><span style="color:#f92672">(</span><span style="color:#ae81ff">53</span><span style="color:#f92672">)</span><span style="">, </span><span style="">sin_addr</span><span style=""></span><span style="color:#f92672">=</span><span style="">inet_addr</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;10.211.54.3&#34;</span><span style="color:#f92672">)}</span><span style="">, </span><span style="color:#ae81ff">16</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000243&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000109&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000290&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.006234&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:56 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000221&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:56 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000371&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:56 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.006071&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:01 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000119&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:01 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000617&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:01 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.005939&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:06 close</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="color:#f92672">)</span><span style="">                       </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000189&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:06 close</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="color:#f92672">)</span><span style="">                       </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000146&gt;
+</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:06 open</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/usr/share/locale/locale.alias&#34;</span><span style="">, O_RDONLY</span><span style="">|</span><span style="">O_CLOEXEC</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000120&gt;</span></code></pre>
+</div>
+<p>DHCP自动获取IP场景,经常会覆盖用户自己配置的参数, 可以使用类似如下的命令将配置持久化. dhcp只会更新DNS服务器,不会删除用户配置.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#39;RES_OPTIONS=&#34;timeout:2 attempts:3 rotate single-request-reopen&#34;&#39;</span><span style=""> &gt;&gt;/etc/sysconfig/network</span></code></pre>
+</div>
+<p>在容器场景下,经常遇到域名解析5s超时的问题,主要是因为<code>glibc</code>下会同时并行发出请求A级记录和AAA记录的报文, 底层有时处理不了这种竞争条件,导致超时.  可通通过<code>single-request-reopen</code>来解决, 详细见如下文章:<br />
+<a href="https://tencentcloudcontainerteam.github.io/2018/10/26/DNS-5-seconds-delay/">https://tencentcloudcontainerteam.github.io/2018/10/26/DNS-5-seconds-delay/</a></p>
+
+<p>在查询域名时，如果域名里面<code>.</code>的个数小于 ndots 指定的数，则会根据 search 中配置的列表依次在对应域中查询，如果没有返回，则最后直接查询域名本身。
+ndots 默认是1</p>
+
+<p>如果大于ndtos, 先直接查询, 查询不到再在serach里的域里继续查询
+假设配置如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">nameserver </span><span style="color:#ae81ff">10</span><span style="">.232.0.3
+</span><span style="">search default.svc.cluster.local svc.cluster.local cluster.local
+</span><span style="">options ndots:5</span></code></pre>
+</div>
+<p>想解析的<code>kubernetes.default.svc</code>中的 . 只有2，小于5，这时会依次拼接上 search 中的地址之后再进行查询，如果都查询不到，则再查询本身。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># host -v kubernetes.default.svc
+</span><span style="color:#75715e"></span><span style="">Trying </span><span style="color:#e6db74">&#34;kubernetes.default.svc.default.svc.cluster.local&#34;</span><span style="">
+</span><span style="">Trying </span><span style="color:#e6db74">&#34;kubernetes.default.svc.svc.cluster.local&#34;</span><span style="">
+</span><span style="">Trying </span><span style="color:#e6db74">&#34;kubernetes.default.svc.cluster.local&#34;</span><span style="">
+</span><span style="">...</span></code></pre>
+</div>
+<h1 id="dig命令使用">dig命令使用</h1>
+
+<p>查询<code>www.163.com</code>解析信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig www.163.com</span></code></pre>
+</div>
+<p>迭代查询</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig +trace www.163.com</span></code></pre>
+</div>
+<p>指定从DNS服务器<code>8.8.8.8</code>获取解析结果</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig @8.8.8.8 www.163.com</span></code></pre>
+</div></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/dns"><span class="tag">Dns</span></a></li>
+        
+          <li><a href="https://xixiliguo.github.io/tags/%E4%BB%BB%E6%92%AD"><span class="tag">任播</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2019 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>
