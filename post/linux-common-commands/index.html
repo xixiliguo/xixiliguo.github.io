@@ -369,6 +369,9 @@ args 为具体的命令行参数</p>
 <p>查找不包含 127 的所有行</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">grep -v </span><span style="color:#e6db74">&#34;127&#34;</span><span style=""> /etc/hosts</span></code></pre>
 </div>
+<p>递归搜索时忽略二进制文件,加参数<code>-I</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">grep -r </span><span style="color:#e6db74">&#34;abc&#34;</span><span style=""> -I /etc</span></code></pre>
+</div>
 <h3 id="15-tail-查看文件指定行信息">15. tail 查看文件指定行信息</h3>
 
 <p>显示最后3行记录</p>
@@ -1571,7 +1574,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>665</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>685</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
