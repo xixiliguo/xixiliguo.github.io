@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 17 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 18 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
 
@@ -1382,8 +1382,22 @@ Cpus_allowed_list:0-1指出该进程可以使用CPU的列表,这里是0-1.</p>
 <p><code>ulimit -n</code>返回当前user单进程可打开的最大进程数<br />
 <code>/proc/[pid]/limits</code> 查询该进程的资源限制数据<br />
 <code>ls -rlt /proc/[pid]/fd | wc -l</code> 查询该进程当前已打开的文件数<br />
-<code>lsof -p [pid] | wc -l</code> 也可查询, 但要过滤掉cwd, 动态库等</p>
-
+<code>lsof -p [pid] | wc -l</code> 也可查询, 但要过滤掉cwd, 动态库等<br />
+<code>ulimit -n unlimited</code>是无效的, 进程级的文件句柄不支持<code>unlimited</code>, 最大值为 <code>/proc/sys/fs/nr_open</code>, 该值默认为1048576.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># ulimit -n 1048577
+</span><span style="color:#75715e"></span><span style="">-bash: ulimit: op</span><span style="color:#f92672">]</span><span style="">en files: cannot modify limit: Operation not permitted
+</span><span style=""></span><span style="color:#75715e"># ulimit -n unlimited
+</span><span style="color:#75715e"></span><span style="">-bash: ulimit: open files: cannot modify limit: Operation not permitted
+</span><span style=""></span><span style="color:#75715e"># cat /proc/sys/fs/nr_open
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">1048576</span></code></pre>
+</div>
+<p>在centos7上<code>nr_open</code>的最大值可调整为2147483584</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># sysctl -w fs.nr_open=2147483585
+</span><span style="color:#75715e"></span><span style="">sysctl: setting key </span><span style="color:#e6db74">&#34;fs.nr_open&#34;</span><span style="">: Invalid argument
+</span><span style="">fs.nr_open </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2147483585</span><span style="">
+</span><span style=""></span><span style="color:#75715e"># sysctl -w fs.nr_open=2147483584
+</span><span style="color:#75715e"></span><span style="">fs.nr_open </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2147483584</span></code></pre>
+</div>
 <p>查询整个OS当前的文件数使用情况:<br />
 file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /proc/sys/fs/file-max</code>提高</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/sys/fs/file-max
@@ -1574,7 +1588,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>686</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>706</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
