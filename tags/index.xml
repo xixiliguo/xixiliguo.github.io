@@ -40,6 +40,15 @@
     </item>
     
     <item>
+      <title>Boot</title>
+      <link>https://xixiliguo.github.io/tags/boot/</link>
+      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/boot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Cloud Init</title>
       <link>https://xixiliguo.github.io/tags/cloud-init/</link>
       <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
@@ -141,7 +150,7 @@
     <item>
       <title>Linux</title>
       <link>https://xixiliguo.github.io/tags/linux/</link>
-      <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>
+      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/tags/linux/</guid>
       <description></description>
@@ -252,6 +261,15 @@
       <pubDate>Wed, 11 Oct 2017 22:11:23 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/tags/shadow/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Systemd</title>
+      <link>https://xixiliguo.github.io/tags/systemd/</link>
+      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/systemd/</guid>
       <description></description>
     </item>
     

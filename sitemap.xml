@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/post/linux-boot/</loc>
+    <lastmod>2020-04-19T15:17:50+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/post/dns/</loc>
     <lastmod>2019-11-24T22:22:53+08:00</lastmod>
   </url>
@@ -111,6 +116,12 @@
   </url>
   
   <url>
+    <loc>https://xixiliguo.github.io/tags/boot/</loc>
+    <lastmod>2020-04-19T15:17:50+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xixiliguo.github.io/categories/</loc>
     <priority>0</priority>
   </url>
@@ -183,7 +194,7 @@
   
   <url>
     <loc>https://xixiliguo.github.io/tags/linux/</loc>
-    <lastmod>2018-01-07T18:10:50+08:00</lastmod>
+    <lastmod>2020-04-19T15:17:50+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -219,7 +230,7 @@
   
   <url>
     <loc>https://xixiliguo.github.io/post/</loc>
-    <lastmod>2019-11-24T22:22:53+08:00</lastmod>
+    <lastmod>2020-04-19T15:17:50+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -262,6 +273,12 @@
   <url>
     <loc>https://xixiliguo.github.io/tags/shadow/</loc>
     <lastmod>2017-10-11T22:11:23+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xixiliguo.github.io/tags/systemd/</loc>
+    <lastmod>2020-04-19T15:17:50+08:00</lastmod>
     <priority>0</priority>
   </url>
   
