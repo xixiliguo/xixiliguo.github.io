@@ -1045,6 +1045,9 @@ output              postrouting         postrouting       output
 </span><span style="">-rw-r--r--. </span><span style="color:#ae81ff">1</span><span style=""> tcpdump tcpdump </span><span style="color:#ae81ff">1001078</span><span style=""> Jan </span><span style="color:#ae81ff">14</span><span style=""> </span><span style="color:#ae81ff">23</span><span style="">:33 abc
 </span><span style="">-rw-r--r--. </span><span style="color:#ae81ff">1</span><span style=""> tcpdump tcpdump  </span><span style="color:#ae81ff">647168</span><span style=""> Jan </span><span style="color:#ae81ff">14</span><span style=""> </span><span style="color:#ae81ff">23</span><span style="">:33 abc1</span></code></pre>
 </div>
+<p>抓取本机eth0网卡发往公网ip的数据包</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -n -i eth0 </span><span style="color:#e6db74">&#39;not net 10.0.0.0/8 and not net 192.168.0.0/16 and not net 172.16.0.0/12&#39;</span></code></pre>
+</div>
 <h3 id="46-dns查询工具">46. DNS查询工具</h3>
 
 <p>指定DNS服务器递归查</p>
@@ -1576,7 +1579,12 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <p>讲当前文件夹所有文件的文件名编码从GBK改为UTF-8, <code>-r</code>表示递归所有子文件夹</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">convmv -f GBk -t UTF-8 --notest -r *，这</span></code></pre>
 </div>
-<p>参考: <a href="http://kuring.me/post/windows_linux_code/">http://kuring.me/post/windows_linux_code/</a></p></article>
+<p>参考: <a href="http://kuring.me/post/windows_linux_code/">http://kuring.me/post/windows_linux_code/</a></p>
+
+<h3 id="75-一些shell循环命令">75. 一些shell循环命令</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">while</span><span style=""> true</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style=""> cat /proc/stat  </span><span style="">|</span><span style=""> grep </span><span style="color:#e6db74">&#34;cpu &#34;</span><span style=""> </span><span style="">;</span><span style=""> sleep </span><span style="color:#ae81ff">30</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">done</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> n in </span><span style="color:#f92672">{</span><span style="color:#ae81ff">1</span><span style="">..1000</span><span style="color:#f92672">}</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style=""> touch a</span><span style="">$n</span><span style="">;</span><span style=""> rm -rf a</span><span style="">$n</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">done</span><span style=""></span></code></pre>
+</div></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
@@ -1588,7 +1596,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>834</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>838</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

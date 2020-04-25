@@ -224,6 +224,11 @@ client和server同时打开时间戳时:<br />
 <code>nstat</code> 观察 <code>TcpExtListenOverflows</code><br />
 两个工具的信息都取自<code>/proc/net/netstat</code></p>
 
+<h3 id="tcp丢包一些排查方法">TCP丢包一些排查方法</h3>
+
+<p>使用perf 跟踪 skb:kfree_skb, 然后看堆栈<br />
+<a href="https://jvns.ca/blog/2017/09/05/finding-out-where-packets-are-being-dropped/">https://jvns.ca/blog/2017/09/05/finding-out-where-packets-are-being-dropped/</a></p>
+
 <h1 id="参考">参考:</h1>
 
 <p><a href="https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt">https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt</a><br />
