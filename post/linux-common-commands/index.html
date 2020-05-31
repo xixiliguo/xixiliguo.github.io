@@ -1583,8 +1583,42 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 
 <h3 id="75-一些shell循环命令">75. 一些shell循环命令</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">while</span><span style=""> true</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style=""> cat /proc/stat  </span><span style="">|</span><span style=""> grep </span><span style="color:#e6db74">&#34;cpu &#34;</span><span style=""> </span><span style="">;</span><span style=""> sleep </span><span style="color:#ae81ff">30</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">done</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> n in </span><span style="color:#f92672">{</span><span style="color:#ae81ff">1</span><span style="">..1000</span><span style="color:#f92672">}</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style=""> touch a</span><span style="">$n</span><span style="">;</span><span style=""> rm -rf a</span><span style="">$n</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">done</span><span style=""></span></code></pre>
-</div></article>
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> n in </span><span style="color:#f92672">{</span><span style="color:#ae81ff">1</span><span style="">..1000</span><span style="color:#f92672">}</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style=""> touch a</span><span style="">$n</span><span style="">;</span><span style=""> rm -rf a</span><span style="">$n</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">done</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> file in </span><span style="color:#66d9ef">$(</span><span style="">ls -1 /proc/</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="">-9</span><span style="color:#f92672">]</span><span style="">*/status</span><span style="color:#66d9ef">)</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">do</span><span style=""> grep Name </span><span style="">$file</span><span style="">;</span><span style=""> </span><span style="color:#66d9ef">done</span><span style=""></span></code></pre>
+</div>
+<h3 id="76-dhcp持续请求配置">76. dhcp持续请求配置</h3>
+
+<p>Network管理时, 在<code>ifcfg-ethX</code>文件里增加<code>PERSISTENT_DHCLIENT=yes</code><br />
+NetworkManager管理时, 两个方法:<br />
+使用类似命令修改<code>nmcli connection modify enps1s0 ipv4.dhcp-timeout infinity</code><br />
+在<code>ifcfg-ethX</code>里增加<code>IPV4_DHCP_TIMEOUT=2147483647</code><br />
+<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/configuring_the_dhcp_client_behavior">参考文档</a></p>
+
+<h3 id="77-解析-proc-pid-status里关于信号的字段">77. 解析/proc/[pid]/status里关于信号的字段</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#read -p &#34;PID=&#34; pid
+</span><span style="color:#75715e"></span><span style="">pid</span><span style=""></span><span style="color:#f92672">=</span><span style="">$1</span><span style="">
+</span><span style="">cat /proc/</span><span style="">$pid</span><span style="">/status</span><span style="">|</span><span style="">egrep </span><span style="color:#e6db74">&#39;(Sig|Shd)(Pnd|Blk|Ign|Cgt)&#39;</span><span style="">|</span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">read</span><span style=""> name mask</span><span style="">;</span><span style="color:#66d9ef">do</span><span style="">
+</span><span style="">    </span><span style="">bin</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#34;ibase=16; obase=2; </span><span style="color:#e6db74">${</span><span style="">mask</span><span style="">^^*</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="">|</span><span style="">bc</span><span style="color:#66d9ef">)</span><span style="">
+</span><span style="">    </span><span style="">echo</span><span style=""> -n </span><span style="color:#e6db74">&#34;</span><span style="">$name</span><span style="color:#e6db74"> </span><span style="">$mask</span><span style="color:#e6db74"> </span><span style="">$bin</span><span style="color:#e6db74"> &#34;</span><span style="">
+</span><span style="">    </span><span style="">i</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="color:#f92672">[[</span><span style=""> </span><span style="">$bin</span><span style=""> -ne </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">]]</span><span style="">;</span><span style="color:#66d9ef">do</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">[[</span><span style=""> </span><span style="color:#e6db74">${</span><span style="">bin</span><span style="">:(-1)</span><span style="color:#e6db74">}</span><span style=""> -eq </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">]]</span><span style="">;</span><span style="color:#66d9ef">then</span><span style="">
+</span><span style="">            </span><span style="">kill</span><span style=""> -l </span><span style="">$i</span><span style=""> </span><span style="">|</span><span style=""> tr </span><span style="color:#e6db74">&#39;\n&#39;</span><span style=""> </span><span style="color:#e6db74">&#39; &#39;</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">fi</span><span style="">
+</span><span style="">        </span><span style="">bin</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">${</span><span style="">bin</span><span style="">:</span><span style="color:#66d9ef">:-</span><span style="">1</span><span style="color:#e6db74">}</span><span style="">
+</span><span style="">        </span><span style="">set</span><span style=""> </span><span style="color:#66d9ef">$((</span><span style="">i++</span><span style="color:#66d9ef">))</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">done</span><span style="">
+</span><span style="">    </span><span style="">echo</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">done</span><span style="">
+</span><span style=""># vim:et:sw</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">:ts</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">:sts</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">:</span></code></pre>
+</div>
+<p><a href="https://stackoverflow.com/questions/4155483/proc-pidstatus-sigign-field">参考链接</a></p>
+
+<h3 id="78-审计谁杀了进程">78. 审计谁杀了进程</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">auditctl -a always,exit -F </span><span style="">arch</span><span style=""></span><span style="color:#f92672">=</span><span style="">b64 -F </span><span style="">a1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">15</span><span style=""> -S </span><span style="">kill</span><span style=""> -k log_kill
+</span><span style="">auditctl -a always,exit -F </span><span style="">arch</span><span style=""></span><span style="color:#f92672">=</span><span style="">b64 -F </span><span style="">a1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">9</span><span style=""> -S </span><span style="">kill</span><span style=""> -k log_kill</span></code></pre>
+</div>
+<p><a href="https://jotdownux.wordpress.com/2016/01/23/whos-killing-that-process-whos-dumping-prelink-files-in-tmp-linux-auditd-to-the-rescue/">参考</a></p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
@@ -1596,7 +1630,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>838</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>875</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

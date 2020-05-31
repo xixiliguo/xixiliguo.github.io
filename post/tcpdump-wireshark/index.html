@@ -455,6 +455,8 @@ TCP/IP Guide:<br />
 
 <li><p>经常处理tcp各种超时问题, 如下文章总结了大部分tcp下的超时情况和对应的参数控制<br />
 <a href="http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/">http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/</a></p></li>
+
+<li><p>服务端收到包, 在tcp层会校验checksum, 如果错误, 则直接丢弃该包.  用<code>nstat</code>可以看到<code>TcpInCsumErrors</code>增大</p></li>
 </ul></article>
     <footer class="post-footer">
       
@@ -465,7 +467,7 @@ TCP/IP Guide:<br />
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>617</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>654</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
