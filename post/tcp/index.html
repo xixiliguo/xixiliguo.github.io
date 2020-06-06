@@ -229,6 +229,12 @@ client和server同时打开时间戳时:<br />
 <p>使用perf 跟踪 skb:kfree_skb, 然后看堆栈<br />
 <a href="https://jvns.ca/blog/2017/09/05/finding-out-where-packets-are-being-dropped/">https://jvns.ca/blog/2017/09/05/finding-out-where-packets-are-being-dropped/</a></p>
 
+<h3 id="net-ipv4-tcp-tw-recycle-1">net.ipv4.tcp_tw_recycle = 1</h3>
+
+<p>在nat场景下会产生丢包. 高内核已经删除这个参数<br />
+<a href="https://github.com/torvalds/linux/commit/4396e46187ca5070219b81773c4e65088dac50cc">https://github.com/torvalds/linux/commit/4396e46187ca5070219b81773c4e65088dac50cc</a><br />
+对应的计数项为<code>TcpExtPAWSPassive</code></p>
+
 <h1 id="参考">参考:</h1>
 
 <p><a href="https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt">https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt</a><br />
