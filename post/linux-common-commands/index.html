@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 18 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 20 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
 
@@ -1421,9 +1421,23 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ss -s                </span><span style="color:#75715e">#显示各socket的统计信息
 </span><span style="color:#75715e"></span><span style="">ss -ntlp             </span><span style="color:#75715e">#-n 不解析, -t 显示tcp连接  -l 显示监听socket, -p 显示使用的进程名
 </span><span style="color:#75715e"></span><span style="">ss -t -a             </span><span style="color:#75715e">#查看所有tcp连接, 不带-a则指显示 Established 连接
-</span><span style="color:#75715e"></span><span style="">ss -to               #查看tcp的keepalive信息</span></code></pre>
+</span><span style="color:#75715e"></span><span style="">ss -to               </span><span style="color:#75715e">#查看tcp的keepalive信息
+</span><span style="color:#75715e"></span><span style="">ss -ti               </span><span style="color:#75715e">#查看tcp的内部信息,比如拥塞算法,rto,rtt,cwnd,ssthresh等
+</span><span style="color:#75715e"></span><span style="">ss -tm               #查看tcp的内存使用信息, 比如收发缓冲区的大小</span></code></pre>
 </div>
-<p>更多使用介绍请参考: <a href="https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html">https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html</a></p>
+<p>还有一些高级的过滤用法</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ss -tn  state listening                                  </span><span style="color:#75715e">#显示处于listening状态的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn  state established                                </span><span style="color:#75715e">#显示处于established状态的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( sport == 22 )&#39;</span><span style="">                                 </span><span style="color:#75715e">#显示源端口为22的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( sport == 22 || dport == 22 )&#39;</span><span style="">                  </span><span style="color:#75715e">#显示源端口为22或者目标端口为22的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( dst 10.211.55.2 &amp;&amp; dport == 58181 )&#39;</span><span style="">           </span><span style="color:#75715e">#显示目标ip为10.211.55.2且目标端口为58181的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( src 127.0.0.1 )&#39;</span><span style="">                               </span><span style="color:#75715e">#显示源ip为 127.0.0.1的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( ! dst 10.211.55.2 &amp;&amp; dport != 58181 )&#39;</span><span style="">         #显示目标ip不是10.211.55.2且目标端口不是58181的连接</span></code></pre>
+</div>
+<p>更多使用介绍请参考:<br />
+<a href="https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html">https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html</a><br />
+<a href="https://man7.org/linux/man-pages/man8/ss.8.html">https://man7.org/linux/man-pages/man8/ss.8.html</a><br />
+<a href="https://github.com/shemminger/iproute2/blob/main/misc/ssfilter.y">https://github.com/shemminger/iproute2/blob/main/misc/ssfilter.y</a></p>
 
 <h3 id="61-消除用户被锁的错误登录记录">61. 消除用户被锁的错误登录记录</h3>
 
@@ -1509,7 +1523,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <p>查询设备的信息, 主要是环境变量</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">python -m SimpleHTTPServer </span><span style="color:#ae81ff">8000</span></code></pre>
 </div>
-<h3 id="68-dpkg包管理命令">68. dpkg包管理命令</h3>
+<h3 id="68-dpkg-apt-get包管理命令">68. dpkg,apt-get包管理命令</h3>
 
 <p>查询所有包</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">dpkg -l</span></code></pre>
@@ -1518,10 +1532,13 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dpkg -S /usr/bin/growpart
 </span><span style="">cloud-guest-utils: /usr/bin/growpart</span></code></pre>
 </div>
+<p>查询使用apt-get安装的历史记录</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /var/log/apt/history.log</span></code></pre>
+</div>
 <h3 id="69-主机安全入侵盘查">69. 主机安全入侵盘查</h3>
 
 <p>检查<code>LD_PRELOAD</code>环境变量<br />
-使用<code>vi</code>打开<code>ld.so.preload</code>这个文件是否有内容<br />
+使用<code>vi</code>打开<code>/etc/ld.so.preload</code>这个文件是否有内容<br />
 使用<code>cat /proc/$$/mountinfo</code> 或者<code>cat /proc/mounts</code> 看<code>proc</code> 是否被挂载到其他目录<br />
 使用<code>strace</code>检查普通命令的系统调用<br />
 如下个三个安全相关的分析案例:<br />
@@ -1562,11 +1579,26 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <code>curl: (7) Failed to connect to 114.114.114.114: Network is unreachable</code> 原因是OS里没有相关路由导致
 很快返回<code>curl: (7) Failed connect to 114.114.114.114:80; Connection refused</code> 因为Curl收到icmp 应答消息 80端口不可达， 可能是中间设备iptable发送或者收到服务端rst消息， 80端口没有处于监听状态</p>
 
-<h3 id="73-统计所有进程占用的物理内存">73. 统计所有进程占用的物理内存</h3>
+<h3 id="73-一些常用的内存统计命令">73. 一些常用的内存统计命令</h3>
+
+<p>统计所有进程占用的物理内存</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 使用 grep 查找 Pss 指标后，再用 awk 计算累加值
 </span><span style="color:#75715e"></span><span style="">$ grep Pss /proc/</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="">-9</span><span style="color:#f92672">]</span><span style="">*/smaps </span><span style="">|</span><span style=""> awk </span><span style="color:#e6db74">&#39;{total+=$2}; END {printf &#34;%d kB\n&#34;, total }&#39;</span><span style="">
 </span><span style=""></span><span style="color:#ae81ff">391266</span><span style=""> kB</span></code></pre>
 </div>
+<p>有时smaps文件会看到没有读写权限的内存段,但有p这个权限,即是内存,往往发生在libc这样的共享库和java程序.<br />
+如下文章解释了具体的目的, java程序的情况下经常占用了很大的内存, 只要是为了预留一段连续的内存快<br />
+这些内存是不会计算到<code>Rss</code>或者<code>Pss</code>里面, 但却实实在在占用了内存.<br />
+<a href="https://unix.stackexchange.com/questions/226283/shared-library-mappings-in-proc-pid-maps">https://unix.stackexchange.com/questions/226283/shared-library-mappings-in-proc-pid-maps</a><br />
+<a href="https://unix.stackexchange.com/questions/353676/what-is-the-purpose-of-seemingly-unusable-memory-mappings-in-linux/353685#353685">https://unix.stackexchange.com/questions/353676/what-is-the-purpose-of-seemingly-unusable-memory-mappings-in-linux/353685#353685</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">7fae7db9f000-7fae7dc8f000 r-xp </span><span style="color:#ae81ff">00000000</span><span style=""> </span><span style="color:#ae81ff">08</span><span style="">:05 </span><span style="color:#ae81ff">536861</span><span style="">                     /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.20
+</span><span style="">7fae7dc8f000-7fae7de8f000 ---p 000f0000 </span><span style="color:#ae81ff">08</span><span style="">:05 </span><span style="color:#ae81ff">536861</span><span style="">                     /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.20
+</span><span style="">7fae7de8f000-7fae7de97000 r--p 000f0000 </span><span style="color:#ae81ff">08</span><span style="">:05 </span><span style="color:#ae81ff">536861</span><span style="">                     /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.20
+</span><span style="">7fae7de97000-7fae7de99000 rw-p 000f8000 </span><span style="color:#ae81ff">08</span><span style="">:05 </span><span style="color:#ae81ff">536861</span><span style="">                     /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.20</span></code></pre>
+</div>
+<p>这篇文章详细地介绍了<code>/proc/meminfo</code>里的每一个字段的含义和一些有用的公式.<br />
+<a href="http://linuxperf.com/?p=142">http://linuxperf.com/?p=142</a></p>
+
 <h3 id="74-不同os的文件编码">74. 不同OS的文件编码</h3>
 
 <p>linux显示文件内容的编码方式</p>
@@ -1588,11 +1620,33 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 </div>
 <h3 id="76-dhcp持续请求配置">76. dhcp持续请求配置</h3>
 
-<p>Network管理时, 在<code>ifcfg-ethX</code>文件里增加<code>PERSISTENT_DHCLIENT=yes</code><br />
-NetworkManager管理时, 两个方法:<br />
+<p>Network管理时, 如果要在dhcp获取ip失败后不断重试,则在<code>ifcfg-ethX</code>文件里增加<code>PERSISTENT_DHCLIENT=yes</code><br />
+默认是1分钟后超时, 不重试,日志打印<code>no dhcpoffers received</code><br />
+如果加参数, 1分钟超时, 然后一个随机的时间间隔后再次重试. 一直重试到成功获取ip,日志打印如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">no dhcpoffers received
+</span><span style="">no working leases in persistent database - sleeping</span></code></pre>
+</div>
+<p>如果底层网卡有down, up动作,  dhcp进程还在, 只显示一条报错信息<code>receive_packet failed on eth0: Network is down</code><br />
+当通过dhcp获取ip失败后, 如果配置了持续获取, 那么下次发起请求的时间间隔是个随机值,大致为150s~450s之间.<br />
+具体的代码如下, <code>retry_interval</code>默认是300s,且不可调整<br />
+<a href="https://github.com/42wim/isc-dhcp/blob/f54a146c7fe88889d60f0c1aa8e6f04707f95223/client/dhclient.c">https://github.com/42wim/isc-dhcp/blob/f54a146c7fe88889d60f0c1aa8e6f04707f95223/client/dhclient.c</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="">	</span><span style="">log_info</span><span style=""> </span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;No working leases in persistent database - sleeping.&#34;</span><span style="">);</span><span style="">
+</span><span style="">	</span><span style="">script_init</span><span style="">(</span><span style="">client</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;FAIL&#34;</span><span style="">,</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">string_list</span><span style=""> </span><span style="color:#f92672">*</span><span style="">)</span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">client</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">alias</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="">script_write_params</span><span style="">(</span><span style="">client</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;alias_&#34;</span><span style="">,</span><span style=""> </span><span style="">client</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">alias</span><span style="">);</span><span style="">
+</span><span style="">	</span><span style="">script_go</span><span style="">(</span><span style="">client</span><span style="">);</span><span style="">
+</span><span style="">	</span><span style="">client</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">state</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">S_INIT</span><span style="">;</span><span style="">
+</span><span style="">	</span><span style="">tv</span><span style="">.</span><span style="">tv_sec</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">cur_tv</span><span style="">.</span><span style="">tv_sec</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">((</span><span style="">client</span><span style="color:#f92672">-&gt;</span><span style="">config</span><span style="color:#f92672">-&gt;</span><span style="">retry_interval</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#ae81ff">2</span><span style=""> </span><span style="color:#f92672">+</span><span style="">
+</span><span style="">		    </span><span style="">(</span><span style="">random</span><span style="">()</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="">client</span><span style="color:#f92672">-&gt;</span><span style="">config</span><span style="color:#f92672">-&gt;</span><span style="">retry_interval</span><span style="">));</span><span style="">
+</span><span style="">	</span><span style="">tv</span><span style="">.</span><span style="">tv_usec</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">((</span><span style="">tv</span><span style="">.</span><span style="">tv_sec</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">cur_tv</span><span style="">.</span><span style="">tv_sec</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="color:#f92672">?</span><span style="">
+</span><span style="">			</span><span style="">random</span><span style="">()</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">1000000</span><span style=""> </span><span style="color:#f92672">:</span><span style=""> </span><span style="">cur_tv</span><span style="">.</span><span style="">tv_usec</span><span style="">;</span><span style="">
+</span><span style="">	</span><span style="">add_timeout</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">tv</span><span style="">,</span><span style=""> </span><span style="">state_init</span><span style="">,</span><span style=""> </span><span style="">client</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
+</span><span style="">	</span><span style="">detach</span><span style=""> </span><span style="">();</span></code></pre>
+</div>
+<p>NetworkManager管理时, 两个方法配置持久化:<br />
 使用类似命令修改<code>nmcli connection modify enps1s0 ipv4.dhcp-timeout infinity</code><br />
 在<code>ifcfg-ethX</code>里增加<code>IPV4_DHCP_TIMEOUT=2147483647</code><br />
-<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/configuring_the_dhcp_client_behavior">参考文档</a></p>
+参考 <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/configuring_the_dhcp_client_behavior">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/configuring_the_dhcp_client_behavior</a></p>
 
 <h3 id="77-解析-proc-pid-status里关于信号的字段">77. 解析/proc/[pid]/status里关于信号的字段</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#read -p &#34;PID=&#34; pid
@@ -1612,13 +1666,199 @@ NetworkManager管理时, 两个方法:<br />
 </span><span style=""></span><span style="color:#66d9ef">done</span><span style="">
 </span><span style=""># vim:et:sw</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">:ts</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">:sts</span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">:</span></code></pre>
 </div>
-<p><a href="https://stackoverflow.com/questions/4155483/proc-pidstatus-sigign-field">参考链接</a></p>
+<p>参考链接: <a href="https://stackoverflow.com/questions/4155483/proc-pidstatus-sigign-field">https://stackoverflow.com/questions/4155483/proc-pidstatus-sigign-field</a></p>
 
 <h3 id="78-审计谁杀了进程">78. 审计谁杀了进程</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">auditctl -a always,exit -F </span><span style="">arch</span><span style=""></span><span style="color:#f92672">=</span><span style="">b64 -F </span><span style="">a1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">15</span><span style=""> -S </span><span style="">kill</span><span style=""> -k log_kill
 </span><span style="">auditctl -a always,exit -F </span><span style="">arch</span><span style=""></span><span style="color:#f92672">=</span><span style="">b64 -F </span><span style="">a1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">9</span><span style=""> -S </span><span style="">kill</span><span style=""> -k log_kill</span></code></pre>
 </div>
-<p><a href="https://jotdownux.wordpress.com/2016/01/23/whos-killing-that-process-whos-dumping-prelink-files-in-tmp-linux-auditd-to-the-rescue/">参考</a></p></article>
+<p>参考: <a href="https://jotdownux.wordpress.com/2016/01/23/whos-killing-that-process-whos-dumping-prelink-files-in-tmp-linux-auditd-to-the-rescue/">https://jotdownux.wordpress.com/2016/01/23/whos-killing-that-process-whos-dumping-prelink-files-in-tmp-linux-auditd-to-the-rescue/</a></p>
+
+<h3 id="79-修改字符集的命令">79. 修改字符集的命令</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">localectl set-locale </span><span style="">LANG</span><span style=""></span><span style="color:#f92672">=</span><span style="">en_US.UTF-8
+</span><span style="">localectl set-locale </span><span style="">LANG</span><span style=""></span><span style="color:#f92672">=</span><span style="">zh_CN.UTF-8
+</span><span style="">localectl list-locales</span></code></pre>
+</div>
+<h3 id="80-bash脚本的退出码">80. bash脚本的退出码</h3>
+
+<p>脚本退出码是有特殊含义的,比如常见的<code>127</code>代表脚本里的命令没找到,<code>130</code>代表用户按了<code>ctrl+c</code>导致脚本停止</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ abc
+</span><span style="">-bash: abc: </span><span style="">command</span><span style=""> not found
+</span><span style="">$ </span><span style="">echo</span><span style=""> </span><span style="">$?</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">127</span><span style="">
+</span><span style="">$ sleep </span><span style="color:#ae81ff">1000</span><span style="">
+</span><span style="">^C
+</span><span style="">$ </span><span style="">echo</span><span style=""> </span><span style="">$?</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">130</span></code></pre>
+</div>
+<p>更详细的退出码含义请参见 <a href="https://tldp.org/LDP/abs/html/exitcodes.html">https://tldp.org/LDP/abs/html/exitcodes.html</a></p>
+
+<h3 id="81-模拟不断增加内存致使触发oom的程序">81. 模拟不断增加内存致使触发oom的程序</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style=""> </span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style=""> </span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">void</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">  
+</span><span style="">         </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">n</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">  
+</span><span style="">
+</span><span style="">         </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">(</span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">  
+</span><span style="">                 </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">malloc</span><span style="">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&lt;&lt;</span><span style="color:#ae81ff">20</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">NULL</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">  
+</span><span style="">                         </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;malloc failure after %d MiB</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">n</span><span style="">);</span><span style="">  
+</span><span style="">                         </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">  
+</span><span style="">                 </span><span style="">}</span><span style="">  
+</span><span style="">                 </span><span style="">printf</span><span style=""> </span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;got %d MiB</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="color:#f92672">++</span><span style="">n</span><span style="">);</span><span style="">  
+</span><span style="">         </span><span style="">}</span><span style="">  
+</span><span style=""> </span><span style="">}</span><span style="">  
+</span><span style="">
+</span><span style="">
+</span><span style="">
+</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">$</span><span style=""> </span><span style="">gcc</span><span style=""> </span><span style="">memtest1</span><span style="">.</span><span style="">c</span><span style="">  
+</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">$</span><span style=""> </span><span style="">.</span><span style="color:#f92672">/</span><span style="">a</span><span style="">.</span><span style="">out</span><span style="">  
+</span><span style="">
+</span><span style=""> </span><span style="">got</span><span style=""> </span><span style="color:#ae81ff">570528</span><span style=""> </span><span style="">MiB</span><span style="">  
+</span><span style=""> </span><span style="">got</span><span style=""> </span><span style="color:#ae81ff">570529</span><span style=""> </span><span style="">MiB</span><span style="">  
+</span><span style=""> </span><span style="">got</span><span style=""> </span><span style="color:#ae81ff">570530</span><span style=""> </span><span style="">MiB</span><span style="">  
+</span><span style=""> </span><span style="">got</span><span style=""> </span><span style="color:#ae81ff">570531</span><span style=""> </span><span style="">MiBKilled</span></code></pre>
+</div>
+<p>具体的详细测试步骤: <a href="https://access.redhat.com/solutions/47692">https://access.redhat.com/solutions/47692</a></p>
+
+<h3 id="82-vi实现十六进制编辑功能">82. vi实现十六进制编辑功能</h3>
+
+<p>vim配合xxd对文件进行十六进制的编辑,达到类似UltraEdit的效果</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">vi abc.txt
+</span><span style="">:%!xxd
+</span><span style="">修改完后,运行下面的命令. 注意左边改动会生效,右边的文本改动不生效
+</span><span style="">:%!xxd -r</span></code></pre>
+</div>
+<p>更详细的请看 <a href="https://www.cnblogs.com/meibenjin/archive/2012/12/06/2806396.html">https://www.cnblogs.com/meibenjin/archive/2012/12/06/2806396.html</a></p>
+
+<h3 id="83-iproute软件包里的一些常用命令">83. iproute软件包里的一些常用命令</h3>
+
+<p><code>ifstat</code>打印网卡的一些统计信息,类似<code>ifconfig</code>里的输出,但每次运行时输出从上次运行之后这段时间的统计,而<code>ifconfig</code>是打印的从网卡up以来的累积值<br />
+<code>-a</code>则忽略历史文件,打印从网卡up后的累积值,<code>-j</code>表示输出格式是json.方便二次处理</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ifstat
+</span><span style=""></span><span style="color:#75715e">#kernel
+</span><span style="color:#75715e"></span><span style="">Interface        RX Pkts/Rate    TX Pkts/Rate    RX Data/Rate    TX Data/Rate
+</span><span style="">                 RX Errs/Drop    TX Errs/Drop    RX Over/Rate    TX Coll/Rate
+</span><span style="">lo                    </span><span style="color:#ae81ff">14</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">            </span><span style="color:#ae81ff">14</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">           </span><span style="color:#ae81ff">819</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">           </span><span style="color:#ae81ff">819</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">                       </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">eth0                  </span><span style="color:#ae81ff">25</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">            </span><span style="color:#ae81ff">18</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">          </span><span style="color:#ae81ff">2058</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">          </span><span style="color:#ae81ff">2784</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">                       </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">virbr0                 </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">                       </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">docker0                </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">                       </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">             </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#ae81ff">0</span></code></pre>
+</div>
+<p><code>nstat</code>打印协议栈里的一些统计计数,类似<code>netstat -s</code>的输出,与内核代码里的相关变量名更贴近,容易分析比较<br />
+<code>-r</code>则忽略历史文件,打印从网卡up后的累积值,<code>-z</code>表示非0值的字段也输出</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ nstat
+</span><span style=""></span><span style="color:#75715e">#kernel
+</span><span style="color:#75715e"></span><span style="">IpInReceives                    </span><span style="color:#ae81ff">8297</span><span style="">               </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IpInDelivers                    </span><span style="color:#ae81ff">8297</span><span style="">               </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IpOutRequests                   </span><span style="color:#ae81ff">7789</span><span style="">               </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IcmpInMsgs                      </span><span style="color:#ae81ff">6</span><span style="">                  </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IcmpInErrors                    </span><span style="color:#ae81ff">3</span><span style="">                  </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IcmpInDestUnreachs              </span><span style="color:#ae81ff">6</span><span style="">                  </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IcmpOutMsgs                     </span><span style="color:#ae81ff">6</span><span style="">                  </span><span style="color:#ae81ff">0</span><span style="">.0
+</span><span style="">IcmpOutDestUnreachs             </span><span style="color:#ae81ff">6</span><span style="">                  </span><span style="color:#ae81ff">0</span><span style="">.0</span></code></pre>
+</div>
+<p><code>TcpExtListenOverflows</code>和<code>TcpExtListenDrops</code> 代表全队列或者半队列满了<br />
+<code>TcpInCsumErrors</code>代表接受的包在tcp层的checksum校验不通过,被丢弃</p>
+
+<p>所有的计数项解释 <a href="https://www.kernel.org/doc/html/latest/networking/snmp_counter.html">https://www.kernel.org/doc/html/latest/networking/snmp_counter.html</a></p>
+
+<p><code>lnstat</code>周期性输入一些内核统计数据, <code>-d</code>显示支持的具体文件和项</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ lnstat -d
+</span><span style="">/proc/net/stat/nf_conntrack:
+</span><span style="">	 </span><span style="color:#ae81ff">1</span><span style="">: entries
+</span><span style="">	 </span><span style="color:#ae81ff">2</span><span style="">: searched
+</span><span style="">	 </span><span style="color:#ae81ff">3</span><span style="">: found
+</span><span style="">	 </span><span style="color:#ae81ff">4</span><span style="">: new
+</span><span style="">	 </span><span style="color:#ae81ff">5</span><span style="">: invalid
+</span><span style="">	 </span><span style="color:#ae81ff">6</span><span style="">: ignore
+</span><span style="">	 </span><span style="color:#ae81ff">7</span><span style="">: delete
+</span><span style="">	 </span><span style="color:#ae81ff">8</span><span style="">: delete_list
+</span><span style="">	 </span><span style="color:#ae81ff">9</span><span style="">: insert
+</span><span style="">	</span><span style="color:#ae81ff">10</span><span style="">: insert_failed
+</span><span style="">	</span><span style="color:#ae81ff">11</span><span style="">: drop
+</span><span style="">	</span><span style="color:#ae81ff">12</span><span style="">: early_drop
+</span><span style="">	</span><span style="color:#ae81ff">13</span><span style="">: icmp_error
+</span><span style="">	</span><span style="color:#ae81ff">14</span><span style="">: expect_new
+</span><span style="">	</span><span style="color:#ae81ff">15</span><span style="">: expect_create
+</span><span style="">	</span><span style="color:#ae81ff">16</span><span style="">: expect_delete
+</span><span style="">	</span><span style="color:#ae81ff">17</span><span style="">: search_restart
+</span><span style="">/proc/net/stat/ndisc_cache:
+</span><span style="">	 </span><span style="color:#ae81ff">1</span><span style="">: entries
+</span><span style="">	 </span><span style="color:#ae81ff">2</span><span style="">: allocs
+</span><span style="">	 </span><span style="color:#ae81ff">3</span><span style="">: destroys
+</span><span style="">	 </span><span style="color:#ae81ff">4</span><span style="">: hash_grows
+</span><span style="">	 </span><span style="color:#ae81ff">5</span><span style="">: lookups
+</span><span style="">	 </span><span style="color:#ae81ff">6</span><span style="">: hits
+</span><span style="">	 </span><span style="color:#ae81ff">7</span><span style="">: res_failed
+</span><span style="">	 </span><span style="color:#ae81ff">8</span><span style="">: rcv_probes_mcast
+</span><span style="">	 </span><span style="color:#ae81ff">9</span><span style="">: rcv_probes_ucast
+</span><span style="">	</span><span style="color:#ae81ff">10</span><span style="">: periodic_gc_runs
+</span><span style="">	</span><span style="color:#ae81ff">11</span><span style="">: forced_gc_runs
+</span><span style="">	</span><span style="color:#ae81ff">12</span><span style="">: unresolved_discards</span></code></pre>
+</div>
+<p><code>-k</code>可输出特定项的信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ lnstat -k </span><span style="color:#e6db74">&#34;entries,insert_failed&#34;</span><span style="">
+</span><span style="">nf_connt</span><span style="">|</span><span style="">nf_connt</span><span style="">|</span><span style="">
+</span><span style=""> entries</span><span style="">|</span><span style="">insert_f</span><span style="">|</span><span style="">
+</span><span style="">        </span><span style="">|</span><span style="">   ailed</span><span style="">|</span><span style="">
+</span><span style="">       </span><span style="color:#ae81ff">7</span><span style="">|</span><span style="">       </span><span style="color:#ae81ff">0</span><span style="">|</span><span style="">
+</span><span style="">       </span><span style="color:#ae81ff">7</span><span style="">|</span><span style="">       </span><span style="color:#ae81ff">0</span><span style="">|</span><span style="">
+</span><span style="">       </span><span style="color:#ae81ff">7</span><span style="">|</span><span style="">       </span><span style="color:#ae81ff">0</span><span style="">|</span></code></pre>
+</div>
+<p>这里的entris和<code>conntrack -L</code>的信息是一样的</p>
+
+<p><code>tc</code>可以模拟网络延迟,限速等功能, 下面是查看当前策略的命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ tc -s qdisc
+</span><span style="">$ tc -s qdisc ls dev eth0</span></code></pre>
+</div>
+<h3 id="84-链接跟踪">84. 链接跟踪</h3>
+
+<p><code>conntrack -L</code>可显示当前的所有链接信息, 需要安装<code>conntrack-tools</code>后才可以使用</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ conntrack -L
+</span><span style="">tcp      </span><span style="color:#ae81ff">6</span><span style=""> </span><span style="color:#ae81ff">430950</span><span style=""> ESTABLISHED </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.2 </span><span style="">sport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">22</span><span style=""> </span><span style="">dport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">51568</span><span style=""> </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.2 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22 </span><span style="">sport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">51568</span><span style=""> </span><span style="">dport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">22</span><span style=""> </span><span style="color:#f92672">[</span><span style="">ASSURED</span><span style="color:#f92672">]</span><span style=""> </span><span style="">mark</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">use</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">tcp      </span><span style="color:#ae81ff">6</span><span style=""> </span><span style="color:#ae81ff">5</span><span style=""> TIME_WAIT </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">113</span><span style="">.142.161.250 </span><span style="">sport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">48530</span><span style=""> </span><span style="">dport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">80</span><span style=""> </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">113</span><span style="">.142.161.250 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22</span></code></pre>
+</div>
+<p>如果内核出现<code>nf_conntrack: table full, dropping packet.</code>, 则需要增加链接跟踪表的size</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">sysctl -w net.nf_conntrack_max</span><span style="color:#f92672">=</span><span style="">xxxxx</span></code></pre>
+</div>
+<p>更详细的一些文章:<br />
+<a href="https://blog.csdn.net/u010472499/article/details/78292811">https://blog.csdn.net/u010472499/article/details/78292811</a></p>
+
+<p><code>sysctl -a | grep nf_</code> 查看和链接跟踪所有的内核参数<br />
+具体解释: <a href="https://www.kernel.org/doc/Documentation/networking/nf_conntrack-sysctl.txt">https://www.kernel.org/doc/Documentation/networking/nf_conntrack-sysctl.txt</a></p>
+
+<p>下面的规则是用于跟踪对应连接的TCP状态, 每次连接都有自己的超时时间, 如果配置不当会导致丢包.<br />
+比如<code>ESTABLISHED</code>的超时时间时5天, 如果改为5分钟, 且这5分钟该TCP没有任何报文交互, 则 iptables会将该连接置为invalid.<br />
+这样即使用<code>ss</code>或者<code>netstat</code>查看该连接仍是<code>ESTABLISHED</code>, 任何发到该连接的报文全部会被丢弃.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">    </span><span style="color:#ae81ff">0</span><span style="">     </span><span style="color:#ae81ff">0</span><span style=""> ACCEPT     all  --  *      virbr0  </span><span style="color:#ae81ff">0</span><span style="">.0.0.0/0            </span><span style="color:#ae81ff">192</span><span style="">.168.122.0/24     ctstate RELATED,ESTABLISHED</span></code></pre>
+</div>
+<p>具体的信息见`man iptables-extensions</p>
+
+<p>一些介绍链接跟踪,iptables的文章<br />
+<a href="https://www.cnblogs.com/liushaodong/archive/2013/02/26/2933593.html">https://www.cnblogs.com/liushaodong/archive/2013/02/26/2933593.html</a></p>
+
+<h3 id="85-一些汇编语法">85. 一些汇编语法</h3>
+
+<p>如下文章介绍了x86_64下许多寄存器的用途<br />
+<a href="http://abcdxyzk.github.io/blog/2012/11/23/assembly-args/">http://abcdxyzk.github.io/blog/2012/11/23/assembly-args/</a></p>
+
+<h3 id="86-使用crash分析内核coredump的一些文章">86. 使用crash分析内核coredump的一些文章</h3>
+
+<p><a href="https://irmbor.co.rs/~dspalovic/assets/docsOracle/E41138/html/ch10s02.html">https://irmbor.co.rs/~dspalovic/assets/docsOracle/E41138/html/ch10s02.html</a><br />
+<a href="https://www.slideshare.net/PaulVNovarese/linux-crash-dump-capture-and-analysis">https://www.slideshare.net/PaulVNovarese/linux-crash-dump-capture-and-analysis</a><br />
+<a href="https://serverfault.com/questions/475721/how-to-use-kdump-crash-to-investigate-an-oom-issue">https://serverfault.com/questions/475721/how-to-use-kdump-crash-to-investigate-an-oom-issue</a><br />
+<a href="https://www.redhat.com/archives/crash-utility/2012-December/msg00029.html">https://www.redhat.com/archives/crash-utility/2012-December/msg00029.html</a></p>
+
+<p>最主要还是看crash的官方主页: <a href="https://crash-utility.github.io/">https://crash-utility.github.io/</a></p>
+
+<h3 id="87-linux内核模块相关">87. Linux内核模块相关</h3>
+
+<p>使用weak-modules实现外部开发的内核模块在多个内核(KABI兼容的情况下)都可以使用, 这篇文章介绍了具体的方法<br />
+<a href="https://www.cnblogs.com/xingmuxin/p/9092344.html">https://www.cnblogs.com/xingmuxin/p/9092344.html</a></p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
@@ -1630,7 +1870,7 @@ NetworkManager管理时, 两个方法:<br />
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>881</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>966</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     
