@@ -343,7 +343,7 @@
 </span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
 </div>
-<p>关于文件描述符和系统级的文件打开表的关系, 可参见文章 <a href="https://www.cnblogs.com/Orgliny/articles/5699479.html">https://www.cnblogs.com/Orgliny/articles/5699479.html</a><br />
+<p>关于文件描述符(the processes&rsquo; local file descriptor table)和系统级的文件打开表(OS&rsquo; open file table)的关系, 可参见文章 <a href="https://www.cnblogs.com/Orgliny/articles/5699479.html">https://www.cnblogs.com/Orgliny/articles/5699479.html</a><br />
 如果两个文件描述符指向同一个文件打开项, 则共享打开的标志, 偏移量. (close-exec 是进程级文件描述符里的标志)<br />
 每次<code>open</code>都会创建一个新的文件打开项, 所以同一个进程打开同一个文件两次, 那么文件打开项是不一样的. 不共享偏移量等信息</p>
 

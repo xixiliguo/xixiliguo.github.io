@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>一些代码片段</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wang" />
+  <meta name="description" content="记录自己日常写的一些代码片段 " />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="一些代码片段" />
+    <meta name="twitter:description" content="记录自己日常写的一些代码片段 " />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/code_segment/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">一些代码片段</h1>
+      <p class="post-meta">@Peter Wang · Sep 30, 2020 · 3 min read</p>
+    </header>
+    <article class="post-content"><p>记录自己日常写的一些代码片段
+</p>
+
+<h3 id="使用golang实现类似ping获取网络时延">使用golang实现类似ping获取网络时延</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;log&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;net&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;os&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;syscall&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;time&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;unsafe&#34;</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;golang.org/x/net/icmp&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;golang.org/x/net/ipv4&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">conn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">net</span><span style="">.</span><span style="color:#a6e22e">DialIP</span><span style="">(</span><span style="color:#e6db74">&#34;ip4:icmp&#34;</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">net</span><span style="">.</span><span style="color:#a6e22e">IPAddr</span><span style="">{</span><span style="color:#a6e22e">IP</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">net</span><span style="">.</span><span style="color:#a6e22e">ParseIP</span><span style="">(</span><span style="color:#e6db74">&#34;114.114.114.114&#34;</span><span style="">)})</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;net DialIP: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">rawconn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">conn</span><span style="">.</span><span style="color:#a6e22e">SyscallConn</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;get raw: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">rawconn</span><span style="">.</span><span style="color:#a6e22e">Control</span><span style="">(</span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">fd</span><span style=""> </span><span style="color:#66d9ef">uintptr</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SetsockoptInt</span><span style="">(</span><span style="">int</span><span style="">(</span><span style="color:#a6e22e">fd</span><span style="">),</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SOL_SOCKET</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SO_TIMESTAMP</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="">})</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">wm</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">icmp</span><span style="">.</span><span style="color:#a6e22e">Message</span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">Type</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">ipv4</span><span style="">.</span><span style="color:#a6e22e">ICMPTypeEcho</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">Code</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">Body</span><span style="">:</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">icmp</span><span style="">.</span><span style="color:#a6e22e">Echo</span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">ID</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Getpid</span><span style="">()</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style=""> </span><span style="color:#ae81ff">0xffff</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">Seq</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">,</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">Data</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="">byte</span><span style="">(</span><span style="color:#e6db74">&#34;aaaaaaaaaaaaaaaaaaaaaaaaaaaa&#34;</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="">},</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">wb</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">wm</span><span style="">.</span><span style="color:#a6e22e">Marshal</span><span style="">(</span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;generate icmp request: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">beforetime</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Now</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;send %+v\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">wm</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">conn</span><span style="">.</span><span style="color:#a6e22e">Write</span><span style="">(</span><span style="color:#a6e22e">wb</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;send icmp request: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">rb</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">make</span><span style="">([]</span><span style="color:#66d9ef">byte</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1500</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">oob</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">make</span><span style="">([]</span><span style="color:#66d9ef">byte</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1500</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">n</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">oobn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">addr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">conn</span><span style="">.</span><span style="color:#a6e22e">ReadMsgIP</span><span style="">(</span><span style="color:#a6e22e">rb</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">oob</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">header</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">ipv4</span><span style="">.</span><span style="color:#a6e22e">ParseHeader</span><span style="">(</span><span style="color:#a6e22e">rb</span><span style="">[:</span><span style="color:#a6e22e">n</span><span style="">])</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;decode ip header of icmp response: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">rm</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">icmp</span><span style="">.</span><span style="color:#a6e22e">ParseMessage</span><span style="">(</span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">rb</span><span style="">[</span><span style="color:#a6e22e">header</span><span style="">.</span><span style="color:#a6e22e">Len</span><span style="">:</span><span style="color:#a6e22e">n</span><span style="">])</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;parse icmp messages: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="color:#a6e22e">rm</span><span style="">.</span><span style="color:#a6e22e">Type</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">ipv4</span><span style="">.</span><span style="color:#a6e22e">ICMPTypeEchoReply</span><span style="">:</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">resp</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">rm</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">icmp</span><span style="">.</span><span style="color:#a6e22e">Echo</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">resp</span><span style="">.</span><span style="color:#a6e22e">ID</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Getpid</span><span style="">()</span><span style="color:#f92672">&amp;</span><span style="color:#ae81ff">0xffff</span><span style=""> </span><span style="color:#f92672">||</span><span style=""> </span><span style="color:#a6e22e">resp</span><span style="">.</span><span style="color:#a6e22e">Seq</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;receiv icmp response for antoher process&#34;</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">cmsgs</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">ParseSocketControlMessage</span><span style="">(</span><span style="color:#a6e22e">oob</span><span style="">[:</span><span style="color:#a6e22e">oobn</span><span style="">])</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatalf</span><span style="">(</span><span style="color:#e6db74">&#34;parse cmsg: %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">m</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmsgs</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">]</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">aftertime</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Now</span><span style="">()</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">m</span><span style="">.</span><span style="color:#a6e22e">Header</span><span style="">.</span><span style="color:#a6e22e">Level</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SOL_SOCKET</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">m</span><span style="">.</span><span style="color:#a6e22e">Header</span><span style="">.</span><span style="color:#a6e22e">Type</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SCM_TIMESTAMP</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">recvtime</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">Timeval</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">recvtime</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#f92672">*</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">Timeval</span><span style="">)(</span><span style="color:#a6e22e">unsafe</span><span style="">.</span><span style="color:#a6e22e">Pointer</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">m</span><span style="">.</span><span style="color:#a6e22e">Data</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">]))</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">aftertime</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Unix</span><span style="">(</span><span style="color:#a6e22e">recvtime</span><span style="">.</span><span style="color:#a6e22e">Unix</span><span style="">())</span><span style="">
+</span><span style="">			</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;using so_timestamp&#34;</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;after %dms, got msg %+v from %v&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">aftertime</span><span style="">.</span><span style="color:#a6e22e">Sub</span><span style="">(</span><span style="color:#a6e22e">beforetime</span><span style="">).</span><span style="color:#a6e22e">Milliseconds</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">rm</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">addr</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">default</span><span style="">:</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;got %+v from %v; want echo reply&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">rm</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">addr</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>运行结果如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ go run main.go
+</span><span style=""></span><span style="color:#ae81ff">2020</span><span style="">/09/30 </span><span style="color:#ae81ff">00</span><span style="">:12:07 send </span><span style="color:#f92672">{</span><span style="">Type:echo Code:0 Checksum:0 Body:0xc000094870</span><span style="color:#f92672">}</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">2020</span><span style="">/09/30 </span><span style="color:#ae81ff">00</span><span style="">:12:07 using so_timestamp
+</span><span style=""></span><span style="color:#ae81ff">2020</span><span style="">/09/30 </span><span style="color:#ae81ff">00</span><span style="">:12:07 after 30ms, got msg </span><span style="">&amp;</span><span style="color:#f92672">{</span><span style="">Type:echo reply Code:0 Checksum:38592 Body:0xc00006c060</span><span style="color:#f92672">}</span><span style=""> from </span><span style="color:#ae81ff">114</span><span style="">.114.114.114</span></code></pre>
+</div>
+<h3 id="使用golang打印系统调用时errorno的含义">使用golang打印系统调用时errorno的含义</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;syscall&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="color:#ae81ff">133</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">errno</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">Errno</span><span style="">(</span><span style="color:#a6e22e">i</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;Errno %d 0x%x: %s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">errno</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>运行结果如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ go run main.go
+</span><span style="">Errno </span><span style="color:#ae81ff">1</span><span style=""> 0x1: operation not permitted
+</span><span style="">Errno </span><span style="color:#ae81ff">2</span><span style=""> 0x2: no such file or directory
+</span><span style="">Errno </span><span style="color:#ae81ff">3</span><span style=""> 0x3: no such process
+</span><span style="">Errno </span><span style="color:#ae81ff">4</span><span style=""> 0x4: interrupted system call
+</span><span style="">Errno </span><span style="color:#ae81ff">5</span><span style=""> 0x5: input/output error
+</span><span style="">Errno </span><span style="color:#ae81ff">6</span><span style=""> 0x6: no such device or address
+</span><span style="">Errno </span><span style="color:#ae81ff">7</span><span style=""> 0x7: argument list too long
+</span><span style="">Errno </span><span style="color:#ae81ff">8</span><span style=""> 0x8: </span><span style="">exec</span><span style=""> format error
+</span><span style="">Errno </span><span style="color:#ae81ff">9</span><span style=""> 0x9: bad file descriptor
+</span><span style="">Errno </span><span style="color:#ae81ff">10</span><span style=""> 0xa: no child processes
+</span><span style="">Errno </span><span style="color:#ae81ff">11</span><span style=""> 0xb: resource temporarily unavailable
+</span><span style="">......</span></code></pre>
+</div>
+<h3 id="分析两个关于超出最大文件数的错误逻辑">分析两个关于超出最大文件数的错误逻辑</h3>
+
+<p>ENFILE是指超过了系统级最大的文件句柄数.  <code>sysctl fs.file-max</code><br />
+EMFILE是指超过了该进程指定的最大文件数. <code>cat /proc/[pid]/limits</code>里的<code>Max open files</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define	ENFILE		23	</span><span style="color:#75715e">/* File table overflow */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define	EMFILE		24	</span><span style="color:#75715e">/* Too many open files */</span></code></pre>
+</div>
+<p><code>Too many open files</code> 演示代码:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/resource.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;errno.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/types.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/stat.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;fcntl.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">rlimit</span><span style=""> </span><span style="">old_lim</span><span style="">,</span><span style=""> </span><span style="">lim</span><span style="">,</span><span style=""> </span><span style="">new_lim</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Get old limits
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">if</span><span style="">(</span><span style=""> </span><span style="">getrlimit</span><span style="">(</span><span style="">RLIMIT_NOFILE</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">old_lim</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Old limits -&gt; soft limit= %ld </span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style="">          </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34; hard limit= %ld </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">old_lim</span><span style="">.</span><span style="">rlim_cur</span><span style="">,</span><span style="">
+</span><span style="">                               </span><span style="">old_lim</span><span style="">.</span><span style="">rlim_max</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">        </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Set new value
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">lim</span><span style="">.</span><span style="">rlim_cur</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">lim</span><span style="">.</span><span style="">rlim_max</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Set limits
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">if</span><span style="">(</span><span style="">setrlimit</span><span style="">(</span><span style="">RLIMIT_NOFILE</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">lim</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Get new limits
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">if</span><span style="">(</span><span style=""> </span><span style="">getrlimit</span><span style="">(</span><span style="">RLIMIT_NOFILE</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">new_lim</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;New limits -&gt; soft limit= %ld </span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style="">          </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34; hard limit= %ld </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">new_lim</span><span style="">.</span><span style="">rlim_cur</span><span style="">,</span><span style="">
+</span><span style="">                                </span><span style="">new_lim</span><span style="">.</span><span style="">rlim_max</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">        </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Try to open a new file
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">if</span><span style="">(</span><span style="">open</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;foo.txt&#34;</span><span style="">,</span><span style=""> </span><span style="">O_WRONLY</span><span style=""> </span><span style="color:#f92672">|</span><span style=""> </span><span style="">O_CREAT</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;errno %d: %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">errno</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">            </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Opened successfully</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>运行结果如下, 说明当进程打开的文件数超过<code>ulimit -a</code>里设置的值或者<code>RLIMIT_NOFILE</code>, 两者等价. 返回<code>EMFILE</code> 24号错误</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ gcc -g testopenfiles-process.c -o testopenfiles-process </span><span style="color:#f92672">&amp;&amp;</span><span style=""> ./testopenfiles-process
+</span><span style="">Old limits -&gt; soft </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1048576</span><span style=""> 	 hard </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1048576</span><span style="">
+</span><span style="">New limits -&gt; soft </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style=""> 	 hard </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">errno </span><span style="color:#ae81ff">24</span><span style="">: Too many open files</span></code></pre>
+</div>
+<p><code>File table overflow</code> 或者<code>Too many open files in system</code>演示代码:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;errno.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;fcntl.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/resource.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/stat.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/types.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="color:#ae81ff">200000</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="">name</span><span style="">[</span><span style="color:#ae81ff">256</span><span style="">];</span><span style="">
+</span><span style="">    </span><span style="">sprintf</span><span style="">(</span><span style="">name</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;foo%d.txt&#34;</span><span style="">,</span><span style=""> </span><span style="">i</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">open</span><span style="">(</span><span style="">name</span><span style="">,</span><span style=""> </span><span style="">O_WRONLY</span><span style=""> </span><span style="color:#f92672">|</span><span style=""> </span><span style="">O_CREAT</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
+</span><span style="">      </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;errno %d: %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">errno</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Opened successfully</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>运行结果如下, 说明当进程打开的文件数系统的最大文件数时. 返回<code>ENFILE</code> 23号错误</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ gcc -g testopenfiles-system.c -o testopenfiles-system </span><span style="color:#f92672">&amp;&amp;</span><span style=""> ./testopenfiles-system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system
+</span><span style="">errno </span><span style="color:#ae81ff">23</span><span style="">: Too many open files in system</span></code></pre>
+</div>
+<p>dmesg里可以同时也打印类似<code>VFS: file-max limit 135375 reached</code>这样的日志.</p>
+
+<h3 id="分析eagain的产生场景">分析EAGAIN的产生场景</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define	EAGAIN		11	</span><span style="color:#75715e">/* Try again */</span></code></pre>
+</div>
+<p>在<code>fork</code>等系统调用时返回<code>EAGAIN Resource temporarily unavailable</code>是因为进程/线程数超限了, 要检查两种情况<br />
+1. 当该进程/线程对应的用户的所有进程数超过上限, <code>ulimit -a</code>里的<code>NOFILE</code><br />
+2. <code>sysctl kernel.pid_max</code> OS系统级的最大进程数<br />
+有一篇详细的案例可参考: <a href="https://access.redhat.com/solutions/1434943">https://access.redhat.com/solutions/1434943</a><br />
+ <code>man 2 fork</code>里的解释如下:</p>
+
+<pre><code>EAGAIN fork() cannot allocate sufficient memory to copy the parent's page tables and allocate a task structure for the child.
+EAGAIN It  was  not  possible to create a new process because the caller's RLIMIT_NPROC resource limit was encountered.  To exceed this limit, the process must have either the CAP_SYS_ADMIN or the CAP_SYS_RESOURCE capability.   
+</code></pre>
+
+<p>非root用户执行如下代码:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;errno.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;fcntl.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/resource.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/stat.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/types.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">rlimit</span><span style=""> </span><span style="">old_lim</span><span style="">,</span><span style=""> </span><span style="">lim</span><span style="">,</span><span style=""> </span><span style="">new_lim</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Get old limits
+</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">getrlimit</span><span style="">(</span><span style="">RLIMIT_NPROC</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">old_lim</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="">
+</span><span style="">        </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Old limits -&gt; soft limit= %ld </span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style="">        </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34; hard limit= %ld </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="">old_lim</span><span style="">.</span><span style="">rlim_cur</span><span style="">,</span><span style=""> </span><span style="">old_lim</span><span style="">.</span><span style="">rlim_max</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">    </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Set new value
+</span><span style="color:#75715e"></span><span style="">  </span><span style="">lim</span><span style="">.</span><span style="">rlim_cur</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">lim</span><span style="">.</span><span style="">rlim_max</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Set limits
+</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">setrlimit</span><span style="">(</span><span style="">RLIMIT_NPROC</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">lim</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Get new limits
+</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">getrlimit</span><span style="">(</span><span style="">RLIMIT_NPROC</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">new_lim</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="">
+</span><span style="">        </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;New limits -&gt; soft limit= %ld &#34;</span><span style="">
+</span><span style="">        </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74"> hard limit= %ld </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="">new_lim</span><span style="">.</span><span style="">rlim_cur</span><span style="">,</span><span style=""> </span><span style="">new_lim</span><span style="">.</span><span style="">rlim_max</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">else</span><span style="">
+</span><span style="">    </span><span style="">fprintf</span><span style="">(</span><span style="">stderr</span><span style="">,</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">targetFork</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">10</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">pid_t</span><span style=""> </span><span style="">forkResult</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">targetFork</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">forkResult</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">fork</span><span style="">();</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">forkResult</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;errno %d %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">errno</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">errno</span><span style="">));</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">forkResult</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Child pid: %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">getpid</span><span style="">());</span><span style="">
+</span><span style="">      </span><span style="color:#66d9ef">break</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Parent pid: %d trigger fork %d times %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">getpid</span><span style="">()</span><span style=""> </span><span style="">,</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>结果为:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ./a.out
+</span><span style="">Old limits -&gt; soft </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4096</span><span style=""> 	 hard </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5370</span><span style="">
+</span><span style="">New limits -&gt; soft </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style=""> 	 hard </span><span style="">limit</span><span style=""></span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="">
+</span><span style="">Parent pid: </span><span style="color:#ae81ff">26665</span><span style=""> trigger fork </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="">times</span><span style=""> </span><span style="color:#ae81ff">1068333019</span><span style="">
+</span><span style="">Child pid: </span><span style="color:#ae81ff">26666</span><span style="">
+</span><span style="">Parent pid: </span><span style="color:#ae81ff">26665</span><span style=""> trigger fork </span><span style="color:#ae81ff">2</span><span style=""> </span><span style="">times</span><span style=""> </span><span style="color:#ae81ff">1068329250</span><span style="">
+</span><span style="">Parent pid: </span><span style="color:#ae81ff">26665</span><span style=""> trigger fork </span><span style="color:#ae81ff">3</span><span style=""> </span><span style="">times</span><span style=""> </span><span style="color:#ae81ff">1068329250</span><span style="">
+</span><span style="">Child pid: </span><span style="color:#ae81ff">26667</span><span style="">
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">errno </span><span style="color:#ae81ff">11</span><span style=""> Resource temporarily unavailable
+</span><span style="">Child pid: </span><span style="color:#ae81ff">26668</span></code></pre>
+</div>
+<p>如果是<code>root</code>用户执行, 则不会有报错, 是因为root默认有<code>CAP_SYS_ADMIN</code>或者<code>CAP_SYS_RESOURCE</code>权限</p>
+
+<h3 id="实现类似hexdump打印格式的代码">实现类似hexdump打印格式的代码</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">extern</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">**</span><span style="">environ</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">hexDump</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">desc</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#f92672">*</span><span style="">addr</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">len</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="">buffLine</span><span style="">[</span><span style="color:#ae81ff">17</span><span style="">];</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">pc</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">)</span><span style="">addr</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">desc</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">NULL</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">desc</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">len</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">((</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">16</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;  %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">buffLine</span><span style="">);</span><span style="">
+</span><span style="">      </span><span style="color:#75715e">// Prints the ADDRESS
+</span><span style="color:#75715e"></span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;  %08x &#34;</span><span style="">,</span><span style=""> </span><span style="">i</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Prints the HEXCODES that represent each chars.
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%02x&#34;</span><span style="">,</span><span style=""> </span><span style="">pc</span><span style="">[</span><span style="">i</span><span style="">]);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">((</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34; &#34;</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">((</span><span style="">pc</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="color:#ae81ff">0x20</span><span style="">)</span><span style=""> </span><span style="color:#f92672">||</span><span style=""> </span><span style="">(</span><span style="">pc</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#ae81ff">0x7e</span><span style="">))</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">buffLine</span><span style="">[</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">16</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;.&#39;</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">buffLine</span><span style="">[</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">16</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">pc</span><span style="">[</span><span style="">i</span><span style="">];</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">buffLine</span><span style="">[(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">16</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;\0&#39;</span><span style="">;</span><span style="">  </span><span style="color:#75715e">// Clears the next array buffLine
+</span><span style="color:#75715e"></span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">((</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">16</span><span style="">)</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">((</span><span style="">i</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;   &#34;</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;  &#34;</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">i</span><span style="color:#f92672">++</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;  %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">buffLine</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">(</span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">argc</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">**</span><span style="">argv</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">end</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;argc = %p %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">argc</span><span style="">,</span><span style=""> </span><span style="">argc</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;argv = %p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">argc</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;argv[%d] = %p %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">i</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="">i</span><span style="">],</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="">i</span><span style="">]);</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;environ = %p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">environ</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">environ</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">NULL</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;environ[%d] = %p %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">i</span><span style="">,</span><span style=""> </span><span style="">environ</span><span style="">[</span><span style="">i</span><span style="">],</span><span style=""> </span><span style="">environ</span><span style="">[</span><span style="">i</span><span style="">]);</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">end</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">environ</span><span style="">[</span><span style="">i</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">];</span><span style=""> </span><span style="color:#f92672">*</span><span style="">end</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0x00</span><span style="">;</span><span style=""> </span><span style="">end</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">hexDump</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;begin from argv[0]&#34;</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">end</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">]</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/%E4%BB%A3%E7%A0%81"><span class="tag">代码</span></a></li>
+        
+          <li><a href="https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5"><span class="tag">片段</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2020 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>

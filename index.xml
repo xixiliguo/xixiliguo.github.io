@@ -23,6 +23,36 @@ wangbo.red@gmail.com</description>
     </item>
     
     <item>
+      <title>Lua实现原理 - GC垃圾回收</title>
+      <link>https://xixiliguo.github.io/post/lua-implemention-gc/</link>
+      <pubDate>Wed, 30 Sep 2020 21:17:14 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/lua-implemention-gc/</guid>
+      <description>&lt;p&gt;Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+本文主要介绍它的垃圾回收算法&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>一些代码片段</title>
+      <link>https://xixiliguo.github.io/post/code_segment/</link>
+      <pubDate>Wed, 30 Sep 2020 00:09:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/code_segment/</guid>
+      <description>&lt;p&gt;记录自己日常写的一些代码片段
+&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Lua实现原理 - 类型与值</title>
+      <link>https://xixiliguo.github.io/post/lua-implemention-type-value/</link>
+      <pubDate>Sun, 27 Sep 2020 21:17:14 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/lua-implemention-type-value/</guid>
+      <description>&lt;p&gt;Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).&lt;br /&gt;
+本文主要介绍它的值实现方式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Linux Boot过程总结</title>
       <link>https://xixiliguo.github.io/post/linux-boot/</link>
       <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>

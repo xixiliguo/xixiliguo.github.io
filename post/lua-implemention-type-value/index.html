@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+
+  
+  <title>Lua实现原理 - 类型与值</title>
+
+  
+  
+
+
+
+
+  
+  <meta name="author" content="Peter Wang" />
+  <meta name="description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+本文主要介绍它的值实现方式
+" />
+
+  
+  
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@gohugoio" />
+    <meta name="twitter:title" content="Lua实现原理 - 类型与值" />
+    <meta name="twitter:description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+本文主要介绍它的值实现方式
+" />
+    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
+  
+
+
+
+
+<meta name="generator" content="Hugo 0.28" />
+
+
+<link rel="canonical" href="https://xixiliguo.github.io/post/lua-implemention-type-value/" />
+<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
+
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="format-detection" content="telephone=no,email=no,adress=no" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+
+
+<meta name="robots" content="index,follow" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+
+<meta name="baidu-site-verification" content="xijFMBD2HS" />
+
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="个人网站" />
+<meta name="msapplication-tooltip" content="个人网站" />
+<meta name='msapplication-navbutton-color' content="#5fbf5e" />
+<meta name="msapplication-TileColor" content="#5fbf5e" />
+<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
+<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
+<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
+<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
+<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+
+
+
+<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+
+<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+
+
+  
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
+  <![endif]-->
+
+<!--[if lte IE 11]>
+    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+
+<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+
+<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+</head>
+  <body>
+    
+    <div class="suspension">
+      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
+      
+        
+      
+    </div>
+    
+    
+  <header class="site-header">
+  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
+  
+  <h2 class="title">个人网站</h2>
+  
+  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
+  <button class="menu-toggle" type="button">
+    <span class="icon icon-menu"></span>
+  </button>
+  <nav class="site-menu collapsed">
+    <h2 class="offscreen">Main Menu</h2>
+    <ul class="menu-list">
+      
+      
+      
+      
+        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
+      
+        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
+      
+        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
+      
+    </ul>
+  </nav>
+  <nav class="social-menu collapsed">
+    <h2 class="offscreen">Social Networks</h2>
+    <ul class="social-list">
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <li class="social-item">
+        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
+      </li>
+
+    </ul>
+  </nav>
+</header>
+
+  <section class="main post-detail">
+    <header class="post-header">
+      <h1 class="post-title">Lua实现原理 - 类型与值</h1>
+      <p class="post-meta">@Peter Wang · Sep 27, 2020 · 3 min read</p>
+    </header>
+    <article class="post-content"><p>Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).<br />
+本文主要介绍它的值实现方式</p>
+
+<p>
+Lua的虚拟机自5.0后是虚拟机运行是基于寄存器的.其他大部分解释性语言都是基于栈的(Python,Java).Lua全部采用C语言编写,可在多个平台下编译通过.作为一个嵌入式的语言,常作为大型程序的插件使用(比如Wireshark,Redis).<br />
+Lua和其他解释性语言一样,先将原文件编译为字节码.即一种虚拟机可&rdquo;读懂&rdquo;的数据形式.然后虚拟机循环读取每个字节码,并执行相应的操作.<br />
+文中所有代码都指Lua 5.3.1,OS环境为CentOS7,同时例子中的代码做了增减,将宏展开或者删除掉一些与所讲内容关系不大的代码.</p>
+
+<p>值与类型
+在Lua里的总共实现了9种类型,具体如下：</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">nil</td>
+<td align="left">代表一个值不存在</td>
+</tr>
+
+<tr>
+<td align="left">boolean</td>
+<td align="left">代表逻辑判断的结果 包括true,false两个值</td>
+</tr>
+
+<tr>
+<td align="left">number</td>
+<td align="left">代表数字，可以是整数,也可以是浮点数.</td>
+</tr>
+
+<tr>
+<td align="left">lightuserdata</td>
+<td align="left">代表轻型用户数据，它简单地指向一个C指针</td>
+</tr>
+
+<tr>
+<td align="left">userdata</td>
+<td align="left">代表完全用户数据，它可以通过元表定义许多操作.</td>
+</tr>
+
+<tr>
+<td align="left">string</td>
+<td align="left">代表字符串</td>
+</tr>
+
+<tr>
+<td align="left">table</td>
+<td align="left">代表hash表和列表， 这块Lua设计得相当取巧,用一种类型同时支持Python里的dict(表示键值对)和Python里的list(数组).</td>
+</tr>
+
+<tr>
+<td align="left">function</td>
+<td align="left">代表Lua和C语言里的函数</td>
+</tr>
+
+<tr>
+<td align="left">thread</td>
+<td align="left">代表Lua内部实现的协程。 它并不是OS的原生线程, 它代表了一组执行序列. 虚拟机的字节码执行就是在它的栈上</td>
+</tr>
+</tbody>
+</table>
+
+<p>在解释性语言里, 值的实现上是自带类型的. 例如 <code>a = 10</code> 这样的语句表示将number类型的值为10的对象绑定到a上.  与C这种静态语言不同，变量名只是一个名字, 它可以通过<code>=</code>和任意类型的对象绑定。<br />
+如下是Lua中对象的结构定义. 所有对象都用这个结构体表示.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span><span style=""> </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">lua_TValue</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">Value</span><span style=""> </span><span style="">value_</span><span style="">;</span><span style=""> 
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">tt_</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span><span style=""> </span><span style="">TValue</span><span style="">;</span><span style=""> 
+</span><span style=""></span><span style="color:#66d9ef">union</span><span style=""> </span><span style="">Value</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">GCObject</span><span style=""> </span><span style="color:#f92672">*</span><span style="">gc</span><span style="">;</span><span style="">    </span><span style="color:#75715e">/* collectable objects */</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#f92672">*</span><span style="">p</span><span style="">;</span><span style="">         </span><span style="color:#75715e">/* light userdata */</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">b</span><span style="">;</span><span style="">           </span><span style="color:#75715e">/* booleans */</span><span style="">
+</span><span style="">  </span><span style="">lua_CFunction</span><span style=""> </span><span style="">f</span><span style="">;</span><span style=""> </span><span style="color:#75715e">/* light C functions */</span><span style="">
+</span><span style="">  </span><span style="">lua_Integer</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">   </span><span style="color:#75715e">/* integer numbers */</span><span style="">
+</span><span style="">  </span><span style="">lua_Number</span><span style=""> </span><span style="">n</span><span style="">;</span><span style="">    </span><span style="color:#75715e">/* float numbers */</span><span style="">
+</span><span style=""></span><span style="">};</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/* 使用 union 可以节省空间,因为这几个字段不可能同时有效 */</span></code></pre>
+</div>
+<p>其中<code>tt_</code>字段包含了类型信息. 低位0到3代表了类型. 4,5位则对类型细分. 比如字符串里又分为短字符串和长字符串. 比如function这个类型可分为c函数, Lua闭包和C闭包. 他们各自的调用方式或者行为都不同, 这样做的目的是可以进一步做优化.<br />
+第6位表示该值是否由GC管理. 用户数据,boolean,c function,整数或者浮点数可以直接表示, 其他如string, table需要GC管理. 相比Python下是所有的类型都受GC管理, Lua则做了优化.这样GC压力小,自然性能好.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/*
+</span><span style="color:#75715e">** basic types
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define LUA_TNIL		0
+</span><span style="color:#75715e">#define LUA_TBOOLEAN		1
+</span><span style="color:#75715e">#define LUA_TLIGHTUSERDATA	2
+</span><span style="color:#75715e">#define LUA_TNUMBER		3
+</span><span style="color:#75715e">#define LUA_TSTRING		4
+</span><span style="color:#75715e">#define LUA_TTABLE		5
+</span><span style="color:#75715e">#define LUA_TFUNCTION		6
+</span><span style="color:#75715e">#define LUA_TUSERDATA		7
+</span><span style="color:#75715e">#define LUA_TTHREAD		8
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** tags for Tagged Values have the following use of bits:
+</span><span style="color:#75715e">** bits 0-3: actual tag (a LUA_T* value)
+</span><span style="color:#75715e">** bits 4-5: variant bits
+</span><span style="color:#75715e">** bit 6: whether value is collectable
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** LUA_TFUNCTION variants:
+</span><span style="color:#75715e">** 0 - Lua function
+</span><span style="color:#75715e">** 1 - light C function
+</span><span style="color:#75715e">** 2 - regular C function (closure)
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/* Variant tags for functions */</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define LUA_TLCL	(LUA_TFUNCTION | (0 &lt;&lt; 4))  </span><span style="color:#75715e">/* Lua closure */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LUA_TLCF	(LUA_TFUNCTION | (1 &lt;&lt; 4))  </span><span style="color:#75715e">/* light C function */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LUA_TCCL	(LUA_TFUNCTION | (2 &lt;&lt; 4))  </span><span style="color:#75715e">/* C closure */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">/* Variant tags for strings */</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define LUA_TSHRSTR	(LUA_TSTRING | (0 &lt;&lt; 4))  </span><span style="color:#75715e">/* short strings */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LUA_TLNGSTR	(LUA_TSTRING | (1 &lt;&lt; 4))  </span><span style="color:#75715e">/* long strings */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">/* Variant tags for numbers */</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define LUA_TNUMFLT	(LUA_TNUMBER | (0 &lt;&lt; 4))  </span><span style="color:#75715e">/* float numbers */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LUA_TNUMINT	(LUA_TNUMBER | (1 &lt;&lt; 4))  </span><span style="color:#75715e">/* integer numbers */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">/* Bit mark for collectable types */</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define BIT_ISCOLLECTABLE	(1 &lt;&lt; 6)</span></code></pre>
+</div>
+<p><code>TValue</code>通过字段<code>tt_</code>字段可知道其型, 如果是<code>booleans</code>, 则直接取<code>TValue.b</code>. 如果是<code>light c function</code>,则取<code>TValue.f</code>. 如果是GC管理的对象, 则需要通过如下宏将类型为GCObject指针显性转换为相应类型的指针. 比如字符串的结构为<code>struct TString</code>,  当前有个<code>TValue</code>的指针p.  通过<code>p-&gt;tt_</code>判断该值是字符串, 则<code>GCUnion*(p-&gt;value_.gc)-&gt;ts</code> 则可以得到一个指向 struct TString结构的指针. 当然也可以将新生成的<code>struct TString</code>结构的指针转换为<code>GCObject</code>结构的指针, 放入<code>TValue</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f92672">**</span><span style=""> </span><span style="">Common</span><span style=""> </span><span style="">Header</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">all</span><span style=""> </span><span style="">collectable</span><span style=""> </span><span style="color:#a6e22e">objects</span><span style=""> </span><span style="">(</span><span style="">in</span><span style=""> </span><span style="">macro</span><span style=""> </span><span style="">form</span><span style="">,</span><span style=""> </span><span style="">to</span><span style=""> </span><span style="">be</span><span style="">
+</span><span style=""></span><span style="color:#f92672">**</span><span style=""> </span><span style="">included</span><span style=""> </span><span style="">in</span><span style=""> </span><span style="">other</span><span style=""> </span><span style="">objects</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#960050;background-color:#1e0010">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define CommonHeader	GCObject *next</span><span style="">;</span><span style=""> </span><span style="">lu_byte</span><span style=""> </span><span style="">tt</span><span style="">;</span><span style=""> </span><span style="">lu_byte</span><span style=""> </span><span style="">marked</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** Common type has only the common header
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">typedef</span><span style=""> </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">GCObject</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">CommonHeader</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span><span style=""> </span><span style="">GCObject</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** Union of all collectable objects (only for conversions)
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">union</span><span style=""> </span><span style="">GCUnion</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">GCObject</span><span style=""> </span><span style="">gc</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* common header */</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">TString</span><span style=""> </span><span style="">ts</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">Udata</span><span style=""> </span><span style="">u</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">union</span><span style=""> </span><span style="">Closure</span><span style=""> </span><span style="">cl</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">Table</span><span style=""> </span><span style="">h</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">Proto</span><span style=""> </span><span style="">p</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">lua_State</span><span style=""> </span><span style="">th</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* thread */</span><span style="">
+</span><span style=""></span><span style="">};</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define cast(t, exp)	((t)(exp))
+</span><span style="color:#75715e">#define cast_u(o)	cast(union GCUnion *, (o))
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#75715e">/* macros to convert a GCObject into a specific value */</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define gco2ts(o)  \
+</span><span style="color:#75715e"></span><span style="">	</span><span style="">check_exp</span><span style="">(</span><span style="">novariant</span><span style="">((</span><span style="">o</span><span style="">)</span><span style="color:#f92672">-&gt;</span><span style="">tt</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">LUA_TSTRING</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">((</span><span style="">cast_u</span><span style="">(</span><span style="">o</span><span style="">))</span><span style="color:#f92672">-&gt;</span><span style="">ts</span><span style="">))</span><span style="">
+</span><span style="">   
+</span><span style=""></span><span style="color:#75715e">/* macro to convert a Lua object into a GCObject */</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define obj2gco(v) \
+</span><span style="color:#75715e"></span><span style="">	</span><span style="">check_exp</span><span style="">(</span><span style="">novariant</span><span style="">((</span><span style="">v</span><span style="">)</span><span style="color:#f92672">-&gt;</span><span style="">tt</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">LUA_TDEADKEY</span><span style="">,</span><span style=""> </span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">(</span><span style="">cast_u</span><span style="">(</span><span style="">v</span><span style="">)</span><span style="color:#f92672">-&gt;</span><span style="">gc</span><span style="">)))</span></code></pre>
+</div>
+<p>字符串在Lua里也是zero-terminated的. 所以可以利用c标准库的各种字符串操作函数.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/*
+</span><span style="color:#75715e">** Header for string value; string bytes follow the end of this structure
+</span><span style="color:#75715e">** (aligned according to &#39;UTString&#39;; see next).
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define CommonHeader	GCObject *next; lu_byte tt; lu_byte marked
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span><span style=""> </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">TString</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">CommonHeader</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">lu_byte</span><span style=""> </span><span style="">extra</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* reserved words for short strings; &#34;has hash&#34; for longs */</span><span style="">
+</span><span style="">  </span><span style="">lu_byte</span><span style=""> </span><span style="">shrlen</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* length for short strings */</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">hash</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">union</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">size_t</span><span style=""> </span><span style="">lnglen</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* length for long strings */</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">TString</span><span style=""> </span><span style="color:#f92672">*</span><span style="">hnext</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* linked list for hash table */</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style=""> </span><span style="">u</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span><span style=""> </span><span style="">TString</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** Ensures that address after this type is always fully aligned.
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">typedef</span><span style=""> </span><span style="color:#66d9ef">union</span><span style=""> </span><span style="">UTString</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">L_Umaxalign</span><span style=""> </span><span style="">dummy</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* ensures maximum alignment for strings */</span><span style="">
+</span><span style="">  </span><span style="">TString</span><span style=""> </span><span style="">tsv</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span><span style=""> </span><span style="">UTString</span><span style="">;</span></code></pre>
+</div>
+<p>字符串长度有专门的字段. 这样取长度时就很快. 不用再计算. 如下代码可以看到,真正储存字符的数据并不是紧跟在struct TString后. 这是为了保证指向第一个字符的指针是对齐的. 参见上面的结构体 union UTString</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define cast(t, exp)	((t)(exp))
+</span><span style="color:#75715e"></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** Get the actual string (array of bytes) from a &#39;TString&#39;.
+</span><span style="color:#75715e">** (Access to &#39;extra&#39; ensures that value is really a &#39;TString&#39;.)
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define getaddrstr(ts)	(cast(char *, (ts)) + sizeof(UTString))
+</span><span style="color:#75715e">#define getstr(ts)  \
+</span><span style="color:#75715e"></span><span style="">  </span><span style="">check_exp</span><span style="">(</span><span style="color:#66d9ef">sizeof</span><span style="">((</span><span style="">ts</span><span style="">)</span><span style="color:#f92672">-&gt;</span><span style="">extra</span><span style="">),</span><span style=""> </span><span style="">cast</span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">char</span><span style="color:#f92672">*</span><span style="">,</span><span style=""> </span><span style="">getaddrstr</span><span style="">(</span><span style="">ts</span><span style="">)))</span><span style="">
+</span><span style=""></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** creates a new string object
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">static</span><span style=""> </span><span style="">TString</span><span style=""> </span><span style="color:#f92672">*</span><span style="">createstrobj</span><span style=""> </span><span style="">(</span><span style="">lua_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">size_t</span><span style=""> </span><span style="">l</span><span style="">,</span><span style="">
+</span><span style="">                              </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">tag</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">h</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="">TString</span><span style=""> </span><span style="color:#f92672">*</span><span style="">ts</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">GCObject</span><span style=""> </span><span style="color:#f92672">*</span><span style="">o</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">size_t</span><span style=""> </span><span style="">totalsize</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* total size of TString object */</span><span style="">
+</span><span style="">  </span><span style="">totalsize</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">sizelstring</span><span style="">(</span><span style="">l</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">o</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">luaC_newobj</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">tag</span><span style="">,</span><span style=""> </span><span style="">totalsize</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">ts</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">gco2ts</span><span style="">(</span><span style="">o</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">ts</span><span style="color:#f92672">-&gt;</span><span style="">hash</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">h</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">ts</span><span style="color:#f92672">-&gt;</span><span style="">extra</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">memcpy</span><span style="">(</span><span style="">getaddrstr</span><span style="">(</span><span style="">ts</span><span style="">),</span><span style=""> </span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">l</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="color:#66d9ef">char</span><span style="">));</span><span style="">
+</span><span style="">  </span><span style="">getaddrstr</span><span style="">(</span><span style="">ts</span><span style="">)[</span><span style="">l</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;\0&#39;</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* ending 0 */</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">ts</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>这里Lua对短字符做了优化处理. 如果需要生成的字符串长度小于或者等于40(可在编译时调整), 则该字符串属于短字符串.Lua里所有的短字符串都保存在一个基于链表的哈希表里. 这样当新创建一个短字符串时,先检查该表有没有.有就直接利用,返回表中的字符指针. 没有则新建并放入该哈希表.
+新的short string因为要放入到哈希表里,所以顺带hash过了. long string在新建时为加速并没有立即hash. 等以后有需要时再计算
+判断两个字符串是否相等时,则很简单:
+一个short,一个long则不同.
+都是short时,直接比指针地址即可(因为所有short string在系统中只存在一份)
+都是long时,则对比长度, 先用memcmp比较</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/*
+</span><span style="color:#75715e">** new string (with explicit length)
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="">TString</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">luaS_newlstr</span><span style=""> </span><span style="">(</span><span style="">lua_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">size_t</span><span style=""> </span><span style="">l</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">l</span><span style=""> </span><span style="color:#f92672">&lt;=</span><span style=""> </span><span style="">LUAI_MAXSHORTLEN</span><span style="">)</span><span style="">  </span><span style="color:#75715e">/* short string? */</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">internshrstr</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">l</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">TString</span><span style=""> </span><span style="color:#f92672">*</span><span style="">ts</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">l</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">(</span><span style="">MAX_SIZE</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">TString</span><span style="">))</span><span style="color:#f92672">/</span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="color:#66d9ef">char</span><span style="">))</span><span style="">
+</span><span style="">      </span><span style="">luaM_toobig</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">ts</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">createstrobj</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">l</span><span style="">,</span><span style=""> </span><span style="">LUA_TLNGSTR</span><span style="">,</span><span style=""> </span><span style="">G</span><span style="">(</span><span style="">L</span><span style="">)</span><span style="color:#f92672">-&gt;</span><span style="">seed</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="">ts</span><span style="color:#f92672">-&gt;</span><span style="">u</span><span style="">.</span><span style="">lnglen</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">l</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">ts</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>hash计算时需要seed.  当进程运行时,会生成如下的运算生成一个随机数作为种子. 该值会赋给g-&gt;seed. 在新建状态机时产生. 整个运行过程中不会再改变</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;time.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define luai_makeseed()		cast(unsigned int, time(NULL))
+</span><span style="color:#75715e"></span><span style="color:#75715e">/*
+</span><span style="color:#75715e">** Compute an initial seed as random as possible. Rely on Address Space
+</span><span style="color:#75715e">** Layout Randomization (if present) to increase randomness..
+</span><span style="color:#75715e">*/</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#define addbuff(b,p,e) \
+</span><span style="color:#75715e"></span><span style="">  </span><span style="">{</span><span style=""> </span><span style="">size_t</span><span style=""> </span><span style="">t</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">cast</span><span style="">(</span><span style="">size_t</span><span style="">,</span><span style=""> </span><span style="">e</span><span style="">);</span><span style=""> \
+</span><span style="">    </span><span style="">memcpy</span><span style="">(</span><span style="">buff</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">p</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">t</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">t</span><span style="">));</span><span style=""> </span><span style="">p</span><span style=""> </span><span style="color:#f92672">+=</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">t</span><span style="">);</span><span style=""> </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">static</span><span style=""> </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">makeseed</span><span style=""> </span><span style="">(</span><span style="">lua_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">L</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="">buff</span><span style="">[</span><span style="color:#ae81ff">4</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">size_t</span><span style="">)];</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">h</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">luai_makeseed</span><span style="">();</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">p</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">addbuff</span><span style="">(</span><span style="">buff</span><span style="">,</span><span style=""> </span><span style="">p</span><span style="">,</span><span style=""> </span><span style="">L</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* heap variable */</span><span style="">
+</span><span style="">  </span><span style="">addbuff</span><span style="">(</span><span style="">buff</span><span style="">,</span><span style=""> </span><span style="">p</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">h</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* local variable */</span><span style="">
+</span><span style="">  </span><span style="">addbuff</span><span style="">(</span><span style="">buff</span><span style="">,</span><span style=""> </span><span style="">p</span><span style="">,</span><span style=""> </span><span style="">luaO_nilobject</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* global variable */</span><span style="">
+</span><span style="">  </span><span style="">addbuff</span><span style="">(</span><span style="">buff</span><span style="">,</span><span style=""> </span><span style="">p</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">lua_newstate</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* public function */</span><span style="">
+</span><span style="">  </span><span style="">lua_assert</span><span style="">(</span><span style="">p</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">buff</span><span style="">));</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">luaS_hash</span><span style="">(</span><span style="">buff</span><span style="">,</span><span style=""> </span><span style="">p</span><span style="">,</span><span style=""> </span><span style="">h</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">luaS_hash</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">size_t</span><span style=""> </span><span style="">l</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">seed</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">h</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">seed</span><span style=""> </span><span style="color:#f92672">^</span><span style=""> </span><span style="">cast</span><span style="">(</span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">,</span><span style=""> </span><span style="">l</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">size_t</span><span style=""> </span><span style="">l1</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">size_t</span><span style=""> </span><span style="">step</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="">l</span><span style=""> </span><span style="color:#f92672">&gt;&gt;</span><span style=""> </span><span style="">LUAI_HASHLIMIT</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">l1</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">l</span><span style="">;</span><span style=""> </span><span style="">l1</span><span style=""> </span><span style="color:#f92672">&gt;=</span><span style=""> </span><span style="">step</span><span style="">;</span><span style=""> </span><span style="">l1</span><span style=""> </span><span style="color:#f92672">-=</span><span style=""> </span><span style="">step</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">h</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">h</span><span style=""> </span><span style="color:#f92672">^</span><span style=""> </span><span style="">((</span><span style="">h</span><span style="color:#f92672">&lt;&lt;</span><span style="color:#ae81ff">5</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">(</span><span style="">h</span><span style="color:#f92672">&gt;&gt;</span><span style="color:#ae81ff">2</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">cast_byte</span><span style="">(</span><span style="">str</span><span style="">[</span><span style="">l1</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">]));</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">h</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>可以看到对string做hash计算时, 并没有对每个字符进行计算, 至多会对其中的 2^5 个字符进行计算</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">luaS_hash</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">str</span><span style="">,</span><span style=""> </span><span style="">size_t</span><span style=""> </span><span style="">l</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">seed</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">h</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">seed</span><span style=""> </span><span style="color:#f92672">^</span><span style=""> </span><span style="">cast</span><span style="">(</span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">,</span><span style=""> </span><span style="">l</span><span style="">);</span><span style="">
+</span><span style="">  </span><span style="">size_t</span><span style=""> </span><span style="">l1</span><span style="">;</span><span style="">
+</span><span style="">  </span><span style="">size_t</span><span style=""> </span><span style="">step</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="">l</span><span style=""> </span><span style="color:#f92672">&gt;&gt;</span><span style=""> </span><span style="">LUAI_HASHLIMIT</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style="">       </span><span style="color:#75715e">/* LUAI_HASHLIMIT 默认是 5 */</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">l1</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">l</span><span style="">;</span><span style=""> </span><span style="">l1</span><span style=""> </span><span style="color:#f92672">&gt;=</span><span style=""> </span><span style="">step</span><span style="">;</span><span style=""> </span><span style="">l1</span><span style=""> </span><span style="color:#f92672">-=</span><span style=""> </span><span style="">step</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">h</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">h</span><span style=""> </span><span style="color:#f92672">^</span><span style=""> </span><span style="">((</span><span style="">h</span><span style="color:#f92672">&lt;&lt;</span><span style="color:#ae81ff">5</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">(</span><span style="">h</span><span style="color:#f92672">&gt;&gt;</span><span style="color:#ae81ff">2</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">cast_byte</span><span style="">(</span><span style="">str</span><span style="">[</span><span style="">l1</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">]));</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">h</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>init和bool类型,包括指针(可转换为整数)直接使用值为hash值</p>
+
+<p>Lua中的table不仅支持键值对这样的结构,还支持以索引值来访问的数组. 可以说将两者合二为1. 少了一个数据结构,但功能上仍一样.
+哈希表主要是基于开放地址, 这样所有数据都在连续排在一起, 避免内存碎化. 内存效率高</p></article>
+    <footer class="post-footer">
+      
+      <ul class="post-tags">
+        
+          <li><a href="https://xixiliguo.github.io/tags/lua"><span class="tag">Lua</span></a></li>
+        
+          <li><a href="https://xixiliguo.github.io/tags/c"><span class="tag">C</span></a></li>
+        
+      </ul>
+      
+      <p class="post-copyright">
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
+      </p>
+    </footer>
+    
+      
+    
+  </section>
+  <footer class="site-footer">
+  <p>© 2017-2020 个人网站</p>
+  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
+  
+</footer>
+
+
+
+<script src="https://xixiliguo.github.io/js/bundle.js"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-107151468-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  </body>
+</html>

@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux 下常用命令与技巧汇总</h1>
-      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 20 min read</p>
+      <p class="post-meta">@Peter Wang · Jan 7, 2018 · 22 min read</p>
     </header>
     <article class="post-content"><p>收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.</p>
 
@@ -432,6 +432,13 @@ bonding
 <p>如果模块直接编译进内核，也可以通过启动管理器(GRUB, LILO 或 Syslinux)的内核行加入参数：
 <code>modname.parametername=parametercontents</code></p>
 
+<p>列出直接编译到内核的模块列表</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /lib/modules/</span><span style="color:#66d9ef">$(</span><span style="">uname -r</span><span style="color:#66d9ef">)</span><span style="">/modules.builtin
+</span><span style="">kernel/lib/zlib_deflate/zlib_deflate.ko
+</span><span style="">kernel/lib/zlib_inflate/zlib_inflate.ko
+</span><span style="">kernel/lib/crc16.ko
+</span><span style="">kernel/lib/crc32.ko</span></code></pre>
+</div>
 <h3 id="20-column格式化输出">20. column格式化输出</h3>
 
 <p>可以让一些命令的输出看起来更舒服些. 例如<code>blkid</code>,<code>mount</code>,<code>cat /etc/fstab</code>.</p>
@@ -785,7 +792,8 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="color:#75715e"></span><span style="">systemctl list-dependencies --before sshd   </span><span style="color:#75715e"># 查看所有unit after sshd, 也就是 sshd 配置里的before=
 </span><span style="color:#75715e"></span><span style="">systemctl list-dependencies --after sshd   </span><span style="color:#75715e"># 查看所有unit before sshd
 </span><span style="color:#75715e"></span><span style="">systemctl cat sshd              </span><span style="color:#75715e">#查看service的配置文件
-</span><span style="color:#75715e"></span><span style="">systemctl show sshd             #查看service的配置参数, 不带 service则显示默认的配置. 可用来查询nofile, noproc等限制资源参数</span></code></pre>
+</span><span style="color:#75715e"></span><span style="">systemctl show sshd             </span><span style="color:#75715e">#查看service的配置参数, 不带 service则显示默认的配置. 可用来查询nofile, noproc等限制资源参数
+</span><span style="color:#75715e"></span><span style="">systemctl list-jobs             #查看有哪些job仍在运行或者等待运行</span></code></pre>
 </div>
 <blockquote>
 <p>/etc/security/limits.conf无法设置systemd服务的资源限制. 参见:<br />
@@ -855,15 +863,21 @@ M &ndash; 模式 (包含许可和文件类型)<br />
 </span><span style="color:#75715e"></span><span style="">journalctl /usr/lib/systemd/systemd </span><span style="color:#75715e"># 查看指定可执行文件的日志, 必须指定绝对路径
 </span><span style="color:#75715e"></span><span style="">journalctl </span><span style="">_PID</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">                </span><span style="color:#75715e"># 查看指定进程的日志
 </span><span style="color:#75715e"></span><span style="">journalctl -u sshd               </span><span style="color:#75715e"># 查看某个 Unit 的日志
-</span><span style="color:#75715e"></span><span style="">journalctl --disk-usage          # 显示日志占据的硬盘空间</span></code></pre>
+</span><span style="color:#75715e"></span><span style="">journalctl --disk-usage          </span><span style="color:#75715e"># 显示日志占据的硬盘空间
+</span><span style="color:#75715e"></span><span style="">journalctl --list-boots          # 显示每次启动的id和时间</span></code></pre>
 </div>
 <p>查看指定时间的日志</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">journalctl --since </span><span style="color:#e6db74">&#34;2012-10-30 18:17:16&#34;</span><span style="">
+</span><span style="">journalctl --since </span><span style="color:#e6db74">&#34;2020-10-01&#34;</span><span style="">
 </span><span style="">journalctl --since </span><span style="color:#e6db74">&#34;20 min ago&#34;</span><span style="">
+</span><span style="">journalctl --since </span><span style="color:#e6db74">&#34;-5m&#34;</span><span style="">
+</span><span style="">journalctl --since </span><span style="color:#e6db74">&#34;-5d&#34;</span><span style="">
 </span><span style="">journalctl --since yesterday
 </span><span style="">journalctl --since </span><span style="color:#e6db74">&#34;2015-01-10&#34;</span><span style=""> --until </span><span style="color:#e6db74">&#34;2015-01-11 03:00&#34;</span><span style="">
 </span><span style="">journalctl --since </span><span style="color:#ae81ff">09</span><span style="">:00 --until </span><span style="color:#e6db74">&#34;1 hour ago&#34;</span></code></pre>
 </div>
+<p>时间格式可参考<code>man journalctl</code>或者<code>man 7 systemd.time</code></p>
+
 <h3 id="31-ubuntu-debian-检查已经安装好的软件包的更新日志">31. Ubuntu/Debian 检查已经安装好的软件包的更新日志</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">zless /usr/share/doc/&lt;package -name&gt;/changelog.Debian.gz
 </span><span style="">zless /usr/share/doc/&lt;package -name&gt;/changelog.gz</span></code></pre>
@@ -1426,13 +1440,32 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 </span><span style="color:#75715e"></span><span style="">ss -tm               #查看tcp的内存使用信息, 比如收发缓冲区的大小</span></code></pre>
 </div>
 <p>还有一些高级的过滤用法</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ss -tn  state listening                                  </span><span style="color:#75715e">#显示处于listening状态的连接
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ss  -A raw,packet_raw  -a -p                             </span><span style="color:#75715e">#查看raw socket的信息
+</span><span style="color:#75715e"></span><span style="">ss -tn  state listening                                  </span><span style="color:#75715e">#显示处于listening状态的连接
 </span><span style="color:#75715e"></span><span style="">ss -tn  state established                                </span><span style="color:#75715e">#显示处于established状态的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn  state listening  </span><span style="color:#e6db74">&#39;( sport == 22 )&#39;</span><span style="">               </span><span style="color:#75715e">#显示处于listening状态且源端口为22的连接
 </span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( sport == 22 )&#39;</span><span style="">                                 </span><span style="color:#75715e">#显示源端口为22的连接
+</span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( sport != 22 )&#39;</span><span style="">                                 </span><span style="color:#75715e">#显示源端口不为22的连接
 </span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( sport == 22 || dport == 22 )&#39;</span><span style="">                  </span><span style="color:#75715e">#显示源端口为22或者目标端口为22的连接
 </span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( dst 10.211.55.2 &amp;&amp; dport == 58181 )&#39;</span><span style="">           </span><span style="color:#75715e">#显示目标ip为10.211.55.2且目标端口为58181的连接
 </span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( src 127.0.0.1 )&#39;</span><span style="">                               </span><span style="color:#75715e">#显示源ip为 127.0.0.1的连接
 </span><span style="color:#75715e"></span><span style="">ss -tn </span><span style="color:#e6db74">&#39;( ! dst 10.211.55.2 &amp;&amp; dport != 58181 )&#39;</span><span style="">         #显示目标ip不是10.211.55.2且目标端口不是58181的连接</span></code></pre>
+</div>
+<p>state后面支持的TCP状态如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="">	</span><span style="color:#66d9ef">static</span><span style=""> </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="">sstate_namel</span><span style="">[]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;UNKNOWN&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_ESTABLISHED</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;established&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_SYN_SENT</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;syn-sent&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_SYN_RECV</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;syn-recv&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_FIN_WAIT1</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;fin-wait-1&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_FIN_WAIT2</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;fin-wait-2&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_TIME_WAIT</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;time-wait&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_CLOSE</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;unconnected&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_CLOSE_WAIT</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;close-wait&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_LAST_ACK</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;last-ack&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_LISTEN</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style="">	</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;listening&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="">[</span><span style="">SS_CLOSING</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;closing&#34;</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="">};</span></code></pre>
 </div>
 <p>更多使用介绍请参考:<br />
 <a href="https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html">https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html</a><br />
@@ -1513,7 +1546,9 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 </span><span style="">E: </span><span style="">ID_ATA_SATA</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
 </span><span style="">E: </span><span style="">ID_ATA_SATA_SIGNAL_RATE_GEN1</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span></code></pre>
 </div>
-<p><code>udevadmin monitor</code>用于实时监控udev实践,定位热插拔设备时特别有用.</p>
+<p><code>udevadmin monitor</code>用于实时监控udev实践,定位热插拔设备时特别有用.<br />
+<code>udevadmin test xxxx</code>用于测试匹配设备的规则执行动作.<br />
+xxx可以是<code>/sys/class/block/sda</code>,<code>/sys/class/net/eth0</code>, 也可以是<code>/sys/devices</code>下面的设备</p>
 
 <p>修改<code>/etc/udev/udev.conf</code>里的<code>udev_log=&quot;debug&quot;</code>可以打开更详细的日志<br />
 使用<code>journalctl -u systemd-udevd</code>查看</p>
@@ -1822,11 +1857,20 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 </span><span style="">tcp      </span><span style="color:#ae81ff">6</span><span style=""> </span><span style="color:#ae81ff">430950</span><span style=""> ESTABLISHED </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.2 </span><span style="">sport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">22</span><span style=""> </span><span style="">dport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">51568</span><span style=""> </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.2 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22 </span><span style="">sport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">51568</span><span style=""> </span><span style="">dport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">22</span><span style=""> </span><span style="color:#f92672">[</span><span style="">ASSURED</span><span style="color:#f92672">]</span><span style=""> </span><span style="">mark</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">use</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="">
 </span><span style="">tcp      </span><span style="color:#ae81ff">6</span><span style=""> </span><span style="color:#ae81ff">5</span><span style=""> TIME_WAIT </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">113</span><span style="">.142.161.250 </span><span style="">sport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">48530</span><span style=""> </span><span style="">dport</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">80</span><span style=""> </span><span style="">src</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">113</span><span style="">.142.161.250 </span><span style="">dst</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="">.211.55.22</span></code></pre>
 </div>
-<p>如果内核出现<code>nf_conntrack: table full, dropping packet.</code>, 则需要增加链接跟踪表的size</p>
+<p>查看当前链接跟踪表里的数目</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/sys/net/netfilter/nf_conntrack_count
+</span><span style=""></span><span style="color:#ae81ff">4</span></code></pre>
+</div>
+<p>查看当前生效的最大值</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/sys/net/netfilter/nf_conntrack_max
+</span><span style=""></span><span style="color:#ae81ff">65536</span></code></pre>
+</div>
+<p>如果内核出现<code>nf_conntrack: table full, dropping packet.</code>, 则需要增加链接跟踪表的最大连接数</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">sysctl -w net.nf_conntrack_max</span><span style="color:#f92672">=</span><span style="">xxxxx</span></code></pre>
 </div>
 <p>更详细的一些文章:<br />
-<a href="https://blog.csdn.net/u010472499/article/details/78292811">https://blog.csdn.net/u010472499/article/details/78292811</a></p>
+<a href="https://blog.csdn.net/u010472499/article/details/78292811">https://blog.csdn.net/u010472499/article/details/78292811</a><br />
+<a href="https://access.redhat.com/solutions/8721">https://access.redhat.com/solutions/8721</a></p>
 
 <p><code>sysctl -a | grep nf_</code> 查看和链接跟踪所有的内核参数<br />
 具体解释: <a href="https://www.kernel.org/doc/Documentation/networking/nf_conntrack-sysctl.txt">https://www.kernel.org/doc/Documentation/networking/nf_conntrack-sysctl.txt</a></p>
@@ -1858,7 +1902,131 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
 <h3 id="87-linux内核模块相关">87. Linux内核模块相关</h3>
 
 <p>使用weak-modules实现外部开发的内核模块在多个内核(KABI兼容的情况下)都可以使用, 这篇文章介绍了具体的方法<br />
-<a href="https://www.cnblogs.com/xingmuxin/p/9092344.html">https://www.cnblogs.com/xingmuxin/p/9092344.html</a></p></article>
+<a href="https://www.cnblogs.com/xingmuxin/p/9092344.html">https://www.cnblogs.com/xingmuxin/p/9092344.html</a></p>
+
+<h3 id="88-ssh连接保活配置">88. ssh连接保活配置</h3>
+
+<p>编辑 /etc/ssh/sshd_config, 添加如下两行, 重启sshd服务生效</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ClientAliveInterval </span><span style="color:#ae81ff">60</span><span style=""> 
+</span><span style="">ClientAliveCountMax </span><span style="color:#ae81ff">3</span><span style=""> </span></code></pre>
+</div>
+<h3 id="89-使用auditd审计功能">89. 使用auditd审计功能</h3>
+
+<p>直接使用<code>systemctl restart auditd</code>重启auditd是失败.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ systemctl restart auditd
+</span><span style="">Failed to restart auditd.service: Operation refused, unit auditd.service may be requested by dependency only </span><span style="color:#f92672">(</span><span style="">it is configured to refuse manual start/stop</span><span style="color:#f92672">)</span><span style="">.
+</span><span style="">See system logs and </span><span style="color:#e6db74">&#39;systemctl status auditd.service&#39;</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> details.</span></code></pre>
+</div>
+<p>可以使用<code>service auditd status/start/stop/restart</code><br />
+参见: <a href="https://access.redhat.com/solutions/2664811">https://access.redhat.com/solutions/2664811</a></p>
+
+<p><code>/var/log/audit/audit.log</code>里的日志格式, 默认不够人性化, 具体字段含义参见:<br />
+<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sec-understanding_audit_log_files">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sec-understanding_audit_log_files</a></p>
+
+<p>打印今天的审计摘要</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ aureport --start </span><span style="color:#ae81ff">01</span><span style="">/10/2020 </span><span style="color:#ae81ff">07</span><span style="">:00:00 --end </span><span style="color:#ae81ff">01</span><span style="">/10/2020 </span><span style="color:#ae81ff">19</span><span style="">:00:00
+</span><span style="">
+</span><span style="">Summary </span><span style="">Report</span><span style="">
+</span><span style=""></span><span style="color:#f92672">======================</span><span style="">
+</span><span style="">Range of </span><span style="">time</span><span style=""> in logs: </span><span style="color:#ae81ff">04</span><span style="">/27/2019 </span><span style="color:#ae81ff">20</span><span style="">:30:36.683 - </span><span style="color:#ae81ff">01</span><span style="">/01/1970 </span><span style="color:#ae81ff">08</span><span style="">:00:00.000
+</span><span style="">Selected </span><span style="">time</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> report: </span><span style="color:#ae81ff">01</span><span style="">/10/2020 </span><span style="color:#ae81ff">07</span><span style="">:00:00 - </span><span style="color:#ae81ff">01</span><span style="">/10/2020 </span><span style="color:#ae81ff">19</span><span style="">:00:00
+</span><span style="">Number of changes in configuration: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of changes to accounts, groups, or roles: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of logins: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of failed logins: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of authentications: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of failed authentications: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of users: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of terminals: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of host names: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of executables: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of commands: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of files: </span><span style="color:#ae81ff">0</span></code></pre>
+</div>
+<p>昨天到今天这个时间段里的审计摘要</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ aureport --start yesterday --end today
+</span><span style="">
+</span><span style="">Summary </span><span style="">Report</span><span style="">
+</span><span style=""></span><span style="color:#f92672">======================</span><span style="">
+</span><span style="">Range of </span><span style="">time</span><span style=""> in logs: </span><span style="color:#ae81ff">04</span><span style="">/27/2019 </span><span style="color:#ae81ff">20</span><span style="">:30:36.683 - </span><span style="color:#ae81ff">10</span><span style="">/01/2020 </span><span style="color:#ae81ff">13</span><span style="">:10:43.415
+</span><span style="">Selected </span><span style="">time</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> report: </span><span style="color:#ae81ff">09</span><span style="">/30/2020 </span><span style="color:#ae81ff">00</span><span style="">:00:00 - </span><span style="color:#ae81ff">10</span><span style="">/01/2020 </span><span style="color:#ae81ff">13</span><span style="">:12:35
+</span><span style="">Number of changes in configuration: </span><span style="color:#ae81ff">46</span><span style="">
+</span><span style="">Number of changes to accounts, groups, or roles: </span><span style="color:#ae81ff">0</span><span style="">
+</span><span style="">Number of logins: </span><span style="color:#ae81ff">25</span><span style="">
+</span><span style="">Number of failed logins: </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">Number of authentications: </span><span style="color:#ae81ff">80</span><span style="">
+</span><span style="">Number of failed authentications: </span><span style="color:#ae81ff">1</span><span style="">
+</span><span style="">Number of users: </span><span style="color:#ae81ff">2</span><span style="">
+</span><span style="">Number of terminals: </span><span style="color:#ae81ff">16</span><span style="">
+</span><span style="">Number of host names: </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">Number of executables: </span><span style="color:#ae81ff">14</span><span style="">
+</span><span style="">Number of commands: </span><span style="color:#ae81ff">11</span><span style="">
+</span><span style="">Number of files: </span><span style="color:#ae81ff">2</span></code></pre>
+</div>
+<p>从昨天开始事件统计摘要, <code>-i</code>让输出更人性化.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ aureport --start yesterday -e -i --summary
+</span><span style="">
+</span><span style="">Event Summary </span><span style="">Report</span><span style="">
+</span><span style=""></span><span style="color:#f92672">======================</span><span style="">
+</span><span style="">total  </span><span style="">type</span><span style="">
+</span><span style=""></span><span style="color:#f92672">======================</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">14485</span><span style="">  CRYPTO_KEY_USER
+</span><span style=""></span><span style="color:#ae81ff">8076</span><span style="">  USER_START
+</span><span style=""></span><span style="color:#ae81ff">7639</span><span style="">  USER_END
+</span><span style=""></span><span style="color:#ae81ff">6762</span><span style="">  CRED_ACQ
+</span><span style=""></span><span style="color:#ae81ff">6761</span><span style="">  USER_ACCT
+</span><span style=""></span><span style="color:#ae81ff">6753</span><span style="">  LOGIN
+</span><span style=""></span><span style="color:#ae81ff">6704</span><span style="">  CRED_REFR
+</span><span style=""></span><span style="color:#ae81ff">6527</span><span style="">  CRED_DISP
+</span><span style=""></span><span style="color:#ae81ff">4966</span><span style="">  NETFILTER_CFG</span></code></pre>
+</div>
+<p>统计可执行文件的摘要</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ aureport -x -i --summary
+</span><span style="">
+</span><span style="">Executable Summary </span><span style="">Report</span><span style="">
+</span><span style=""></span><span style="color:#f92672">=================================</span><span style="">
+</span><span style="">total  </span><span style="">file</span><span style="">
+</span><span style=""></span><span style="color:#f92672">=================================</span><span style="">
+</span><span style=""></span><span style="color:#ae81ff">33791</span><span style="">  /usr/sbin/sshd
+</span><span style=""></span><span style="color:#ae81ff">31880</span><span style="">  /usr/sbin/crond
+</span><span style=""></span><span style="color:#ae81ff">7432</span><span style="">  /usr/lib/systemd/systemd
+</span><span style=""></span><span style="color:#ae81ff">4370</span><span style="">  /usr/sbin/xtables-multi
+</span><span style=""></span><span style="color:#ae81ff">651</span><span style="">  ?
+</span><span style=""></span><span style="color:#ae81ff">627</span><span style="">  /usr/bin/python2.7
+</span><span style=""></span><span style="color:#ae81ff">608</span><span style="">  /usr/bin/login
+</span><span style=""></span><span style="color:#ae81ff">309</span><span style="">  /usr/bin/kmod
+</span><span style=""></span><span style="color:#ae81ff">232</span><span style="">  /usr/lib/systemd/systemd-update-utmp
+</span><span style=""></span><span style="color:#ae81ff">204</span><span style="">  /
+</span><span style=""></span><span style="color:#ae81ff">102</span><span style="">  /usr/sbin/libvirtd
+</span><span style=""></span><span style="color:#ae81ff">94</span><span style="">  /usr/sbin/tcpdump
+</span><span style=""></span><span style="color:#ae81ff">60</span><span style="">  /usr/bin/su
+</span><span style=""></span><span style="color:#ae81ff">50</span><span style="">  /usr/bin/dockerd-current
+</span><span style=""></span><span style="color:#ae81ff">42</span><span style="">  /usr/sbin/groupadd</span></code></pre>
+</div>
+<p>显示每个audit日志记录的对应时间段</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ aureport -t
+</span><span style="">
+</span><span style="">Log Time Range </span><span style="">Report</span><span style="">
+</span><span style=""></span><span style="color:#f92672">=====================</span><span style="">
+</span><span style="">/var/log/audit/audit.log.2: </span><span style="color:#ae81ff">04</span><span style="">/27/2019 </span><span style="color:#ae81ff">20</span><span style="">:30:36.683 - </span><span style="color:#ae81ff">12</span><span style="">/01/2019 </span><span style="color:#ae81ff">10</span><span style="">:40:01.857
+</span><span style="">/var/log/audit/audit.log.1: </span><span style="color:#ae81ff">12</span><span style="">/01/2019 </span><span style="color:#ae81ff">10</span><span style="">:40:01.858 - </span><span style="color:#ae81ff">06</span><span style="">/08/2020 </span><span style="color:#ae81ff">12</span><span style="">:20:01.343
+</span><span style="">/var/log/audit/audit.log: </span><span style="color:#ae81ff">06</span><span style="">/08/2020 </span><span style="color:#ae81ff">12</span><span style="">:20:01.358 - </span><span style="color:#ae81ff">10</span><span style="">/01/2020 </span><span style="color:#ae81ff">13</span><span style="">:42:52.455</span></code></pre>
+</div>
+<p>搜索今天所有的日志</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ausearch --start today -i</span></code></pre>
+</div>
+<p>搜索今天所有的事件为系统调用的日志<br />
+所有的事件列表参见: <a href="https://access.redhat.com/articles/4409591">https://access.redhat.com/articles/4409591</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ausearch --start today -i  -m syscall</span></code></pre>
+</div>
+<p>搜索今天所有的关键字为xxxx的日志</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ausearch --start today -i  -k xxxx</span></code></pre>
+</div>
+<p>搜索今天所有的涉及文件/etc/passwd的日志</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">ausearch --start today -i  -f /etc/passwd</span></code></pre>
+</div>
+<p>其他一些参考资料:<br />
+<a href="https://cloud.tencent.com/developer/article/1359606">https://cloud.tencent.com/developer/article/1359606</a></p></article>
     <footer class="post-footer">
       
       <ul class="post-tags">
@@ -1870,7 +2038,7 @@ file-max显示所有进程的最大文件数, 可通过<code>echo 100000 &gt; /p
       </ul>
       
       <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>966</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
+        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>1001</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
       </p>
     </footer>
     

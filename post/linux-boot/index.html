@@ -186,7 +186,7 @@
   <section class="main post-detail">
     <header class="post-header">
       <h1 class="post-title">Linux Boot过程总结</h1>
-      <p class="post-meta">@Peter Wang · Apr 19, 2020 · 3 min read</p>
+      <p class="post-meta">@Peter Wang · Apr 19, 2020 · 4 min read</p>
     </header>
     <article class="post-content"><p>记录linux启动过程的总结</p>
 
@@ -311,8 +311,43 @@ VNC屏幕打印<code>Welcome to XXXX</code>意味着initramfs里的systemd已经
 </span><span style="">                                     </span><span style="">isempty</span><span style="">(</span><span style="">ansi_color</span><span style="">)</span><span style=""> </span><span style="color:#f92672">?</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;1&#34;</span><span style=""> </span><span style="color:#f92672">:</span><span style=""> </span><span style="">ansi_color</span><span style="">,</span><span style="">
 </span><span style="">                                     </span><span style="">isempty</span><span style="">(</span><span style="">pretty_name</span><span style="">)</span><span style=""> </span><span style="color:#f92672">?</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Linux&#34;</span><span style=""> </span><span style="color:#f92672">:</span><span style=""> </span><span style="">pretty_name</span><span style="">);</span></code></pre>
 </div>
+<p>大致的顺序如下:<br />
+1. dracut-cmdline解析<code>/proc/cmdline</code>, 找到真实root的信息<br />
+2. udev启动,识别所有的设备, 特别是硬盘,在/dev/下生成相应的信息, 这里当识别到新设备时会加载相应的驱动<br />
+   bus驱动通过特殊的ID(设备厂商ID, 子系统ID等)识别新设备, 这个也叫MODALIAS<br />
+   然后modprobe MODALIAS, 会读取/lib/module/xxxx/modules.alias, 找到对应的驱动来加载驱动.<br />
+   对应的规则为<code>/lib/udev/rules.d/80-drivers.rules:ENV{MODALIAS}==&quot;?*&quot;, RUN{builtin}+=&quot;kmod load $env{MODALIAS}&quot;</code><br />
+3. initqueue阶段,有很多循环, 不停地检查一些关键任务是否完成, 比如root设备是否已识别并在<code>/dev/</code>下完成相关文件创建<br />
+4. mount和fsck root设备<br />
+5. 清理就切换到真实的root设备</p>
+
 <p>可以在Grub菜单里给内核加参数<code>rd.break</code>使系统停留在initramfs创建后, 切换到真正的root文件系统前. 用于学习和排障<br />
-<code>rd</code>就是<code>ramdisk</code>的缩写, 即<code>the initial ramdisk (initrd) environment</code></p>
+<code>rd</code>就是<code>ramdisk</code>的缩写, 即<code>the initial ramdisk (initrd) environment</code><br />
+<code>rd.debug</code> 可以输出详细的日志. dracut许多命令都是shell脚本. 打印详细日志的大致两种:<br />
+脚本里加<code>set -x</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat sleep.sh
+</span><span style=""></span><span style="color:#75715e">#!/usr/bin/bash
+</span><span style="color:#75715e"></span><span style="">set</span><span style=""> -x
+</span><span style="">sleep </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">$ ./sleep.sh
+</span><span style="">+ sleep </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style=""></span><span style="color:#f92672">[</span><span style="">root@localhost ~</span><span style="color:#f92672">]</span><span style="">#</span></code></pre>
+</div>
+<p>再<code>set -x</code>的基础上,继续增加<code>export 'PS4=${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): '</code> 可打印具体的行数和函数名</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bah" data-lang="bah"><span style="">$ cat sleep.sh
+</span><span style=""></span><span style="color:#75715e">#!/usr/bin/bash
+</span><span style="color:#75715e"></span><span style="">set</span><span style=""> -x
+</span><span style=""></span><span style="">export</span><span style=""> </span><span style="color:#e6db74">&#39;PS4=${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): &#39;</span><span style="">
+</span><span style="">sleep </span><span style="color:#ae81ff">3</span><span style="">
+</span><span style="">$ ./sleep.sh
+</span><span style="">+ </span><span style="">export</span><span style=""> </span><span style="color:#e6db74">&#39;PS4=${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): &#39;</span><span style="">
+</span><span style="">+ </span><span style="">PS4</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): &#39;</span><span style="">
+</span><span style="">./sleep.sh@4</span><span style="color:#f92672">()</span><span style="">: sleep </span><span style="color:#ae81ff">3</span></code></pre>
+</div>
+<p>如下文档介绍了bash下面PS相关变量可以实现的一些特殊功能<br />
+<a href="https://www.thegeekstuff.com/2008/09/bash-shell-take-control-of-ps1-ps2-ps3-ps4-and-prompt_command/">https://www.thegeekstuff.com/2008/09/bash-shell-take-control-of-ps1-ps2-ps3-ps4-and-prompt_command/</a></p>
+
+<p><code>rd.udev.debug</code> 可以输入udev的详细日志</p>
 
 <p>centos7还支持如下参数, 可以在特定的阶段打断OS的正常运行.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#f92672">[</span><span style="">root@localhost ~</span><span style="color:#f92672">]</span><span style="color:#75715e"># grep -r &#34;rd.break=&#34; /lib/dracut/modules.d/*systemd/*service
@@ -325,14 +360,24 @@ VNC屏幕打印<code>Welcome to XXXX</code>意味着initramfs里的systemd已经
 </div>
 <p>initramfs大部分问题都可以通过重建initramfs解决</p>
 
+<p>提取initramfs文件的命令:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">mkdir /tmp/initrd
+</span><span style=""></span><span style="">cd</span><span style=""> /tmp/initrd
+</span><span style="">/usr/lib/dracut/skipcpio /boot/initramfs-</span><span style="color:#66d9ef">$(</span><span style="">uname -r</span><span style="color:#66d9ef">)</span><span style="">.img </span><span style="">|</span><span style=""> gunzip -c </span><span style="">|</span><span style=""> cpio -idmv</span></code></pre>
+</div>
+<p><a href="https://access.redhat.com/solutions/2037313">https://access.redhat.com/solutions/2037313</a></p>
+
+<p>查看initramfs文件里包含的文件列表, 使用<code>lsinitrd xxx</code>, 如果要查看具体文件的内容,用如下命令:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ lsinitrd /boot/initramfs-3.10.0-1062.el7.x86_64.img -f /etc/machine-id
+</span><span style="">ab80e79ed1cf4e9aa1108082dd40f5bc</span></code></pre>
+</div>
 <p>挂盘到一个虚拟机里, chroot到对应的root目录, 已3.10.0-1062.el7.x86_64为例,命令为:<br />
 <code>dracut initramfs-3.10.0-1062.el7.x86_64.img 3.10.0-1062.el7.x86_64</code><br />
 不要不加参数执行<code>dracut</code>, 因为它默认会使用当前的内核生成文件. 当前内核可能不是故障虚拟机里的内核版本</p>
 
 <p>单用户 reboot, 可以使用reboot -f</p>
 
-<p>除了处理安装驱动识别硬件, 这个阶段主要通过linux16的参数,找到真实的根目录, 比如root=UUID=xxxx, 这样, 然后识别, fsck, mount到/sysroot
-运行initrd-switch-root.service完成其他工作并改变根目录为/sysroot, 系统打印如下:</p>
+<p>运行initrd-switch-root.service完成其他工作并改变根目录为/sysroot, 系统打印如下:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">Apr </span><span style="color:#ae81ff">20</span><span style=""> </span><span style="color:#ae81ff">21</span><span style="">:33:52 localhost.localdomain systemd</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="color:#f92672">]</span><span style="">: Starting Switch Root...
 </span><span style="">Apr </span><span style="color:#ae81ff">20</span><span style=""> </span><span style="color:#ae81ff">21</span><span style="">:33:52 localhost.localdomain systemd</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="color:#f92672">]</span><span style="">: Switching root.</span></code></pre>
 </div>
@@ -372,12 +417,43 @@ systemd与传统sysint不同, 随OS启动的服务如果之前没有依赖关系
 同时这也说明initramfs里面的systemd是OK的, 只是启动真实跟盘上的systemd出现异常了, 可以在initramfs阶段 手工chroot到/sysroot里执行
 <code>rpm -V systemd</code>, <code>rpm -V glibc</code>, <code>rpm -V bash</code> 等命令查询下基础组件是否有损坏</p>
 
+<h2 id="与kdump相关的initramfs知识">与kdump相关的initramfs知识</h2>
+
+<p>有两个方法判断是否crashkernel生效</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dmesg -T </span><span style="">|</span><span style=""> grep </span><span style="color:#e6db74">&#34;for crashkernel&#34;</span><span style="">
+</span><span style=""></span><span style="color:#f92672">[</span><span style="">Wed Sep  </span><span style="color:#ae81ff">9</span><span style=""> </span><span style="color:#ae81ff">22</span><span style="">:24:54 </span><span style="color:#ae81ff">2020</span><span style="color:#f92672">]</span><span style=""> Reserving 128MB of memory at 720MB </span><span style="color:#66d9ef">for</span><span style=""> crashkernel </span><span style="color:#f92672">(</span><span style="">System RAM: 1535MB</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">$ cat /sys/kernel/kexec_crash_size
+</span><span style=""></span><span style="color:#ae81ff">134217728</span></code></pre>
+</div>
+<p><code>systemctl start kdump</code>的作用是检查内核参数, 生成含kdump相关功能的initramfs.<br />
+通过IN_KDUMP这个环境变量,使重建的initramfs里含有kdump所有的脚本和命令. 这样一旦转储,新的initramfs里就可以sava vmcore了</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">root@localhost ~</span><span style="color:#f92672">]</span><span style="color:#75715e"># head /sbin/mkdumprd
+</span><span style="color:#75715e"></span><span style="color:#75715e">#!/bin/bash --norc
+</span><span style="color:#75715e"></span><span style="color:#75715e"># New mkdumprd
+</span><span style="color:#75715e">#
+</span><span style="color:#75715e"># Copyright 2011 Red Hat, Inc.
+</span><span style="color:#75715e">#
+</span><span style="color:#75715e"># Written by Cong Wang &lt;amwang@redhat.com&gt;
+</span><span style="color:#75715e">#
+</span><span style="color:#75715e"></span><span style="">
+</span><span style="">. /lib/kdump/kdump-lib.sh
+</span><span style=""></span><span style="">export</span><span style=""> </span><span style="">IN_KDUMP</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span></code></pre>
+</div>
+<p><code>/etc/kdump.conf</code>是关于kdump的配置项, 可给initramfs添加文件或者内核参数,调整转储失败时的动作等.</p>
+
 <h2 id="参考">参考</h2>
 
 <ul>
 <li><a href="https://freedesktop.org/wiki/Software/systemd/Debugging/">https://freedesktop.org/wiki/Software/systemd/Debugging/</a></li>
 <li><a href="https://www.freedesktop.org/software/systemd/man/bootup.html">https://www.freedesktop.org/software/systemd/man/bootup.html</a></li>
 <li><a href="https://www.freedesktop.org/software/systemd/man/systemctl.html">https://www.freedesktop.org/software/systemd/man/systemctl.html</a></li>
+<li><a href="https://www.freedesktop.org/software/systemd/man/systemd.service.html">https://www.freedesktop.org/software/systemd/man/systemd.service.html</a></li>
+<li><a href="https://www.linux.com/training-tutorials/understanding-and-using-systemd/">https://www.linux.com/training-tutorials/understanding-and-using-systemd/</a><br /></li>
+<li><a href="https://people.redhat.com/harald/dracut.html">https://people.redhat.com/harald/dracut.html</a></li>
+<li><a href="https://man7.org/linux/man-pages/man8/dracut.8.html">https://man7.org/linux/man-pages/man8/dracut.8.html</a></li>
+<li><a href="https://fedoraproject.org/wiki/How_to_debug_Dracut_problems">https://fedoraproject.org/wiki/How_to_debug_Dracut_problems</a></li>
+<li><a href="https://documentation.suse.com/sles/12-SP4/html/SLES-all/cha-udev.html">https://documentation.suse.com/sles/12-SP4/html/SLES-all/cha-udev.html</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/udev">https://wiki.archlinux.org/index.php/udev</a></li>
 </ul></article>
     <footer class="post-footer">
       
