@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RSS on My personal Blog</title>
+    <link>https://xixiliguo.github.io/tags/RSS/</link>
+    <description>Recent content in RSS on My personal Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 07 Apr 2019 10:05:29 +0800</lastBuildDate>
+    
+	<atom:link href="https://xixiliguo.github.io/tags/RSS/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linux 网卡多队列介绍</title>
+      <link>https://xixiliguo.github.io/post/multi-queue/</link>
+      <pubDate>Sun, 07 Apr 2019 10:05:29 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/multi-queue/</guid>
+      <description>&lt;p&gt;单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

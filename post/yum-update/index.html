@@ -1,445 +1,619 @@
 <!DOCTYPE html>
-<html lang="en">
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+
 <head>
-
-  <meta charset="utf-8" />
-
-  
-  <title>使用Yum 升级OS</title>
-
-  
-  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 
 
-  
-  <meta name="author" content="Peter Wang" />
-  <meta name="description" content="主要介绍使用yum 升级OS软件包的一些细节
 
-" />
 
-  
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="使用Yum 升级OS" />
-    <meta name="twitter:description" content="主要介绍使用yum 升级OS软件包的一些细节
-
-" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+    <meta name="description" content="主要介绍使用yum 升级OS软件包的一些细节">
 
 
 
+    
+    
+        
+    
 
-<meta name="generator" content="Hugo 0.28" />
-
-
-<link rel="canonical" href="https://xixiliguo.github.io/post/yum-update/" />
-<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+    
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+    <title>使用Yum 升级OS | My personal Blog</title>
 
-<meta name="baidu-site-verification" content="xijFMBD2HS" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
 
+    
 
+    <meta property="og:title" content="使用Yum 升级OS" />
+<meta property="og:description" content="主要介绍使用yum 升级OS软件包的一些细节" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xixiliguo.github.io/post/yum-update/" />
+<meta property="article:published_time" content="2019-06-12T00:12:08+08:00" />
+<meta property="article:modified_time" content="2019-06-12T00:12:08+08:00" />
 
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="个人网站" />
-<meta name="msapplication-tooltip" content="个人网站" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用Yum 升级OS"/>
+<meta name="twitter:description" content="主要介绍使用yum 升级OS软件包的一些细节"/>
 
 
+    <link rel="preload" as="font" href="/fonts/Metropolis.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Bold.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-BoldItalic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Italic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationMono.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/DroidSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/GeekblogIcons.woff2" type="font/woff2" crossorigin="anonymous">
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+<link rel="preload" href="/main-342b625c73.min.css" as="style">
+<link rel="stylesheet" href="/main-342b625c73.min.css" media="all">
 
-<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+<link rel="preload" href="/mobile-14fbbb71d2.min.css" as="style">
+<link rel="stylesheet" href="/mobile-14fbbb71d2.min.css" media="screen and (max-width: 45rem)">
 
+<link rel="preload" href="/print-86167e859a.min.css" as="style">
+<link rel="stylesheet" href="/print-86167e859a.min.css" media="print">
 
-  
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
-
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
+<link rel="preload" href="/custom.css" as="style">
+<link rel="stylesheet" href="/custom.css" media="all">
 
 
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+<!-- Made with Geekblog theme https://github.com/thegeeklab/hugo-geekblog -->
+
+    
 
 
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "articleSection": "post",
+    "name": "使用Yum 升级OS",
+    "headline": "使用Yum 升级OS",
+    "alternativeHeadline": "",
+    "description": "\x3cp\x3e主要介绍使用yum 升级OS软件包的一些细节\x3c\/p\x3e",
+    "inLanguage": "en",
+    "isFamilyFriendly": "true",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https:\/\/xixiliguo.github.io\/post\/yum-update\/"
+    },
+    "author" : [
+    ],
+    "copyrightHolder" : "My personal Blog",
+    "copyrightYear" : "2019",
+    "dateCreated": "2019-06-12T00:12:08.00Z",
+    "datePublished": "2019-06-12T00:12:08.00Z",
+    "dateModified": "2019-06-12T00:12:08.00Z",
+    "publisher":{
+        "@type":"Organization",
+        "name": "My personal Blog",
+        "url": "https://xixiliguo.github.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/xixiliguo.github.io\/brand.svg",
+            "width":"32",
+            "height":"32"
+        }
+    },
+    "url" : "https:\/\/xixiliguo.github.io\/post\/yum-update\/",
+    "wordCount" : "1042",
+    "genre" : [ "yum" ]
+}
+</script>
 
 
 </head>
-  <body>
-    
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
-      
-        
-      
+
+<body>
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_back" xmlns="http://www.w3.org/2000/svg"><path d="M31.999 14.035v3.93H7.673l11.134 11.228L16 32 .001 16.001 16 .002l2.807 2.807L7.673 14.037h24.326z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M7.954 17.965v5.988L.001 16l7.953-7.953v5.988H32v3.93H7.954z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M24.046 14.035V8.047L31.999 16l-7.953 7.953v-5.988H0v-3.93h24.046z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="bitbucket" xmlns="http://www.w3.org/2000/svg"><path d="M15.905 13.355c.189 1.444-1.564 2.578-2.784 1.839-1.375-.602-1.375-2.784-.034-3.403 1.151-.705 2.818.223 2.818 1.564zm1.907-.361c-.309-2.44-3.076-4.056-5.328-3.042-1.426.636-2.389 2.148-2.32 3.747.086 2.097 2.08 3.815 4.176 3.626s3.729-2.234 3.472-4.331zm4.108-9.315c-.756-.997-2.045-1.169-3.179-1.358-3.214-.516-6.513-.533-9.727.034-1.066.172-2.269.361-2.939 1.323 1.1 1.031 2.664 1.186 4.073 1.358 2.544.327 5.156.344 7.699.017 1.426-.172 3.008-.309 4.073-1.375zm.979 17.788c-.481 1.684-.206 3.953-1.994 4.932-3.076 1.701-6.806 1.89-10.191 1.289-1.787-.327-3.884-.894-4.864-2.578-.43-1.65-.705-3.334-.98-5.018l.103-.275.309-.155c5.121 3.386 12.288 3.386 17.427 0 .808.241.206 1.22.189 1.805zM26.01 4.951c-.584 3.764-1.255 7.51-1.908 11.257-.189 1.1-1.255 1.719-2.148 2.183-3.214 1.615-6.96 1.89-10.483 1.512-2.389-.258-4.829-.894-6.771-2.389-.911-.705-.911-1.908-1.083-2.922-.602-3.523-1.289-7.046-1.719-10.604.206-1.547 1.942-2.217 3.231-2.698C6.848.654 8.686.362 10.508.19c3.884-.378 7.854-.241 11.618.859 1.341.395 2.784.945 3.695 2.097.412.533.275 1.203.189 1.805z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="bookmarks" xmlns="http://www.w3.org/2000/svg"><path d="M20.357 5.856q1.157 0 2.043.851t.885 2.008v23.284l-10.212-4.357-10.144 4.357V8.715q0-1.157.885-2.008t2.042-.851h14.502zm5.787 18.859V5.856q0-1.157-.851-2.042t-2.008-.885H8.715q0-1.157.885-2.042t2.043-.885h14.502q1.157 0 2.043.885t.885 2.042v23.216z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="clear" xmlns="http://www.w3.org/2000/svg"><path d="M32 3.222L19.222 16 32 28.778l-3.221 3.221-12.778-12.778L3.223 31.999.002 28.778 12.78 16 .002 3.222 3.223.001l12.778 12.778L28.779.001z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="code" xmlns="http://www.w3.org/2000/svg"><path d="M9.917 24.5a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm0-21a1.75 1.75 0 10-3.501.001A1.75 1.75 0 009.917 3.5zm11.666 2.333a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm1.75 0a3.502 3.502 0 01-1.75 3.026c-.055 6.581-4.721 8.039-7.82 9.023-2.898.911-3.846 1.349-3.846 3.117v.474a3.502 3.502 0 011.75 3.026c0 1.932-1.568 3.5-3.5 3.5s-3.5-1.568-3.5-3.5c0-1.294.711-2.424 1.75-3.026V6.526A3.502 3.502 0 014.667 3.5c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5a3.502 3.502 0 01-1.75 3.026v9.06c.93-.456 1.914-.766 2.807-1.039 3.391-1.075 5.323-1.878 5.359-5.687a3.502 3.502 0 01-1.75-3.026c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="contacts" xmlns="http://www.w3.org/2000/svg"><path d="M22.688 22.688v-2q0-1.5-2.281-2.438t-4.406-.938-4.406.938-2.281 2.438v2h13.375zM16 9q-1.25 0-2.125.875T13 12t.875 2.125T16 15t2.125-.875T19 12t-.875-2.125T16 9zm10.688-3.687q1.063 0 1.844.813t.781 1.875v16q0 1.063-.781 1.875t-1.844.813H5.313q-1.063 0-1.844-.813t-.781-1.875v-16q0-1.063.781-1.875t1.844-.813h21.375zM5.313 32v-2.688h21.375V32H5.313zM26.688 0v2.688H5.313V0h21.375z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="create" xmlns="http://www.w3.org/2000/svg"><path d="M31.499 7.167l-3.25 3.25-6.666-6.666 3.25-3.25q.5-.5 1.25-.5t1.25.5l4.166 4.166q.5.5.5 1.25t-.5 1.25zM.001 25.333L19.667 5.667l6.666 6.666L6.667 31.999H.001v-6.666z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="date" xmlns="http://www.w3.org/2000/svg"><path d="M27.192 28.844V11.192H4.808v17.652h22.384zm0-25.689q1.277 0 2.253.976t.976 2.253v22.459q0 1.277-.976 2.216t-2.253.939H4.808q-1.352 0-2.291-.901t-.939-2.253V6.385q0-1.277.939-2.253t2.291-.976h1.577V.001h3.23v3.155h12.769V.001h3.23v3.155h1.577zm-3.155 11.267v3.155h-3.23v-3.155h3.23zm-6.46 0v3.155h-3.155v-3.155h3.155zm-6.384 0v3.155h-3.23v-3.155h3.23z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="download" xmlns="http://www.w3.org/2000/svg"><path d="M2.866 28.209h26.269v3.79H2.866v-3.79zm26.268-16.925L16 24.418 2.866 11.284h7.493V.001h11.283v11.283h7.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="email" xmlns="http://www.w3.org/2000/svg"><path d="M28.845 9.615v-3.23L16 14.422 3.155 6.385v3.23L16 17.577zm0-6.46q1.277 0 2.216.977T32 6.385v19.23q0 1.277-.939 2.253t-2.216.977H3.155q-1.277 0-2.216-.977T0 25.615V6.385q0-1.277.939-2.253t2.216-.977h25.69z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="git" xmlns="http://www.w3.org/2000/svg"><path d="M27.472 12.753L15.247.529a1.803 1.803 0 00-2.55 0l-2.84 2.84 2.137 2.137a2.625 2.625 0 013.501 3.501l3.499 3.499a2.625 2.625 0 11-1.237 1.237l-3.499-3.499c-.083.04-.169.075-.257.106v7.3a2.626 2.626 0 11-1.75 0v-7.3a2.626 2.626 0 01-1.494-3.607L8.62 4.606l-8.09 8.09a1.805 1.805 0 000 2.551l12.225 12.224a1.803 1.803 0 002.55 0l12.168-12.168a1.805 1.805 0 000-2.551z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="github" xmlns="http://www.w3.org/2000/svg"><path d="M16 .394c8.833 0 15.999 7.166 15.999 15.999 0 7.062-4.583 13.062-10.937 15.187-.813.146-1.104-.354-1.104-.771 0-.521.021-2.25.021-4.396 0-1.5-.5-2.458-1.083-2.958 3.562-.396 7.312-1.75 7.312-7.896 0-1.75-.625-3.167-1.646-4.291.167-.417.708-2.042-.167-4.25-1.333-.417-4.396 1.646-4.396 1.646a15.032 15.032 0 00-8 0S8.937 6.602 7.603 7.018c-.875 2.208-.333 3.833-.167 4.25-1.021 1.125-1.646 2.542-1.646 4.291 0 6.125 3.729 7.5 7.291 7.896-.458.417-.875 1.125-1.021 2.146-.917.417-3.25 1.125-4.646-1.333-.875-1.521-2.458-1.646-2.458-1.646-1.562-.021-.104.979-.104.979 1.042.479 1.771 2.333 1.771 2.333.938 2.854 5.396 1.896 5.396 1.896 0 1.333.021 2.583.021 2.979 0 .417-.292.917-1.104.771C4.582 29.455-.001 23.455-.001 16.393-.001 7.56 7.165.394 15.998.394zM6.063 23.372c.042-.083-.021-.187-.146-.25-.125-.042-.229-.021-.271.042-.042.083.021.187.146.25.104.062.229.042.271-.042zm.646.709c.083-.062.062-.208-.042-.333-.104-.104-.25-.146-.333-.062-.083.062-.062.208.042.333.104.104.25.146.333.062zm.625.937c.104-.083.104-.25 0-.396-.083-.146-.25-.208-.354-.125-.104.062-.104.229 0 .375s.271.208.354.146zm.875.875c.083-.083.042-.271-.083-.396-.146-.146-.333-.167-.417-.062-.104.083-.062.271.083.396.146.146.333.167.417.062zm1.187.521c.042-.125-.083-.271-.271-.333-.167-.042-.354.021-.396.146s.083.271.271.312c.167.062.354 0 .396-.125zm1.313.104c0-.146-.167-.25-.354-.229-.187 0-.333.104-.333.229 0 .146.146.25.354.229.187 0 .333-.104.333-.229zm1.208-.208c-.021-.125-.187-.208-.375-.187-.187.042-.312.167-.292.312.021.125.187.208.375.167s.312-.167.292-.292z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="gitlab" xmlns="http://www.w3.org/2000/svg"><path d="M1.629 11.034L14 26.888.442 17.048a1.09 1.09 0 01-.39-1.203l1.578-4.811zm7.217 0h10.309l-5.154 15.854zM5.753 1.475l3.093 9.559H1.63l3.093-9.559a.548.548 0 011.031 0zm20.618 9.559l1.578 4.811c.141.437-.016.922-.39 1.203l-13.558 9.84 12.371-15.854zm0 0h-7.216l3.093-9.559a.548.548 0 011.031 0z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="heart" xmlns="http://www.w3.org/2000/svg"><path d="M16 29.714a1.11 1.11 0 01-.786-.321L4.072 18.643c-.143-.125-4.071-3.714-4.071-8 0-5.232 3.196-8.357 8.535-8.357 3.125 0 6.053 2.464 7.464 3.857 1.411-1.393 4.339-3.857 7.464-3.857 5.339 0 8.535 3.125 8.535 8.357 0 4.286-3.928 7.875-4.089 8.035L16.785 29.392c-.214.214-.5.321-.786.321z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M25.875 28.25L22.125 32 6.126 16.001 22.125.002l3.75 3.75-12.25 12.25z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M6.125 28.25L18.375 16 6.125 3.75 9.875 0l15.999 15.999L9.875 31.998z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="link" xmlns="http://www.w3.org/2000/svg"><path d="M24.037 7.963q3.305 0 5.634 2.366T32 16t-2.329 5.671-5.634 2.366h-6.46v-3.08h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.08h6.46zM9.615 17.578v-3.155h12.77v3.155H9.615zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.08h-6.46q-3.305 0-5.634-2.366T0 16.001t2.329-5.671 5.634-2.366h6.46v3.08h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="menu" xmlns="http://www.w3.org/2000/svg"><path d="M.001 5.334h31.998v3.583H.001V5.334zm0 12.416v-3.5h31.998v3.5H.001zm0 8.916v-3.583h31.998v3.583H.001z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="notifications" xmlns="http://www.w3.org/2000/svg"><path d="M25.846 22.154l3.308 3.308v1.615H2.847v-1.615l3.308-3.308V14q0-3.846 1.961-6.692t5.423-3.692V2.462q0-1 .692-1.731T16 0t1.769.731.692 1.731v1.154q3.461.846 5.423 3.692T25.846 14v8.154zM16 32q-1.385 0-2.346-.923t-.962-2.308h6.615q0 1.308-1 2.269T15.999 32z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="person" xmlns="http://www.w3.org/2000/svg"><path d="M16 20.023q5.052 0 10.526 2.199t5.473 5.754v4.023H0v-4.023q0-3.555 5.473-5.754t10.526-2.199zM16 16q-3.275 0-5.614-2.339T8.047 8.047t2.339-5.661T16 0t5.614 2.386 2.339 5.661-2.339 5.614T16 16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="pin" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 19.2h9.6v-1.6L22.4 16V3.2l4.8-1.6V0H4.8v1.6l4.8 1.6V16l-4.8 1.6v1.6h9.6v11.2L16 32l1.6-1.6V19.2z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="rss_feed" xmlns="http://www.w3.org/2000/svg"><path d="M-.481 12.048q8.482 0 14.457 5.976t5.976 14.457h-5.879q0-5.976-4.289-10.264T-.48 17.928v-5.879zm0-11.565q13.204 0 22.601 9.397t9.397 22.601h-5.783q0-10.891-7.662-18.553T-.481 6.266V.483zm0 27.468q0-1.831 1.301-3.132t3.229-1.301 3.181 1.253 1.253 3.181-1.301 3.229-3.132 1.301q-1.928 0-3.229-1.301T-.48 27.952z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="search" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zm10.981 0L32 29.255 29.255 32l-9.094-9.094v-1.458l-.515-.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432T.001 11.925t3.474-8.45 8.45-3.474 8.407 3.474 3.432 8.45q0 1.802-.858 4.075t-1.973 3.646l.515.515h1.458z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="security" xmlns="http://www.w3.org/2000/svg"><path d="M16 0l13.072 5.855v8.715q0 6.059-3.745 11.063T16 31.999q-5.583-1.362-9.327-6.366T2.928 14.57V5.855zm0 16v13.004q4.017-1.294 6.808-4.868T26.144 16H16zm0 0V3.2L5.856 7.693v8.306H16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="telescope" xmlns="http://www.w3.org/2000/svg"><path d="M25.026 3.335a.466.466 0 00-.646-.238L13.362 8.91a.463.463 0 00-.216.575l.227.593-6.36 3.488a.462.462 0 00-.205.583l.211.508-6.755 3.228a.463.463 0 00-.228.595l1.386 3.341a.463.463 0 00.583.259l7.056-2.5.211.508a.462.462 0 00.557.267l6.733-1.941.202.527a.46.46 0 00.566.277l12.03-3.702a.46.46 0 00.293-.613L25.026 3.335zM2.109 21.061l-1.049-2.53 6.314-3.018 1.332 3.211-6.596 2.337zm7.857-1.708l-.22-.531-1.706-4.113-.22-.53 5.863-3.216 2.197 5.676.347.908-6.261 1.806zm7.505-1.146l-.188-.491c-.003-.01-.001-.022-.006-.032l-.572-1.478-2.549-6.668 10.201-5.381 4.249 10.624-11.136 3.428zm8.943-16.723a.463.463 0 00-.86.344l5.552 13.881a.464.464 0 00.602.258.464.464 0 00.258-.602L26.413 1.484zM16.268 20.627h-2.776c-1.055 0-1.851.796-1.851 1.851v1.217l-5.44 6.347a.462.462 0 10.702.602l5.415-6.316h2.101v6.015a.463.463 0 00.926 0v-6.015h2.101l5.414 6.316a.462.462 0 10.703-.602l-5.44-6.347v-1.148c0-1.076-.813-1.92-1.851-1.92zm.925 2.777h-4.627v-.925c0-.545.38-.925.925-.925h2.776c.527 0 .925.428.925.995v.856z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="timer" xmlns="http://www.w3.org/2000/svg"><path d="M16 29q4.428 0 7.536-3.143t3.107-7.571-3.107-7.536T16 7.643 8.464 10.75t-3.107 7.536 3.107 7.571T16 29zM26.714 9.786q1.214 1.571 2.107 4.036t.893 4.464q0 5.643-4 9.678T16 32t-9.714-4.036-4-9.678 4-9.678T16 4.572q1.929 0 4.464.929t4.107 2.143l2.143-2.214q1.143.929 2.143 2.143zM14.5 19.857v-9.143h3v9.143h-3zM20.571.001v3.071h-9.143V.001h9.143z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="tree" xmlns="http://www.w3.org/2000/svg"><path d="M32 14.423H20.808V9.616h-3.23v12.77h3.23v-4.807H32v12.845H20.808v-4.807h-6.385v-16h-3.23v4.807H.001V1.579h11.192v4.807h9.615V1.579H32v12.845z"/></symbol></svg>
+
+    <div class="wrapper">
+        <header class="gblog-header">
+    <div class="container flex align-center justify-center">
+        <a class="gblog-header__link" rel="me" href="https://xixiliguo.github.io/">
+            <span class="gblog-brand flex align-center justify-center">
+                <img class="gblog-brand__img" src="/brand.svg" alt="" width=60 height=60>
+                My personal Blog
+            </span>
+            
+        </a>
     </div>
-    
-    
-  <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
-  
-  <h2 class="title">个人网站</h2>
-  
-  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
-      
-        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
 </header>
+<nav class="gblog-nav">
+    <input type="checkbox" id="menu-control" class="hidden">
+    <div class="gblog-nav__control">
+        <label for="menu-control"  class="flex align-center justify-center">
+            <svg class="icon menu"><use xlink:href="#menu"></use></svg>
+            <svg class="icon clear"><use xlink:href="#clear"></use></svg>
+            <span>Nav</span>
+        </label>
+    </div>
+    <ul class="gblog-nav__list container flex flex-wrap justify-center menu-content">
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/BM/">BM</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Bandersnatch/">Bandersnatch</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Hash/">Hash</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/KMP/">KMP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Lua/">Lua</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NTP/">NTP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NetWork/">NetWork</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/OpenStack/">OpenStack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Pypi/">Pypi</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Python/">Python</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/RSS/">RSS</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/atop/">atop</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/boot/">boot</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/c/">c</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/cloud-init/">cloud-init</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/command/">command</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/crypt/">crypt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/dns/">dns</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/docker/">docker</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/golang/">golang</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/httprouter/">httprouter</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/iptables/">iptables</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/libvirt/">libvirt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/linux/">linux</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/net-stack/">net stack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/os/exec/">os/exec</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/proc/">proc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/radix-tree/">radix-tree</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/runc/">runc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/shadow/">shadow</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/systemd/">systemd</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/tcp/">tcp</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/yum/">yum</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%BB%E6%92%AD/">任播</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97/">多网卡队列</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E7%89%87%E6%AE%B5/">片段</a>
+        </li>
+        
+        
+        
+    </ul>
+</nav>
 
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">使用Yum 升级OS</h1>
-      <p class="post-meta">@Peter Wang · Jun 12, 2019 · 5 min read</p>
-    </header>
-    <article class="post-content"><p>主要介绍使用yum 升级OS软件包的一些细节</p>
 
-<p></p>
+        <main class="gblog-page container">
+            
+    <article class="gblog-post">
+        <header class="gblog-post__header">
+            
+            
 
+            <h1>使用Yum 升级OS</h1>
+            
+            <div class="gblog-post__meta">
+                <span class="no-wrap">
+                    <svg class="icon date"><use xlink:href="#date"></use></svg>
+                    <span class="gblog-post__tag">
+                        <time datetime="2019-06-12T00:12:08&#43;08:00">
+                            
+                            Jun 12, 2019
+                        </time>
+                    </span>
+                </span>
+
+                <span class="no-wrap">
+                    <svg class="icon timer"><use xlink:href="#timer"></use></svg>
+                    <span class="gblog-post__tag">5 min read</span>
+                </span>
+            </div>
+            
+        </header>
+
+        <section class="gblog-markdown">
+            <p>主要介绍使用yum 升级OS软件包的一些细节</p>
 <h1 id="repo源">Repo源</h1>
-
-<p>每个源下面有个<code>repodata</code>这个文件夹, 该文件夹存放着软件包的元数据(包名,路径,版本,依赖关系)<br />
-比如<code>https://mirrors.tuna.tsinghua.edu.cn/centos/7.6.1810/os/x86_64/</code><br />
+<p>每个源下面有个<code>repodata</code>这个文件夹, 该文件夹存放着软件包的元数据(包名,路径,版本,依赖关系)<br>
+比如<code>https://mirrors.tuna.tsinghua.edu.cn/centos/7.6.1810/os/x86_64/</code><br>
 下面的repodata里 <code>25cd2c29e5adb2b6f8a5b091237dd9f760e97815b37f2557f2cd1c12a5f294f0-primary.xml.gz</code> 文件就是元数据文件</p>
-
 <h2 id="创建repo源的操作">创建Repo源的操作</h2>
-
 <p>已<code>/opt/mirrors/CentOS7</code>为例:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">mkdir -p CentOS7/Packages</span></code></pre>
-</div>
-<p>将所有软件rpm包上传到文件夹<code>Packages</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">cd</span><span style=""> /opt/mirrors/CentOS7
-</span><span style="">createrepo .</span></code></pre>
-</div>
-<p>该操作会生成<code>yum</code>会用到的元数据,并放入到<code>repodata</code>目录.<br />
-并不一定非要创建<code>Packages</code>目录, <code>createrepo</code>会自动查找指定目录及其子目录. <code>Packages</code>是个很好的约定,方便管理<br />
-rpm包是集合, 含有二进制文件, 版本信息, 依赖关系等. <code>createrepo</code>通过读取每个rpm的信息,并生成元数据.<br />
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir -p CentOS7/Packages
+</code></pre></div><p>将所有软件rpm包上传到文件夹<code>Packages</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /opt/mirrors/CentOS7
+createrepo .
+</code></pre></div><p>该操作会生成<code>yum</code>会用到的元数据,并放入到<code>repodata</code>目录.<br>
+并不一定非要创建<code>Packages</code>目录, <code>createrepo</code>会自动查找指定目录及其子目录. <code>Packages</code>是个很好的约定,方便管理<br>
+rpm包是集合, 含有二进制文件, 版本信息, 依赖关系等. <code>createrepo</code>通过读取每个rpm的信息,并生成元数据.<br>
 这样<code>yum</code>在分析时只需要下载元数据,就可以得知该源有哪个软件,什么版本等.不必每次下载源里的包.</p>
-
 <p>我们使用<code>yum checkupdate</code>等命令时, 假设访问<code>xxx/CentOS7</code>, <code>yum</code>会检查是否有<code>xxx/CentOS7/repodata</code>这个目录,并获取相应的元数据.</p>
-
 <h1 id="rpm相关操作">rpm相关操作</h1>
-
 <h2 id="rpmsave与rpmnew">rpmsave与rpmnew</h2>
-
-<p>rpm的spec文件里可以指定新版配置文件的升级方式<br />
-默认升级时旧版本有改动,则用新版本替换旧版本的文件. 旧版本的文件改名为XXXX.rpmsave<br />
-如果spec文件里指定为<code>%config(noreplace)</code>, 则升级时旧版本有改动, 保留旧文件,新版本文件改为XXXX.rpmnew<br />
-这里的改动指新版本的rpm里对比旧版本rpm里的默认文件.  并非拿可能被用户修改过的文件和新版本里的文件对比<br />
+<p>rpm的spec文件里可以指定新版配置文件的升级方式<br>
+默认升级时旧版本有改动,则用新版本替换旧版本的文件. 旧版本的文件改名为XXXX.rpmsave<br>
+如果spec文件里指定为<code>%config(noreplace)</code>, 则升级时旧版本有改动, 保留旧文件,新版本文件改为XXXX.rpmnew<br>
+这里的改动指新版本的rpm里对比旧版本rpm里的默认文件.  并非拿可能被用户修改过的文件和新版本里的文件对比<br>
 如果文件不存在(比如人为删除), 升级时会重新生成该文件， 不管是configfile还是 noconfigfile</p>
-
 <p>卸载时对于<code>%config(noreplace)</code>的文件,如果有改动,则不会删除,改名为XXXX.rpmsave</p>
-
-<p><a href="https://blog.csdn.net/xukunddp/article/details/6409795">https://blog.csdn.net/xukunddp/article/details/6409795</a> 有相关解释<br />
+<p><a href="https://blog.csdn.net/xukunddp/article/details/6409795">https://blog.csdn.net/xukunddp/article/details/6409795</a> 有相关解释 <br>
 <a href="https://www.cl.cam.ac.uk/~jw35/docs/rpm_config.html">https://www.cl.cam.ac.uk/~jw35/docs/rpm_config.html</a>  描述了各种改动场景下的结果</p>
-
-<p>如果没有spec文件, 可通过如下步骤从已安装的软件包确认下配置文件的覆盖方式<br />
-比较文件的flags是否 第5个Bit位位1.   即 XX &amp; (1&lt;&lt;4) 是否非0<br />
+<p>如果没有spec文件, 可通过如下步骤从已安装的软件包确认下配置文件的覆盖方式<br>
+比较文件的flags是否 第5个Bit位位1.   即 XX &amp; (1&laquo;4) 是否非0<br>
 显示<code>/etc/pam.d/sshd</code>,<code>/etc/ssh/sshd_config</code>,<code>/etc/sysconfig/sshd</code>的属性是 %config(noreplace)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --qf &#39;[%{filenames}: %{fileflags}\n]&#39; openssh-server
-</span><span style="color:#75715e"></span><span style="">/etc/pam.d/sshd: </span><span style="color:#ae81ff">17</span><span style="">
-</span><span style="">/etc/ssh/sshd_config: </span><span style="color:#ae81ff">17</span><span style="">
-</span><span style="">/etc/sysconfig/sshd: </span><span style="color:#ae81ff">17</span><span style="">
-</span><span style="">/usr/lib/systemd/system/sshd-keygen.service: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/lib/systemd/system/sshd.service: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/lib/systemd/system/sshd.socket: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/lib/systemd/system/sshd@.service: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/lib64/fipscheck/sshd.hmac: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/libexec/openssh/sftp-server: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/sbin/sshd: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/sbin/sshd-keygen: </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">/usr/share/man/man5/moduli.5.gz: </span><span style="color:#ae81ff">2</span><span style="">
-</span><span style="">/usr/share/man/man5/sshd_config.5.gz: </span><span style="color:#ae81ff">2</span><span style="">
-</span><span style="">/usr/share/man/man8/sftp-server.8.gz: </span><span style="color:#ae81ff">2</span><span style="">
-</span><span style="">/usr/share/man/man8/sshd.8.gz: </span><span style="color:#ae81ff">2</span><span style="">
-</span><span style="">/var/empty/sshd: </span><span style="color:#ae81ff">0</span></code></pre>
-</div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># grep -r RPMFILE_NOREPLACE /usr/include/
-</span><span style="color:#75715e"></span><span style="">/usr/include/rpm/rpmfi.h:    </span><span style="">RPMFILE_NOREPLACE</span><span style="">	</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style=""> &lt;&lt;  </span><span style="color:#ae81ff">4</span><span style="color:#f92672">)</span><span style="">,	/*!&lt; from %%config</span><span style="color:#f92672">(</span><span style="">noreplace</span><span style="color:#f92672">)</span><span style=""> */</span></code></pre>
-</div>
-<p>参考: <a href="https://www.redhat.com/archives/rpm-list/2003-October/msg00140.html">https://www.redhat.com/archives/rpm-list/2003-October/msg00140.html</a></p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># rpm -q --qf &#39;[%{filenames}: %{fileflags}\n]&#39; openssh-server</span>
+/etc/pam.d/sshd: <span class="m">17</span>
+/etc/ssh/sshd_config: <span class="m">17</span>
+/etc/sysconfig/sshd: <span class="m">17</span>
+/usr/lib/systemd/system/sshd-keygen.service: <span class="m">0</span>
+/usr/lib/systemd/system/sshd.service: <span class="m">0</span>
+/usr/lib/systemd/system/sshd.socket: <span class="m">0</span>
+/usr/lib/systemd/system/sshd@.service: <span class="m">0</span>
+/usr/lib64/fipscheck/sshd.hmac: <span class="m">0</span>
+/usr/libexec/openssh/sftp-server: <span class="m">0</span>
+/usr/sbin/sshd: <span class="m">0</span>
+/usr/sbin/sshd-keygen: <span class="m">0</span>
+/usr/share/man/man5/moduli.5.gz: <span class="m">2</span>
+/usr/share/man/man5/sshd_config.5.gz: <span class="m">2</span>
+/usr/share/man/man8/sftp-server.8.gz: <span class="m">2</span>
+/usr/share/man/man8/sshd.8.gz: <span class="m">2</span>
+/var/empty/sshd: <span class="m">0</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># grep -r RPMFILE_NOREPLACE /usr/include/</span>
+/usr/include/rpm/rpmfi.h:    <span class="nv">RPMFILE_NOREPLACE</span>	<span class="o">=</span> <span class="o">(</span><span class="m">1</span> &lt;&lt;  4<span class="o">)</span>,	/*!&lt; from %%config<span class="o">(</span>noreplace<span class="o">)</span> */
+</code></pre></div><p>参考: <a href="https://www.redhat.com/archives/rpm-list/2003-October/msg00140.html">https://www.redhat.com/archives/rpm-list/2003-October/msg00140.html</a></p>
 <h2 id="查询依赖关系">查询依赖关系</h2>
-
 <p>检查软件提供哪些capability</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --provides openssh-server
-</span><span style="color:#75715e"></span><span style="">config</span><span style="color:#f92672">(</span><span style="">openssh-server</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
-</span><span style="">openssh-server </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
-</span><span style="">openssh-server</span><span style="color:#f92672">(</span><span style="">x86-64</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7</span></code></pre>
-</div>
-<p>检查软件需要哪些capability</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --requires openssh-server
-</span><span style="color:#75715e"></span><span style="">/bin/bash
-</span><span style="">/bin/sh
-</span><span style="">/bin/sh
-</span><span style="">/bin/sh
-</span><span style="">/bin/sh
-</span><span style="">/usr/sbin/useradd
-</span><span style="">config</span><span style="color:#f92672">(</span><span style="">openssh-server</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
-</span><span style="">fipscheck-lib</span><span style="color:#f92672">(</span><span style="">x86-64</span><span style="color:#f92672">)</span><span style=""> &gt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">.3.0
-</span><span style="">libaudit.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.14</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.16</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.17</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.2.5</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.3</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.3.4</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.4</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.8</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcom_err.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcrypt.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcrypt.so.1</span><span style="color:#f92672">(</span><span style="">GLIBC_2.2.5</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcrypto.so.10</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcrypto.so.10</span><span style="color:#f92672">(</span><span style="">OPENSSL_1.0.1_EC</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcrypto.so.10</span><span style="color:#f92672">(</span><span style="">OPENSSL_1.0.2</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libcrypto.so.10</span><span style="color:#f92672">(</span><span style="">libcrypto.so.10</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libdl.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libfipscheck.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libgssapi_krb5.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libgssapi_krb5.so.2</span><span style="color:#f92672">(</span><span style="">gssapi_krb5_2_MIT</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libk5crypto.so.3</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libkrb5.so.3</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libkrb5.so.3</span><span style="color:#f92672">(</span><span style="">krb5_3_MIT</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">liblber-2.4.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libldap-2.4.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libpam.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libpam.so.0</span><span style="color:#f92672">(</span><span style="">LIBPAM_1.0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libresolv.so.2</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libselinux.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libsystemd.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libsystemd.so.0</span><span style="color:#f92672">(</span><span style="">LIBSYSTEMD_209</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libutil.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libutil.so.1</span><span style="color:#f92672">(</span><span style="">GLIBC_2.2.5</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libwrap.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">libz.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="">openssh</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">7</span><span style="">.4p1-16.el7
-</span><span style="">pam &gt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">.0.1-3
-</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">CompressedFileNames</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="">.0.4-1
-</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">FileDigests</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style="">.6.0-1
-</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">PayloadFilesHavePrefix</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style="">.0-1
-</span><span style="">rtld</span><span style="color:#f92672">(</span><span style="">GNU_HASH</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">systemd-units
-</span><span style="">systemd-units
-</span><span style="">systemd-units
-</span><span style="">rpmlib</span><span style="color:#f92672">(</span><span style="">PayloadIsXz</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="">.2-1</span></code></pre>
-</div>
-<p>根据capability,查询哪个包提供</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --whatprovides pam
-</span><span style="color:#75715e"></span><span style="">pam-1.1.8-22.el7.x86_64
-</span><span style=""></span><span style="color:#75715e"># rpm -q --whatprovides libsystemd.so.0\(\)\(64bit\)
-</span><span style="color:#75715e"></span><span style="">systemd-libs-219-62.el7_6.6.x86_64</span></code></pre>
-</div>
-<p>查询哪个包需要某个特定的capability</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># rpm -q --whatrequires pam
-</span><span style="color:#75715e"></span><span style="">passwd-0.79-4.el7.x86_64
-</span><span style="">cronie-1.4.11-20.el7_6.x86_64
-</span><span style="">util-linux-2.23.2-59.el7_6.1.x86_64
-</span><span style="">openssh-server-7.4p1-16.el7.x86_64
-</span><span style="">authconfig-6.2.8-30.el7.x86_64
-</span><span style=""></span><span style="color:#75715e"># rpm -q --whatrequires libsystemd.so.0\(\)\(64bit\)
-</span><span style="color:#75715e"></span><span style="">dbus-libs-1.10.24-13.el7_6.x86_64
-</span><span style="">dbus-1.10.24-13.el7_6.x86_64
-</span><span style="">polkit-0.112-18.el7_6.1.x86_64
-</span><span style="">util-linux-2.23.2-59.el7_6.1.x86_64
-</span><span style="">openssh-server-7.4p1-16.el7.x86_64
-</span><span style="">rsyslog-8.24.0-34.el7.x86_64
-</span><span style="">procps-ng-3.3.10-23.el7.x86_64</span></code></pre>
-</div>
-<p>如果要查询本地rpm软件包的信息, 需要使用<code>-p</code><br />
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># rpm -q --provides openssh-server</span>
+config<span class="o">(</span>openssh-server<span class="o">)</span> <span class="o">=</span> 7.4p1-16.el7
+openssh-server <span class="o">=</span> 7.4p1-16.el7
+openssh-server<span class="o">(</span>x86-64<span class="o">)</span> <span class="o">=</span> 7.4p1-16.el7
+</code></pre></div><p>检查软件需要哪些capability</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># rpm -q --requires openssh-server</span>
+/bin/bash
+/bin/sh
+/bin/sh
+/bin/sh
+/bin/sh
+/usr/sbin/useradd
+config<span class="o">(</span>openssh-server<span class="o">)</span> <span class="o">=</span> 7.4p1-16.el7
+fipscheck-lib<span class="o">(</span>x86-64<span class="o">)</span> &gt;<span class="o">=</span> 1.3.0
+libaudit.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">()(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.14<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.16<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.17<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.2.5<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.3<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.3.4<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.4<span class="o">)(</span>64bit<span class="o">)</span>
+libc.so.6<span class="o">(</span>GLIBC_2.8<span class="o">)(</span>64bit<span class="o">)</span>
+libcom_err.so.2<span class="o">()(</span>64bit<span class="o">)</span>
+libcrypt.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+libcrypt.so.1<span class="o">(</span>GLIBC_2.2.5<span class="o">)(</span>64bit<span class="o">)</span>
+libcrypto.so.10<span class="o">()(</span>64bit<span class="o">)</span>
+libcrypto.so.10<span class="o">(</span>OPENSSL_1.0.1_EC<span class="o">)(</span>64bit<span class="o">)</span>
+libcrypto.so.10<span class="o">(</span>OPENSSL_1.0.2<span class="o">)(</span>64bit<span class="o">)</span>
+libcrypto.so.10<span class="o">(</span>libcrypto.so.10<span class="o">)(</span>64bit<span class="o">)</span>
+libdl.so.2<span class="o">()(</span>64bit<span class="o">)</span>
+libfipscheck.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+libgssapi_krb5.so.2<span class="o">()(</span>64bit<span class="o">)</span>
+libgssapi_krb5.so.2<span class="o">(</span>gssapi_krb5_2_MIT<span class="o">)(</span>64bit<span class="o">)</span>
+libk5crypto.so.3<span class="o">()(</span>64bit<span class="o">)</span>
+libkrb5.so.3<span class="o">()(</span>64bit<span class="o">)</span>
+libkrb5.so.3<span class="o">(</span>krb5_3_MIT<span class="o">)(</span>64bit<span class="o">)</span>
+liblber-2.4.so.2<span class="o">()(</span>64bit<span class="o">)</span>
+libldap-2.4.so.2<span class="o">()(</span>64bit<span class="o">)</span>
+libpam.so.0<span class="o">()(</span>64bit<span class="o">)</span>
+libpam.so.0<span class="o">(</span>LIBPAM_1.0<span class="o">)(</span>64bit<span class="o">)</span>
+libresolv.so.2<span class="o">()(</span>64bit<span class="o">)</span>
+libselinux.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+libsystemd.so.0<span class="o">()(</span>64bit<span class="o">)</span>
+libsystemd.so.0<span class="o">(</span>LIBSYSTEMD_209<span class="o">)(</span>64bit<span class="o">)</span>
+libutil.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+libutil.so.1<span class="o">(</span>GLIBC_2.2.5<span class="o">)(</span>64bit<span class="o">)</span>
+libwrap.so.0<span class="o">()(</span>64bit<span class="o">)</span>
+libz.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+<span class="nv">openssh</span> <span class="o">=</span> 7.4p1-16.el7
+pam &gt;<span class="o">=</span> 1.0.1-3
+rpmlib<span class="o">(</span>CompressedFileNames<span class="o">)</span> &lt;<span class="o">=</span> 3.0.4-1
+rpmlib<span class="o">(</span>FileDigests<span class="o">)</span> &lt;<span class="o">=</span> 4.6.0-1
+rpmlib<span class="o">(</span>PayloadFilesHavePrefix<span class="o">)</span> &lt;<span class="o">=</span> 4.0-1
+rtld<span class="o">(</span>GNU_HASH<span class="o">)</span>
+systemd-units
+systemd-units
+systemd-units
+rpmlib<span class="o">(</span>PayloadIsXz<span class="o">)</span> &lt;<span class="o">=</span> 5.2-1
+</code></pre></div><p>根据capability,查询哪个包提供</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># rpm -q --whatprovides pam</span>
+pam-1.1.8-22.el7.x86_64
+<span class="c1"># rpm -q --whatprovides libsystemd.so.0\(\)\(64bit\)</span>
+systemd-libs-219-62.el7_6.6.x86_64
+</code></pre></div><p>查询哪个包需要某个特定的capability</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># rpm -q --whatrequires pam</span>
+passwd-0.79-4.el7.x86_64
+cronie-1.4.11-20.el7_6.x86_64
+util-linux-2.23.2-59.el7_6.1.x86_64
+openssh-server-7.4p1-16.el7.x86_64
+authconfig-6.2.8-30.el7.x86_64
+<span class="c1"># rpm -q --whatrequires libsystemd.so.0\(\)\(64bit\)</span>
+dbus-libs-1.10.24-13.el7_6.x86_64
+dbus-1.10.24-13.el7_6.x86_64
+polkit-0.112-18.el7_6.1.x86_64
+util-linux-2.23.2-59.el7_6.1.x86_64
+openssh-server-7.4p1-16.el7.x86_64
+rsyslog-8.24.0-34.el7.x86_64
+procps-ng-3.3.10-23.el7.x86_64
+</code></pre></div><p>如果要查询本地rpm软件包的信息, 需要使用<code>-p</code><br>
 比如之前是<code>rpm -ql bpftool</code>, 要改为<code>rpm -ql -p bpftool-3.10.0-957.el7.x86_64.rpm</code></p>
-
-<p>如果要查询的包,文件或者capability, 不在本地已安装的包里, 可以使用<code>repoquery</code>从已知源中查询<br />
+<p>如果要查询的包,文件或者capability, 不在本地已安装的包里, 可以使用<code>repoquery</code>从已知源中查询<br>
 例如查询哪个包提供了<code>strace</code>这个capability:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ repoquery --whatprovides strace
-</span><span style="">strace-0:4.12-9.el7.x86_64</span></code></pre>
-</div>
-<p>repoquery不仅支持从源中查,还会从本地已安装的信息来查.</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ repoquery --whatprovides strace
+strace-0:4.12-9.el7.x86_64
+</code></pre></div><p>repoquery不仅支持从源中查,还会从本地已安装的信息来查.</p>
 <h2 id="spec文件">SPEC文件</h2>
-
 <p>rpm的构建过程需要源代码和<code>spec</code>文件.
 <code>spec</code>文件用于描述rpm的元数据信息和指导如何编译,打包,封装为二进制的rpm文件</p>
-
-<p>跟着如下教程, 自己可以从xxx.src.rpm编译出xxx.rpm文件.  常用于问题定位,增加日志等.<br />
+<p>跟着如下教程, 自己可以从xxx.src.rpm编译出xxx.rpm文件.  常用于问题定位,增加日志等.<br>
 <a href="https://blog.packagecloud.io/eng/2015/04/20/working-with-source-rpms/">https://blog.packagecloud.io/eng/2015/04/20/working-with-source-rpms/</a></p>
-
-<p>下面两篇文章介绍了SPEC的语法:<br />
-<a href="https://fedoraproject.org/wiki/How_to_create_am_RPM_package/zh-cn">https://fedoraproject.org/wiki/How_to_create_am_RPM_package/zh-cn</a><br />
+<p>下面两篇文章介绍了SPEC的语法:<br>
+<a href="https://fedoraproject.org/wiki/How_to_create_am_RPM_package/zh-cn">https://fedoraproject.org/wiki/How_to_create_am_RPM_package/zh-cn</a><br>
 <a href="https://rpm-packaging-guide.github.io">https://rpm-packaging-guide.github.io</a></p>
-
 <h2 id="其他">其他</h2>
-
 <p>本地rpm包解压缩</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">rpm2cpio xxx.rpm </span><span style="">|</span><span style=""> cpio -div</span></code></pre>
-</div>
-<h1 id="yum相关操作">yum相关操作</h1>
-
-<p><code>yum</code>的主要代码在<code>/usr/lib/python2.7/site-packages/yum/</code><br />
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">rpm2cpio xxx.rpm <span class="p">|</span> cpio -div
+</code></pre></div><h1 id="yum相关操作">yum相关操作</h1>
+<p><code>yum</code>的主要代码在<code>/usr/lib/python2.7/site-packages/yum/</code><br>
 <code>class YumBase</code> 是主要的类, 含大部分操作</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">YumBase</span><span style="">(</span><span style="">depsolve</span><span style="color:#f92672">.</span><span style="">Depsolve</span><span style="">):</span><span style="">
-</span><span style="">    </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;&#34;&#34;This is a primary structure and base class. It houses the
-</span><span style="color:#e6db74">    objects and methods needed to perform most things in yum. It is
-</span><span style="color:#e6db74">    almost an abstract class in that you will need to add your own
-</span><span style="color:#e6db74">    class above it for most real use.
-</span><span style="color:#e6db74">    &#34;&#34;&#34;</span></code></pre>
-</div>
-<p>yum所有的操作,都是分析具体的操作(删除,更新,新安装),进而分析相关的依赖, 比如更新时,检查依赖是否满足,不满足也要将依赖的包进程更新.<br />
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">YumBase</span><span class="p">(</span><span class="n">depsolve</span><span class="o">.</span><span class="n">Depsolve</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;This is a primary structure and base class. It houses the
+</span><span class="s2">    objects and methods needed to perform most things in yum. It is
+</span><span class="s2">    almost an abstract class in that you will need to add your own
+</span><span class="s2">    class above it for most real use.
+</span><span class="s2">    &#34;&#34;&#34;</span>
+</code></pre></div><p>yum所有的操作,都是分析具体的操作(删除,更新,新安装),进而分析相关的依赖, 比如更新时,检查依赖是否满足,不满足也要将依赖的包进程更新.<br>
 分析完后将对应包和状态(比如updated, erase等)放入事务中,然后执行具体的操作</p>
-
 <p>查询特定软件依赖哪些包</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># yum deplist rsync
-</span><span style="color:#75715e"></span><span style="">Loaded plugins: fastestmirror
-</span><span style="">Loading mirror speeds from cached hostfile
-</span><span style=""> * base: mirrors.cqu.edu.cn
-</span><span style=""> * extras: mirror.jdcloud.com
-</span><span style=""> * updates: mirrors.aliyun.com
-</span><span style="">package: rsync.x86_64 </span><span style="color:#ae81ff">3</span><span style="">.1.2-6.el7_6.1
-</span><span style="">  dependency: /bin/sh
-</span><span style="">   provider: bash.x86_64 </span><span style="color:#ae81ff">4</span><span style="">.2.46-31.el7
-</span><span style="">  dependency: libacl.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: libacl.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.2.51-14.el7
-</span><span style="">  dependency: libacl.so.1</span><span style="color:#f92672">(</span><span style="">ACL_1.0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: libacl.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.2.51-14.el7
-</span><span style="">  dependency: libattr.so.1</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: libattr.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.4.46-13.el7
-</span><span style="">  dependency: libattr.so.1</span><span style="color:#f92672">(</span><span style="">ATTR_1.0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: libattr.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.4.46-13.el7
-</span><span style="">  dependency: libc.so.6</span><span style="color:#f92672">(</span><span style="">GLIBC_2.15</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: glibc.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.17-260.el7_6.5
-</span><span style="">  dependency: libpopt.so.0</span><span style="color:#f92672">()(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: popt.x86_64 </span><span style="color:#ae81ff">1</span><span style="">.13-16.el7
-</span><span style="">  dependency: libpopt.so.0</span><span style="color:#f92672">(</span><span style="">LIBPOPT_0</span><span style="color:#f92672">)(</span><span style="">64bit</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: popt.x86_64 </span><span style="color:#ae81ff">1</span><span style="">.13-16.el7
-</span><span style="">  dependency: rtld</span><span style="color:#f92672">(</span><span style="">GNU_HASH</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">   provider: glibc.x86_64 </span><span style="color:#ae81ff">2</span><span style="">.17-260.el7_6.5
-</span><span style="">   provider: glibc.i686 </span><span style="color:#ae81ff">2</span><span style="">.17-260.el7_6.5
-</span><span style="">  dependency: systemd-units
-</span><span style="">   provider: systemd.x86_64 </span><span style="color:#ae81ff">219</span><span style="">-62.el7_6.6
-</span><span style="">  dependency: zlib
-</span><span style="">   provider: zlib.x86_64 </span><span style="color:#ae81ff">1</span><span style="">.2.7-18.el7
-</span><span style="">   provider: zlib.i686 </span><span style="color:#ae81ff">1</span><span style="">.2.7-18.el7</span></code></pre>
-</div>
-<h2 id="history相关操作">history相关操作</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># yum deplist rsync</span>
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirrors.cqu.edu.cn
+ * extras: mirror.jdcloud.com
+ * updates: mirrors.aliyun.com
+package: rsync.x86_64 3.1.2-6.el7_6.1
+  dependency: /bin/sh
+   provider: bash.x86_64 4.2.46-31.el7
+  dependency: libacl.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+   provider: libacl.x86_64 2.2.51-14.el7
+  dependency: libacl.so.1<span class="o">(</span>ACL_1.0<span class="o">)(</span>64bit<span class="o">)</span>
+   provider: libacl.x86_64 2.2.51-14.el7
+  dependency: libattr.so.1<span class="o">()(</span>64bit<span class="o">)</span>
+   provider: libattr.x86_64 2.4.46-13.el7
+  dependency: libattr.so.1<span class="o">(</span>ATTR_1.0<span class="o">)(</span>64bit<span class="o">)</span>
+   provider: libattr.x86_64 2.4.46-13.el7
+  dependency: libc.so.6<span class="o">(</span>GLIBC_2.15<span class="o">)(</span>64bit<span class="o">)</span>
+   provider: glibc.x86_64 2.17-260.el7_6.5
+  dependency: libpopt.so.0<span class="o">()(</span>64bit<span class="o">)</span>
+   provider: popt.x86_64 1.13-16.el7
+  dependency: libpopt.so.0<span class="o">(</span>LIBPOPT_0<span class="o">)(</span>64bit<span class="o">)</span>
+   provider: popt.x86_64 1.13-16.el7
+  dependency: rtld<span class="o">(</span>GNU_HASH<span class="o">)</span>
+   provider: glibc.x86_64 2.17-260.el7_6.5
+   provider: glibc.i686 2.17-260.el7_6.5
+  dependency: systemd-units
+   provider: systemd.x86_64 219-62.el7_6.6
+  dependency: zlib
+   provider: zlib.x86_64 1.2.7-18.el7
+   provider: zlib.i686 1.2.7-18.el7
+</code></pre></div><h2 id="history相关操作">history相关操作</h2>
 <p><a href="https://www.cyberciti.biz/faq/yum-history-command">https://www.cyberciti.biz/faq/yum-history-command</a></p>
-
 <h2 id="yum-update-与-yum-update-to-的区别">yum update 与 yum update-to 的区别</h2>
-
-<p>yum 有两种升级命令， yum update 和 yum update-to<br />
-yum update kernel 会升级Repo里的最新版<br />
+<p>yum 有两种升级命令， yum update 和 yum update-to<br>
+yum update kernel 会升级Repo里的最新版<br>
 yum update kernel-3.10.0-327.62.59.83.h108.x86_64 会升级到指定版本。 但如果这个指定版本就是当前已安装的版本， 则自动升级到repo里的最新版。</p>
-
-<p>yum update-to kernel-3.10.0-327.62.59.83.h108.x86_64 升级到指定版本， 如果这个指定版本就是当前已安装的版本， 则不升级<br />
+<p>yum update-to kernel-3.10.0-327.62.59.83.h108.x86_64 升级到指定版本， 如果这个指定版本就是当前已安装的版本， 则不升级<br>
 但是yum update-to kernel则会升级多个高版本的内核。 因为yum update-to 一般要求就是软件包的版本信息</p>
-
 <h2 id="yum-update">yum update</h2>
-
-<p>没有指定的软件包,则升级所有软件, 主要逻辑代码在<code>/usr/lib/python2.7/site-packages/yum/__init__.py</code>里类<code>YumBase</code>的函数<code>update</code><br />
-加<code>-v</code>可打印详细的日志<br />
-1. 使用rpm模块, 通过<code>dbMatch</code>获取已安装软件的所有信息<br />
-2. 连接repo, 获取所有availble 的软件包信息<br />
-3. 精简newpkg的列表,比如只保留软件包的最新版本<br />
-4. 完成依赖关系检查, 主要是检查依赖项和冲突项<br />
-5. 用户确认OK后,执行下载,升级操作</p>
-
+<p>没有指定的软件包,则升级所有软件, 主要逻辑代码在<code>/usr/lib/python2.7/site-packages/yum/__init__.py</code>里类<code>YumBase</code>的函数<code>update</code><br>
+加<code>-v</code>可打印详细的日志</p>
+<ol>
+<li>使用rpm模块, 通过<code>dbMatch</code>获取已安装软件的所有信息</li>
+<li>连接repo, 获取所有availble 的软件包信息</li>
+<li>精简newpkg的列表,比如只保留软件包的最新版本</li>
+<li>完成依赖关系检查, 主要是检查依赖项和冲突项</li>
+<li>用户确认OK后,执行下载,升级操作</li>
+</ol>
 <p>如下下yum的包状态, 打印Debug日志时可以对照分析</p>
-
 <pre><code>           i = the package will be installed
            u = the package will be an update
            e = the package will be erased
@@ -448,24 +622,19 @@ yum update kernel-3.10.0-327.62.59.83.h108.x86_64 会升级到指定版本。 �
            o = the package will be obsoleting another package
            ud = the package will be updated
            od = the package will be obsoleted
-</code></pre>
-
-<h2 id="yum-downgrade">yum downgrade</h2>
-
-<p><code>yum history undo</code>, 这里undo的是升级事务, 则内部调用的是<code>yum downgrader</code><br />
+</code></pre><h2 id="yum-downgrade">yum downgrade</h2>
+<p><code>yum history undo</code>, 这里undo的是升级事务, 则内部调用的是<code>yum downgrader</code><br>
 主要执行入口在类<code>YumBase</code>的函数<code>history_redo</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">for</span><span style=""> </span><span style="">pkg</span><span style=""> </span><span style="color:#f92672">in</span><span style=""> </span><span style="">transaction</span><span style="color:#f92672">.</span><span style="">trans_data</span><span style="">:</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">pkg</span><span style="color:#f92672">.</span><span style="">state</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Updated&#39;</span><span style="">:</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">try</span><span style="">:</span><span style="">
-</span><span style="">                    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">self</span><span style="color:#f92672">.</span><span style="">downgrade</span><span style="">(</span><span style="">pkgtup</span><span style="color:#f92672">=</span><span style="">pkg</span><span style="color:#f92672">.</span><span style="">pkgtup</span><span style="">):</span><span style="">
-</span><span style="">                        </span><span style="">done</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">True</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">except</span><span style=""> </span><span style="">yum</span><span style="color:#f92672">.</span><span style="">Errors</span><span style="color:#f92672">.</span><span style="">DowngradeError</span><span style="">:</span><span style="">
-</span><span style="">                    </span><span style="">self</span><span style="color:#f92672">.</span><span style="">logger</span><span style="color:#f92672">.</span><span style="">critical</span><span style="">(</span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Failed to downgrade: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span><span style="">),</span><span style=""> </span><span style="">pkg</span><span style="">)</span></code></pre>
-</div>
-<p>加<code>-v</code>可打印详细的日志<br />
-主要是删除已安装的包, 然后<code>yum update</code>指定的新包.<br />
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">transaction</span><span class="o">.</span><span class="n">trans_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pkg</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;Updated&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">downgrade</span><span class="p">(</span><span class="n">pkgtup</span><span class="o">=</span><span class="n">pkg</span><span class="o">.</span><span class="n">pkgtup</span><span class="p">):</span>
+                        <span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">except</span> <span class="n">yum</span><span class="o">.</span><span class="n">Errors</span><span class="o">.</span><span class="n">DowngradeError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s1">&#39;Failed to downgrade: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">pkg</span><span class="p">)</span>
+</code></pre></div><p>加<code>-v</code>可打印详细的日志<br>
+主要是删除已安装的包, 然后<code>yum update</code>指定的新包.<br>
 这里删除已安装的包, 很容易删掉其他依赖包. 导致问题.  如下是删除包的一些描述</p>
-
 <pre><code>Are  used  to  remove  the  specified packages from the system as well as removing any packages which depend on the package being removed. remove operates on
               groups, files, provides and filelists just like the &quot;install&quot; command.(See Specifying package names for more information)
 
@@ -477,198 +646,155 @@ yum update kernel-3.10.0-327.62.59.83.h108.x86_64 会升级到指定版本。 �
 
               Because remove does a lot of work to make it as easy as possible to use, there are also a few specific remove commands &quot;remove-n&quot;, &quot;remove-na&quot;  and  &quot;remove-
               nevra&quot;. These only work on package names, and do not process wildcards etc.
-</code></pre>
-
-<h2 id="其他-1">其他</h2>
-
-<p><code>yum list installed</code>的结果并不等于<code>rpm -qa</code>. <code>rpm -qa</code>会多<code>gpg-pubkey</code>这个软件包. 解释如下:<br />
+</code></pre><h2 id="其他-1">其他</h2>
+<p><code>yum list installed</code>的结果并不等于<code>rpm -qa</code>. <code>rpm -qa</code>会多<code>gpg-pubkey</code>这个软件包. 解释如下:<br>
 <a href="https://unix.stackexchange.com/questions/190203/what-are-gpg-pubkey-packages">https://unix.stackexchange.com/questions/190203/what-are-gpg-pubkey-packages</a></p>
-
-<p>可以使用python库<code>rpm</code>来比较软件包的版本. <code>rpm.labelCompare((an,av,ar),(bn,bv,br))</code><br />
+<p>可以使用python库<code>rpm</code>来比较软件包的版本. <code>rpm.labelCompare((an,av,ar),(bn,bv,br))</code><br>
 返回值1 表示a较新. 0 相等. -1 b较新. 下面是具体的例子:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># python
-</span><span style="color:#75715e"></span><span style="">Python </span><span style="color:#ae81ff">2</span><span style="">.7.5 </span><span style="color:#f92672">(</span><span style="">default, Apr  </span><span style="color:#ae81ff">9</span><span style=""> </span><span style="color:#ae81ff">2019</span><span style="">, </span><span style="color:#ae81ff">14</span><span style="">:30:50</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#f92672">[</span><span style="">GCC </span><span style="color:#ae81ff">4</span><span style="">.8.5 </span><span style="color:#ae81ff">20150623</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Red Hat </span><span style="color:#ae81ff">4</span><span style="">.8.5-36</span><span style="color:#f92672">)]</span><span style=""> on linux2
-</span><span style="">Type </span><span style="color:#e6db74">&#34;help&#34;</span><span style="">, </span><span style="color:#e6db74">&#34;copyright&#34;</span><span style="">, </span><span style="color:#e6db74">&#34;credits&#34;</span><span style=""> or </span><span style="color:#e6db74">&#34;license&#34;</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> more information.
-</span><span style="">&gt;&gt;&gt; import rpm
-</span><span style="">&gt;&gt;&gt; rpm.labelCompare</span><span style="color:#f92672">((</span><span style="color:#e6db74">&#34;systemd&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;219&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;62.el7_6.6&#34;</span><span style="color:#f92672">)</span><span style="">,</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;systemd&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;219&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;63.el7_6.6&#34;</span><span style="color:#f92672">))</span><span style="">
-</span><span style="">-1
-</span><span style="">&gt;&gt;&gt; exit</span><span style="color:#f92672">()</span></code></pre>
-</div>
-<p><a href="https://stackoverflow.com/questions/3206319/how-do-i-compare-rpm-versions-in-python">https://stackoverflow.com/questions/3206319/how-do-i-compare-rpm-versions-in-python</a></p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># python</span>
+Python 2.7.5 <span class="o">(</span>default, Apr  <span class="m">9</span> 2019, 14:30:50<span class="o">)</span>
+<span class="o">[</span>GCC 4.8.5 <span class="m">20150623</span> <span class="o">(</span>Red Hat 4.8.5-36<span class="o">)]</span> on linux2
+Type <span class="s2">&#34;help&#34;</span>, <span class="s2">&#34;copyright&#34;</span>, <span class="s2">&#34;credits&#34;</span> or <span class="s2">&#34;license&#34;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt; import rpm
+&gt;&gt;&gt; rpm.labelCompare<span class="o">((</span><span class="s2">&#34;systemd&#34;</span>,<span class="s2">&#34;219&#34;</span>,<span class="s2">&#34;62.el7_6.6&#34;</span><span class="o">)</span>,<span class="o">(</span><span class="s2">&#34;systemd&#34;</span>,<span class="s2">&#34;219&#34;</span>,<span class="s2">&#34;63.el7_6.6&#34;</span><span class="o">))</span>
+-1
+&gt;&gt;&gt; exit<span class="o">()</span>
+</code></pre></div><p><a href="https://stackoverflow.com/questions/3206319/how-do-i-compare-rpm-versions-in-python">https://stackoverflow.com/questions/3206319/how-do-i-compare-rpm-versions-in-python</a></p>
 <h1 id="升级前检查">升级前检查</h1>
-
 <ul>
-<li><p>检查repo里是否有当前OS已安装的软件包. 方便回退.<br />
-以下两个命令等价</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --orphans
-</span><span style="">yum list extras</span></code></pre>
-</div>
-<p>代码看是通过<code>/usr/share/yum-cli/cli.py</code>里类<code>YumBaseCli</code>的函数<code>returnPkgLists</code>, 进一步调用类<code>YumBase</code>的函数<code>doPackageLists</code> 实现</p></li>
-
-<li><p>检查本地rpm数据库是否由依赖问题, 相当于升级前校验</p></li>
+<li>检查repo里是否有当前OS已安装的软件包. 方便回退.<br>
+以下两个命令等价</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">package-cleanup --problems</span></code></pre>
-</div>
-<p>通过<code>rpmdb.check_dependencies()</code>实现</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">package-cleanup --orphans
+yum list extras
+</code></pre></div><p>代码看是通过<code>/usr/share/yum-cli/cli.py</code>里类<code>YumBaseCli</code>的函数<code>returnPkgLists</code>, 进一步调用类<code>YumBase</code>的函数<code>doPackageLists</code> 实现</p>
+<ul>
+<li>检查本地rpm数据库是否由依赖问题, 相当于升级前校验</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">package-cleanup --problems
+</code></pre></div><p>通过<code>rpmdb.check_dependencies()</code>实现</p>
 <ul>
 <li>模拟<code>yum update</code>但不真正升级, 检查是否报错. 相当于dry-run. 原理是对每次确认选择都是<code>no</code></li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">yum update --assumeno </span></code></pre>
-</div>
-<p>使用<code>echo $?</code>检查上述命令的返回码. 非零表明有异常.</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">yum update --assumeno 
+</code></pre></div><p>使用<code>echo $?</code>检查上述命令的返回码. 非零表明有异常.</p>
 <h1 id="升级">升级</h1>
-
 <ul>
 <li>升级命令</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">yum update -y</span></code></pre>
-</div>
-<h1 id="升级后检查">升级后检查</h1>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">yum update -y
+</code></pre></div><h1 id="升级后检查">升级后检查</h1>
 <ul>
-<li><p>检查哪些进程需要重启,才能使用新的软件包或者库</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span><span style=""> : /usr/lib/systemd/systemd --system --deserialize </span><span style="color:#ae81ff">16</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">443</span><span style=""> : login -- root
-</span><span style=""></span><span style="color:#ae81ff">3838</span><span style=""> : sshd: root@pts/3
-</span><span style=""></span><span style="color:#ae81ff">1009</span><span style=""> : /sbin/dhclient -H localhost -1 -q -lf /var/lib/dhclient/dhclient--eth0.lease -pf /var/run/dhclient-eth0.pid eth0
-</span><span style=""></span><span style="color:#ae81ff">2221</span><span style=""> : sshd: root@pts/0</span></code></pre>
-</div></li>
+<li>检查哪些进程需要重启,才能使用新的软件包或者库</li>
 </ul>
-
-<p>原理:<br />
-在<code>/proc</code>下遍历所有<code>pid</code>下面的<code>smaps</code>文件, 获取所有打开文件的信息<br />
-检查这些文件对应的rpm包的安装时间<br />
-和进程的启动时间对比, 如果rpm的时间晚,则打印出来<br />
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># needs-restarting</span>
+<span class="m">1</span> : /usr/lib/systemd/systemd --system --deserialize <span class="m">16</span>
+<span class="m">443</span> : login -- root
+<span class="m">3838</span> : sshd: root@pts/3
+<span class="m">1009</span> : /sbin/dhclient -H localhost -1 -q -lf /var/lib/dhclient/dhclient--eth0.lease -pf /var/run/dhclient-eth0.pid eth0
+<span class="m">2221</span> : sshd: root@pts/0
+</code></pre></div><p>原理:<br>
+在<code>/proc</code>下遍历所有<code>pid</code>下面的<code>smaps</code>文件, 获取所有打开文件的信息<br>
+检查这些文件对应的rpm包的安装时间<br>
+和进程的启动时间对比, 如果rpm的时间晚,则打印出来<br>
 具体可以查看<code>/usr/bin/needs-restarting</code>, 它是一个py脚本</p>
-
-<p>细节:<br />
+<p>细节:<br>
 通过<code>/proc/[pid]/stat</code>下的信息和os的<code>boot_time</code>来计算进程的启动时间</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span><span style=""> </span><span style="color:#a6e22e">get_process_time</span><span style="">(</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="">boot_time</span><span style="">):</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{}</span><span style="">
-</span><span style="">    </span><span style="">ps_stat</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">open</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;/proc/</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">/stat&#34;</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="">pid</span><span style="">)</span><span style="color:#f92672">.</span><span style="">read</span><span style="">()</span><span style="color:#f92672">.</span><span style="">strip</span><span style="">()</span><span style="">
-</span><span style="">    </span><span style="color:#75715e"># Filename of the executable might contain spaces, so we throw it away</span><span style="">
-</span><span style="">    </span><span style="">ps_stat</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">ps_stat</span><span style="">[</span><span style="">ps_stat</span><span style="color:#f92672">.</span><span style="">rfind</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;)&#39;</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">:]</span><span style="color:#f92672">.</span><span style="">split</span><span style="">()</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;utime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">11</span><span style="">])</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;stime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">12</span><span style="">])</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;cutime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">13</span><span style="">])</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;cstime&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">14</span><span style="">])</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;start_time&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">boot_time</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">jiffies_to_seconds</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">19</span><span style="">])</span><span style="">
-</span><span style="">    </span><span style="">ps</span><span style="">[</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;state&#39;</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;R&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Running&#39;</span><span style="">),</span><span style="">
-</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;S&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Sleeping&#39;</span><span style="">),</span><span style="">
-</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;D&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Uninterruptible&#39;</span><span style="">),</span><span style="">
-</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Z&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Zombie&#39;</span><span style="">),</span><span style="">
-</span><span style="">                   </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;T&#39;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Traced/Stopped&#39;</span><span style="">)</span><span style="">
-</span><span style="">                   </span><span style="">}</span><span style="color:#f92672">.</span><span style="">get</span><span style="">(</span><span style="">ps_stat</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">_</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;Unknown&#39;</span><span style="">))</span></code></pre>
-</div>
-<p>通过rpmdb库里的<code>searchFiles</code>函数获取打开文件对应的包, 进而获取安装时间,即<code>installtime</code></p>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_process_time</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">boot_time</span><span class="p">):</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ps_stat</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&#34;/proc/</span><span class="si">%d</span><span class="s2">/stat&#34;</span> <span class="o">%</span> <span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1"># Filename of the executable might contain spaces, so we throw it away</span>
+    <span class="n">ps_stat</span> <span class="o">=</span> <span class="n">ps_stat</span><span class="p">[</span><span class="n">ps_stat</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">ps</span><span class="p">[</span><span class="s1">&#39;utime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jiffies_to_seconds</span><span class="p">(</span><span class="n">ps_stat</span><span class="p">[</span><span class="mi">11</span><span class="p">])</span>
+    <span class="n">ps</span><span class="p">[</span><span class="s1">&#39;stime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jiffies_to_seconds</span><span class="p">(</span><span class="n">ps_stat</span><span class="p">[</span><span class="mi">12</span><span class="p">])</span>
+    <span class="n">ps</span><span class="p">[</span><span class="s1">&#39;cutime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jiffies_to_seconds</span><span class="p">(</span><span class="n">ps_stat</span><span class="p">[</span><span class="mi">13</span><span class="p">])</span>
+    <span class="n">ps</span><span class="p">[</span><span class="s1">&#39;cstime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jiffies_to_seconds</span><span class="p">(</span><span class="n">ps_stat</span><span class="p">[</span><span class="mi">14</span><span class="p">])</span>
+    <span class="n">ps</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">boot_time</span> <span class="o">+</span> <span class="n">jiffies_to_seconds</span><span class="p">(</span><span class="n">ps_stat</span><span class="p">[</span><span class="mi">19</span><span class="p">])</span>
+    <span class="n">ps</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;R&#39;</span> <span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s1">&#39;Running&#39;</span><span class="p">),</span>
+                   <span class="s1">&#39;S&#39;</span> <span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s1">&#39;Sleeping&#39;</span><span class="p">),</span>
+                   <span class="s1">&#39;D&#39;</span> <span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s1">&#39;Uninterruptible&#39;</span><span class="p">),</span>
+                   <span class="s1">&#39;Z&#39;</span> <span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s1">&#39;Zombie&#39;</span><span class="p">),</span>
+                   <span class="s1">&#39;T&#39;</span> <span class="p">:</span> <span class="n">_</span><span class="p">(</span><span class="s1">&#39;Traced/Stopped&#39;</span><span class="p">)</span>
+                   <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ps_stat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">_</span><span class="p">(</span><span class="s1">&#39;Unknown&#39;</span><span class="p">))</span>
+</code></pre></div><p>通过rpmdb库里的<code>searchFiles</code>函数获取打开文件对应的包, 进而获取安装时间,即<code>installtime</code></p>
 <p>进程属于哪个systemd service的方法是 获取该pid的cgroup, 如果有<code>name=systemd</code>则说明它是一个服务, 然后已<code>/</code>为分隔符后的最后一个字段就是对应的service</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ cat /proc/3656/cgroup
-</span><span style=""></span><span style="color:#ae81ff">11</span><span style="">:blkio:/
-</span><span style=""></span><span style="color:#ae81ff">10</span><span style="">:cpuset:/
-</span><span style=""></span><span style="color:#ae81ff">9</span><span style="">:net_prio,net_cls:/
-</span><span style=""></span><span style="color:#ae81ff">8</span><span style="">:perf_event:/
-</span><span style=""></span><span style="color:#ae81ff">7</span><span style="">:hugetlb:/
-</span><span style=""></span><span style="color:#ae81ff">6</span><span style="">:freezer:/
-</span><span style=""></span><span style="color:#ae81ff">5</span><span style="">:memory:/
-</span><span style=""></span><span style="color:#ae81ff">4</span><span style="">:devices:/
-</span><span style=""></span><span style="color:#ae81ff">3</span><span style="">:pids:/
-</span><span style=""></span><span style="color:#ae81ff">2</span><span style="">:cpuacct,cpu:/
-</span><span style=""></span><span style="color:#ae81ff">1</span><span style="">:name</span><span style="color:#f92672">=</span><span style="">systemd:/system.slice/sshd.service</span></code></pre>
-</div>
-<ul>
-<li>检查是否重启OS才能使相应更新后的软件包生效. 当然OS能正常运行.只是不重启无法使用新的功能或者特性.<br />
-原理是检查升级的包是否在如下列表里<br /></li>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ cat /proc/3656/cgroup
+11:blkio:/
+10:cpuset:/
+9:net_prio,net_cls:/
+8:perf_event:/
+7:hugetlb:/
+6:freezer:/
+5:memory:/
+4:devices:/
+3:pids:/
+2:cpuacct,cpu:/
+1:name<span class="o">=</span>systemd:/system.slice/sshd.service
+</code></pre></div><ul>
+<li>检查是否重启OS才能使相应更新后的软件包生效. 当然OS能正常运行.只是不重启无法使用新的功能或者特性.<br>
+原理是检查升级的包是否在如下列表里</li>
 </ul>
-
 <pre><code> 'kernel', 'glibc', 'linux-firmware', 'systemd', 'udev',
  `openssl-libs', 'gnutls', 'dbus'
-</code></pre>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting -r
-</span><span style="color:#75715e"></span><span style="">Core libraries or services have been updated:
-</span><span style="">  systemd -&gt; </span><span style="color:#ae81ff">219</span><span style="">-62.el7_6.6
-</span><span style="">
-</span><span style="">Reboot is required to ensure that your system benefits from these updates.
-</span><span style="">More information:
-</span><span style="">https://access.redhat.com/solutions/27943</span></code></pre>
-</div>
-<p>如下命令打印哪些服务需要重启</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># needs-restarting -s
-</span><span style="color:#75715e"></span><span style="">network.service</span></code></pre>
-</div>
-<h1 id="回退">回退</h1>
+</code></pre><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># needs-restarting -r</span>
+Core libraries or services have been updated:
+  systemd -&gt; 219-62.el7_6.6
 
-<p>使用<code>yum history</code>查询要回退事务的ID, 比如<code>213</code>. 然后运行<code>yum history undo 213</code><br />
+Reboot is required to ensure that your system benefits from these updates.
+More information:
+https://access.redhat.com/solutions/27943
+</code></pre></div><p>如下命令打印哪些服务需要重启</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># needs-restarting -s</span>
+network.service
+</code></pre></div><h1 id="回退">回退</h1>
+<p>使用<code>yum history</code>查询要回退事务的ID, 比如<code>213</code>. 然后运行<code>yum history undo 213</code><br>
 先查询指定的事务里的包状态信息, 然后反方向生成事务, 再次执行. 比如之前是更新, 那么新事务就是卸载新包,安装旧包</p>
-
 <h1 id="其他-2">其他</h1>
-
 <p>查询本地软件包来自哪个repo</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># find-repos-of-install kernel
-</span><span style="color:#75715e"></span><span style="">Loaded plugins: fastestmirror
-</span><span style="">kernel-3.10.0-123.el7.x86_64 from repo anaconda
-</span><span style="">kernel-3.10.0-957.21.2.el7.x86_64 from repo updates</span></code></pre>
-</div>
-<p>使用<code>yum repolist -v</code>查询repo详情</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># find-repos-of-install kernel</span>
+Loaded plugins: fastestmirror
+kernel-3.10.0-123.el7.x86_64 from repo anaconda
+kernel-3.10.0-957.21.2.el7.x86_64 from repo updates
+</code></pre></div><p>使用<code>yum repolist -v</code>查询repo详情</p>
 <h1 id="参考">参考</h1>
+<p>How to use yum history to roll back an update in Red Hat Enterprise Linux 6 , 7<br>
+<a href="https://access.redhat.com/solutions/64069">https://access.redhat.com/solutions/64069</a><br>
+How to use yum to downgrade or rollback some package updates<br>
+<a href="https://access.redhat.com/solutions/29617">https://access.redhat.com/solutions/29617</a></p>
 
-<p>How to use yum history to roll back an update in Red Hat Enterprise Linux 6 , 7<br />
-<a href="https://access.redhat.com/solutions/64069">https://access.redhat.com/solutions/64069</a><br />
-How to use yum to downgrade or rollback some package updates<br />
-<a href="https://access.redhat.com/solutions/29617">https://access.redhat.com/solutions/29617</a></p></article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
+        </section>
+    </article>
+
+        </main>
+
+        <footer class="gblog-footer">
+    <nav class="container">
+        <section class="flex flex-wrap align-center">
+            
+            
+            
+            
+        </section>
+        <section class="flex flex-wrap align-center">
+            <span class="gblog-footer__item">
+                Built with <a href="https://gohugo.io/" class="gblog-footer__link">Hugo</a> and
+                <svg class="icon heart"><use xlink:href="#heart"></use></svg>
+            </span>
+        </section>
         
-          <li><a href="https://xixiliguo.github.io/tags/yum"><span class="tag">Yum</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
-      </p>
-    </footer>
-    
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2020 个人网站</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+    </nav>
 </footer>
 
+    </div>
 
-
-<script src="https://xixiliguo.github.io/js/bundle.js"></script>
-
-
+    
+<script defer src="/js/clipboard-f06c52bfdd.min.js"></script>
 <script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-107151468-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var clipboard = new ClipboardJS('.clip');
+    });
 </script>
 
 
-
-  </body>
+</body>
 </html>

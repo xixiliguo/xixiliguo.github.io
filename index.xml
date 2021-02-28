@@ -1,26 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>个人网站</title>
+    <title>My personal Blog</title>
     <link>https://xixiliguo.github.io/</link>
-    <description>Recent content on 个人网站</description>
+    <description>Recent content on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
-    <lastBuildDate>Sun, 20 Aug 2017 21:38:52 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 30 Sep 2020 21:17:14 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>About</title>
-      <link>https://xixiliguo.github.io/about/</link>
-      <pubDate>Sun, 20 Aug 2017 21:38:52 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/about/</guid>
-      <description>IT民工
-wangbo.red@gmail.com</description>
-    </item>
     
     <item>
       <title>Lua实现原理 - GC垃圾回收</title>
@@ -38,8 +26,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Wed, 30 Sep 2020 00:09:04 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/code_segment/</guid>
-      <description>&lt;p&gt;记录自己日常写的一些代码片段
-&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录自己日常写的一些代码片段&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -48,7 +35,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 27 Sep 2020 21:17:14 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/lua-implemention-type-value/</guid>
-      <description>&lt;p&gt;Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).&lt;br /&gt;
+      <description>&lt;p&gt;Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).&lt;br&gt;
 本文主要介绍它的值实现方式&lt;/p&gt;</description>
     </item>
     
@@ -58,9 +45,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/linux-boot/</guid>
-      <description>&lt;p&gt;记录linux启动过程的总结&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录linux启动过程的总结&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -69,9 +54,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 24 Nov 2019 22:22:53 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/dns/</guid>
-      <description>&lt;p&gt;这里记录了自己学习DNS协议中总结和对一些e问题的思考&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;这里记录了自己学习DNS协议中总结和对一些问题的思考&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -80,9 +63,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 03 Nov 2019 10:31:44 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/runc/</guid>
-      <description>&lt;p&gt;runc实现了CRI接口, 也就是容器运行时. 利用linux的cgroup, namespace使进程运行在一个虚拟的隔离环境, 本文记录了源码阅读后的心得.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;runc实现了CRI接口, 也就是容器运行时. 利用linux的cgroup, namespace使进程运行在一个虚拟的隔离环境, 本文记录了源码阅读后的心得.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -91,8 +72,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/libvirt-network/</guid>
-      <description>&lt;p&gt;学习libvirt的网络实现方式,记录一些笔记
-&lt;/p&gt;</description>
+      <description>&lt;p&gt;学习libvirt的网络实现方式,记录一些笔记&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -101,9 +81,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Wed, 12 Jun 2019 00:12:08 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/yum-update/</guid>
-      <description>&lt;p&gt;主要介绍使用yum 升级OS软件包的一些细节&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;主要介绍使用yum 升级OS软件包的一些细节&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -112,9 +90,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 02 Jun 2019 23:22:44 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/golang-exec/</guid>
-      <description>&lt;p&gt;os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -123,9 +99,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 07 Apr 2019 10:05:29 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/multi-queue/</guid>
-      <description>&lt;p&gt;单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;单CPU处理网络IO存在瓶颈, 目前经常使用网卡多队列提高性能.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -134,9 +108,7 @@ wangbo.red@gmail.com</description>
       <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/tcp/</guid>
-      <description>&lt;p&gt;记录自己对TCP协议栈的学习心得&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录自己对TCP协议栈的学习心得&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -145,10 +117,8 @@ wangbo.red@gmail.com</description>
       <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/radix-tree/</guid>
-      <description>&lt;p&gt;Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.&lt;br /&gt;
-Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.&lt;br&gt;
+Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -157,9 +127,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       <pubDate>Thu, 16 Aug 2018 22:41:37 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/tcpdump-wireshark/</guid>
-      <description>&lt;p&gt;记录Tcpdump相关知识和Wireshark技巧&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录Tcpdump相关知识和Wireshark技巧&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -168,8 +136,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/ntp/</guid>
-      <description>&lt;p&gt;NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式
-&lt;/p&gt;</description>
+      <description>&lt;p&gt;NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -178,9 +145,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/linux-common-commands/</guid>
-      <description>&lt;p&gt;收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -189,9 +154,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/bandersnatch-pypi/</guid>
-      <description>&lt;p&gt;经常使用python的公司,考虑到pypi.python.org不稳定,都会自己搭建私有的Pypi源.这里简单介绍下方法.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;经常使用python的公司,考虑到pypi.python.org不稳定,都会自己搭建私有的Pypi源.这里简单介绍下方法.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -201,9 +164,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       
       <guid>https://xixiliguo.github.io/post/cloud-init-2/</guid>
       <description>&lt;h2 id=&#34;cloud-init-源码结构&#34;&gt;cloud-init 源码结构&lt;/h2&gt;
-
-&lt;p&gt;大部分代码存放于 /lib/python2.7/site-packages/cloudinit
-&lt;/p&gt;</description>
+&lt;p&gt;大部分代码存放于 /lib/python2.7/site-packages/cloudinit&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -213,9 +174,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       
       <guid>https://xixiliguo.github.io/post/cloud-init-1/</guid>
       <description>&lt;h2 id=&#34;cloud-init介绍&#34;&gt;cloud-init介绍&lt;/h2&gt;
-
-&lt;p&gt;目前大部分公有云（openstack, AWS, Aliyun）都在使用cloud-init, 已经成为虚拟机元数据管理和OS系统配置初始化的事实标准.最早cloud-init由ubuntu的母公司 Canonical 开发。主要思想是当用户首次创建虚拟机时，将前台设置的主机名，密码或者秘钥等存入metadata server(顾名思义，存放元数据的服务器）。在openstack环境下当cloud-init随虚拟机启动而运行时，通过http协议访问metadata server，获取这些信息并修改主机配置。完成系统的环境初始化。本文以openstack + centos7 + cloud-init 0.7.9 为例,分两篇介绍基本概念，工作原理和源码解读。&lt;br /&gt;
-&lt;/p&gt;</description>
+&lt;p&gt;目前大部分公有云（openstack, AWS, Aliyun）都在使用cloud-init, 已经成为虚拟机元数据管理和OS系统配置初始化的事实标准.最早cloud-init由ubuntu的母公司 Canonical 开发。主要思想是当用户首次创建虚拟机时，将前台设置的主机名，密码或者秘钥等存入metadata server(顾名思义，存放元数据的服务器）。在openstack环境下当cloud-init随虚拟机启动而运行时，通过http协议访问metadata server，获取这些信息并修改主机配置。完成系统的环境初始化。本文以openstack + centos7 + cloud-init 0.7.9 为例,分两篇介绍基本概念，工作原理和源码解读。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -233,9 +192,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/strings-algorithm-golang/</guid>
-      <description>&lt;p&gt;Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -244,8 +201,7 @@ Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
       <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/atop/</guid>
-      <description>&lt;p&gt;ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 &lt;code&gt;CPU，Memory，Disk，Network&lt;/code&gt; 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。
-&lt;/p&gt;</description>
+      <description>&lt;p&gt;ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 &lt;code&gt;CPU，Memory，Disk，Network&lt;/code&gt; 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Os/Exec on 个人网站</title>
+    <title>os/exec on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/os/exec/</link>
-    <description>Recent content in Os/Exec on 个人网站</description>
+    <description>Recent content in os/exec on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
-    <lastBuildDate>Sun, 02 Jun 2019 23:22:44 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/os/exec/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,9 +15,7 @@
       <pubDate>Sun, 02 Jun 2019 23:22:44 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/golang-exec/</guid>
-      <description>&lt;p&gt;os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.&lt;/p&gt;</description>
     </item>
     
   </channel>

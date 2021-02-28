@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Shadow on 个人网站</title>
+    <title>shadow on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/shadow/</link>
-    <description>Recent content in Shadow on 个人网站</description>
+    <description>Recent content in shadow on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Wed, 11 Oct 2017 22:11:23 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/shadow/index.xml" rel="self" type="application/rss+xml" />

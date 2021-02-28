@@ -1,392 +1,594 @@
 <!DOCTYPE html>
-<html lang="en">
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+
 <head>
-
-  <meta charset="utf-8" />
-
-  
-  <title>Lua实现原理 - GC垃圾回收</title>
-
-  
-  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 
 
-  
-  <meta name="author" content="Peter Wang" />
-  <meta name="description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等). 本文主要介绍它的垃圾回收算法
-" />
 
-  
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="Lua实现原理 - GC垃圾回收" />
-    <meta name="twitter:description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等). 本文主要介绍它的垃圾回收算法
-" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+
+    <meta name="description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+本文主要介绍它的垃圾回收算法">
 
 
 
+    
+    
+        
+    
 
-<meta name="generator" content="Hugo 0.28" />
-
-
-<link rel="canonical" href="https://xixiliguo.github.io/post/lua-implemention-gc/" />
-<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+    
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+    <title>Lua实现原理 - GC垃圾回收 | My personal Blog</title>
 
-<meta name="baidu-site-verification" content="xijFMBD2HS" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
 
+    
 
+    <meta property="og:title" content="Lua实现原理 - GC垃圾回收" />
+<meta property="og:description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+本文主要介绍它的垃圾回收算法" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xixiliguo.github.io/post/lua-implemention-gc/" />
+<meta property="article:published_time" content="2020-09-30T21:17:14+08:00" />
+<meta property="article:modified_time" content="2020-09-30T21:17:14+08:00" />
 
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="个人网站" />
-<meta name="msapplication-tooltip" content="个人网站" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Lua实现原理 - GC垃圾回收"/>
+<meta name="twitter:description" content="Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+本文主要介绍它的垃圾回收算法"/>
 
 
+    <link rel="preload" as="font" href="/fonts/Metropolis.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Bold.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-BoldItalic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Italic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationMono.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/DroidSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/GeekblogIcons.woff2" type="font/woff2" crossorigin="anonymous">
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+<link rel="preload" href="/main-342b625c73.min.css" as="style">
+<link rel="stylesheet" href="/main-342b625c73.min.css" media="all">
 
-<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+<link rel="preload" href="/mobile-14fbbb71d2.min.css" as="style">
+<link rel="stylesheet" href="/mobile-14fbbb71d2.min.css" media="screen and (max-width: 45rem)">
 
+<link rel="preload" href="/print-86167e859a.min.css" as="style">
+<link rel="stylesheet" href="/print-86167e859a.min.css" media="print">
 
-  
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
-
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
+<link rel="preload" href="/custom.css" as="style">
+<link rel="stylesheet" href="/custom.css" media="all">
 
 
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+<!-- Made with Geekblog theme https://github.com/thegeeklab/hugo-geekblog -->
+
+    
 
 
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "articleSection": "post",
+    "name": "Lua实现原理 - GC垃圾回收",
+    "headline": "Lua实现原理 - GC垃圾回收",
+    "alternativeHeadline": "",
+    "description": "\x3cp\x3eLua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).\n本文主要介绍它的垃圾回收算法\x3c\/p\x3e",
+    "inLanguage": "en",
+    "isFamilyFriendly": "true",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https:\/\/xixiliguo.github.io\/post\/lua-implemention-gc\/"
+    },
+    "author" : [
+    ],
+    "copyrightHolder" : "My personal Blog",
+    "copyrightYear" : "2020",
+    "dateCreated": "2020-09-30T21:17:14.00Z",
+    "datePublished": "2020-09-30T21:17:14.00Z",
+    "dateModified": "2020-09-30T21:17:14.00Z",
+    "publisher":{
+        "@type":"Organization",
+        "name": "My personal Blog",
+        "url": "https://xixiliguo.github.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/xixiliguo.github.io\/brand.svg",
+            "width":"32",
+            "height":"32"
+        }
+    },
+    "url" : "https:\/\/xixiliguo.github.io\/post\/lua-implemention-gc\/",
+    "wordCount" : "624",
+    "genre" : [ "Lua" , "c" ]
+}
+</script>
 
 
 </head>
-  <body>
-    
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
-      
-        
-      
+
+<body>
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_back" xmlns="http://www.w3.org/2000/svg"><path d="M31.999 14.035v3.93H7.673l11.134 11.228L16 32 .001 16.001 16 .002l2.807 2.807L7.673 14.037h24.326z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M7.954 17.965v5.988L.001 16l7.953-7.953v5.988H32v3.93H7.954z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M24.046 14.035V8.047L31.999 16l-7.953 7.953v-5.988H0v-3.93h24.046z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="bitbucket" xmlns="http://www.w3.org/2000/svg"><path d="M15.905 13.355c.189 1.444-1.564 2.578-2.784 1.839-1.375-.602-1.375-2.784-.034-3.403 1.151-.705 2.818.223 2.818 1.564zm1.907-.361c-.309-2.44-3.076-4.056-5.328-3.042-1.426.636-2.389 2.148-2.32 3.747.086 2.097 2.08 3.815 4.176 3.626s3.729-2.234 3.472-4.331zm4.108-9.315c-.756-.997-2.045-1.169-3.179-1.358-3.214-.516-6.513-.533-9.727.034-1.066.172-2.269.361-2.939 1.323 1.1 1.031 2.664 1.186 4.073 1.358 2.544.327 5.156.344 7.699.017 1.426-.172 3.008-.309 4.073-1.375zm.979 17.788c-.481 1.684-.206 3.953-1.994 4.932-3.076 1.701-6.806 1.89-10.191 1.289-1.787-.327-3.884-.894-4.864-2.578-.43-1.65-.705-3.334-.98-5.018l.103-.275.309-.155c5.121 3.386 12.288 3.386 17.427 0 .808.241.206 1.22.189 1.805zM26.01 4.951c-.584 3.764-1.255 7.51-1.908 11.257-.189 1.1-1.255 1.719-2.148 2.183-3.214 1.615-6.96 1.89-10.483 1.512-2.389-.258-4.829-.894-6.771-2.389-.911-.705-.911-1.908-1.083-2.922-.602-3.523-1.289-7.046-1.719-10.604.206-1.547 1.942-2.217 3.231-2.698C6.848.654 8.686.362 10.508.19c3.884-.378 7.854-.241 11.618.859 1.341.395 2.784.945 3.695 2.097.412.533.275 1.203.189 1.805z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="bookmarks" xmlns="http://www.w3.org/2000/svg"><path d="M20.357 5.856q1.157 0 2.043.851t.885 2.008v23.284l-10.212-4.357-10.144 4.357V8.715q0-1.157.885-2.008t2.042-.851h14.502zm5.787 18.859V5.856q0-1.157-.851-2.042t-2.008-.885H8.715q0-1.157.885-2.042t2.043-.885h14.502q1.157 0 2.043.885t.885 2.042v23.216z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="clear" xmlns="http://www.w3.org/2000/svg"><path d="M32 3.222L19.222 16 32 28.778l-3.221 3.221-12.778-12.778L3.223 31.999.002 28.778 12.78 16 .002 3.222 3.223.001l12.778 12.778L28.779.001z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="code" xmlns="http://www.w3.org/2000/svg"><path d="M9.917 24.5a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm0-21a1.75 1.75 0 10-3.501.001A1.75 1.75 0 009.917 3.5zm11.666 2.333a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm1.75 0a3.502 3.502 0 01-1.75 3.026c-.055 6.581-4.721 8.039-7.82 9.023-2.898.911-3.846 1.349-3.846 3.117v.474a3.502 3.502 0 011.75 3.026c0 1.932-1.568 3.5-3.5 3.5s-3.5-1.568-3.5-3.5c0-1.294.711-2.424 1.75-3.026V6.526A3.502 3.502 0 014.667 3.5c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5a3.502 3.502 0 01-1.75 3.026v9.06c.93-.456 1.914-.766 2.807-1.039 3.391-1.075 5.323-1.878 5.359-5.687a3.502 3.502 0 01-1.75-3.026c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="contacts" xmlns="http://www.w3.org/2000/svg"><path d="M22.688 22.688v-2q0-1.5-2.281-2.438t-4.406-.938-4.406.938-2.281 2.438v2h13.375zM16 9q-1.25 0-2.125.875T13 12t.875 2.125T16 15t2.125-.875T19 12t-.875-2.125T16 9zm10.688-3.687q1.063 0 1.844.813t.781 1.875v16q0 1.063-.781 1.875t-1.844.813H5.313q-1.063 0-1.844-.813t-.781-1.875v-16q0-1.063.781-1.875t1.844-.813h21.375zM5.313 32v-2.688h21.375V32H5.313zM26.688 0v2.688H5.313V0h21.375z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="create" xmlns="http://www.w3.org/2000/svg"><path d="M31.499 7.167l-3.25 3.25-6.666-6.666 3.25-3.25q.5-.5 1.25-.5t1.25.5l4.166 4.166q.5.5.5 1.25t-.5 1.25zM.001 25.333L19.667 5.667l6.666 6.666L6.667 31.999H.001v-6.666z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="date" xmlns="http://www.w3.org/2000/svg"><path d="M27.192 28.844V11.192H4.808v17.652h22.384zm0-25.689q1.277 0 2.253.976t.976 2.253v22.459q0 1.277-.976 2.216t-2.253.939H4.808q-1.352 0-2.291-.901t-.939-2.253V6.385q0-1.277.939-2.253t2.291-.976h1.577V.001h3.23v3.155h12.769V.001h3.23v3.155h1.577zm-3.155 11.267v3.155h-3.23v-3.155h3.23zm-6.46 0v3.155h-3.155v-3.155h3.155zm-6.384 0v3.155h-3.23v-3.155h3.23z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="download" xmlns="http://www.w3.org/2000/svg"><path d="M2.866 28.209h26.269v3.79H2.866v-3.79zm26.268-16.925L16 24.418 2.866 11.284h7.493V.001h11.283v11.283h7.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="email" xmlns="http://www.w3.org/2000/svg"><path d="M28.845 9.615v-3.23L16 14.422 3.155 6.385v3.23L16 17.577zm0-6.46q1.277 0 2.216.977T32 6.385v19.23q0 1.277-.939 2.253t-2.216.977H3.155q-1.277 0-2.216-.977T0 25.615V6.385q0-1.277.939-2.253t2.216-.977h25.69z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="git" xmlns="http://www.w3.org/2000/svg"><path d="M27.472 12.753L15.247.529a1.803 1.803 0 00-2.55 0l-2.84 2.84 2.137 2.137a2.625 2.625 0 013.501 3.501l3.499 3.499a2.625 2.625 0 11-1.237 1.237l-3.499-3.499c-.083.04-.169.075-.257.106v7.3a2.626 2.626 0 11-1.75 0v-7.3a2.626 2.626 0 01-1.494-3.607L8.62 4.606l-8.09 8.09a1.805 1.805 0 000 2.551l12.225 12.224a1.803 1.803 0 002.55 0l12.168-12.168a1.805 1.805 0 000-2.551z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="github" xmlns="http://www.w3.org/2000/svg"><path d="M16 .394c8.833 0 15.999 7.166 15.999 15.999 0 7.062-4.583 13.062-10.937 15.187-.813.146-1.104-.354-1.104-.771 0-.521.021-2.25.021-4.396 0-1.5-.5-2.458-1.083-2.958 3.562-.396 7.312-1.75 7.312-7.896 0-1.75-.625-3.167-1.646-4.291.167-.417.708-2.042-.167-4.25-1.333-.417-4.396 1.646-4.396 1.646a15.032 15.032 0 00-8 0S8.937 6.602 7.603 7.018c-.875 2.208-.333 3.833-.167 4.25-1.021 1.125-1.646 2.542-1.646 4.291 0 6.125 3.729 7.5 7.291 7.896-.458.417-.875 1.125-1.021 2.146-.917.417-3.25 1.125-4.646-1.333-.875-1.521-2.458-1.646-2.458-1.646-1.562-.021-.104.979-.104.979 1.042.479 1.771 2.333 1.771 2.333.938 2.854 5.396 1.896 5.396 1.896 0 1.333.021 2.583.021 2.979 0 .417-.292.917-1.104.771C4.582 29.455-.001 23.455-.001 16.393-.001 7.56 7.165.394 15.998.394zM6.063 23.372c.042-.083-.021-.187-.146-.25-.125-.042-.229-.021-.271.042-.042.083.021.187.146.25.104.062.229.042.271-.042zm.646.709c.083-.062.062-.208-.042-.333-.104-.104-.25-.146-.333-.062-.083.062-.062.208.042.333.104.104.25.146.333.062zm.625.937c.104-.083.104-.25 0-.396-.083-.146-.25-.208-.354-.125-.104.062-.104.229 0 .375s.271.208.354.146zm.875.875c.083-.083.042-.271-.083-.396-.146-.146-.333-.167-.417-.062-.104.083-.062.271.083.396.146.146.333.167.417.062zm1.187.521c.042-.125-.083-.271-.271-.333-.167-.042-.354.021-.396.146s.083.271.271.312c.167.062.354 0 .396-.125zm1.313.104c0-.146-.167-.25-.354-.229-.187 0-.333.104-.333.229 0 .146.146.25.354.229.187 0 .333-.104.333-.229zm1.208-.208c-.021-.125-.187-.208-.375-.187-.187.042-.312.167-.292.312.021.125.187.208.375.167s.312-.167.292-.292z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="gitlab" xmlns="http://www.w3.org/2000/svg"><path d="M1.629 11.034L14 26.888.442 17.048a1.09 1.09 0 01-.39-1.203l1.578-4.811zm7.217 0h10.309l-5.154 15.854zM5.753 1.475l3.093 9.559H1.63l3.093-9.559a.548.548 0 011.031 0zm20.618 9.559l1.578 4.811c.141.437-.016.922-.39 1.203l-13.558 9.84 12.371-15.854zm0 0h-7.216l3.093-9.559a.548.548 0 011.031 0z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="heart" xmlns="http://www.w3.org/2000/svg"><path d="M16 29.714a1.11 1.11 0 01-.786-.321L4.072 18.643c-.143-.125-4.071-3.714-4.071-8 0-5.232 3.196-8.357 8.535-8.357 3.125 0 6.053 2.464 7.464 3.857 1.411-1.393 4.339-3.857 7.464-3.857 5.339 0 8.535 3.125 8.535 8.357 0 4.286-3.928 7.875-4.089 8.035L16.785 29.392c-.214.214-.5.321-.786.321z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M25.875 28.25L22.125 32 6.126 16.001 22.125.002l3.75 3.75-12.25 12.25z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M6.125 28.25L18.375 16 6.125 3.75 9.875 0l15.999 15.999L9.875 31.998z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="link" xmlns="http://www.w3.org/2000/svg"><path d="M24.037 7.963q3.305 0 5.634 2.366T32 16t-2.329 5.671-5.634 2.366h-6.46v-3.08h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.08h6.46zM9.615 17.578v-3.155h12.77v3.155H9.615zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.08h-6.46q-3.305 0-5.634-2.366T0 16.001t2.329-5.671 5.634-2.366h6.46v3.08h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="menu" xmlns="http://www.w3.org/2000/svg"><path d="M.001 5.334h31.998v3.583H.001V5.334zm0 12.416v-3.5h31.998v3.5H.001zm0 8.916v-3.583h31.998v3.583H.001z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="notifications" xmlns="http://www.w3.org/2000/svg"><path d="M25.846 22.154l3.308 3.308v1.615H2.847v-1.615l3.308-3.308V14q0-3.846 1.961-6.692t5.423-3.692V2.462q0-1 .692-1.731T16 0t1.769.731.692 1.731v1.154q3.461.846 5.423 3.692T25.846 14v8.154zM16 32q-1.385 0-2.346-.923t-.962-2.308h6.615q0 1.308-1 2.269T15.999 32z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="person" xmlns="http://www.w3.org/2000/svg"><path d="M16 20.023q5.052 0 10.526 2.199t5.473 5.754v4.023H0v-4.023q0-3.555 5.473-5.754t10.526-2.199zM16 16q-3.275 0-5.614-2.339T8.047 8.047t2.339-5.661T16 0t5.614 2.386 2.339 5.661-2.339 5.614T16 16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="pin" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 19.2h9.6v-1.6L22.4 16V3.2l4.8-1.6V0H4.8v1.6l4.8 1.6V16l-4.8 1.6v1.6h9.6v11.2L16 32l1.6-1.6V19.2z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="rss_feed" xmlns="http://www.w3.org/2000/svg"><path d="M-.481 12.048q8.482 0 14.457 5.976t5.976 14.457h-5.879q0-5.976-4.289-10.264T-.48 17.928v-5.879zm0-11.565q13.204 0 22.601 9.397t9.397 22.601h-5.783q0-10.891-7.662-18.553T-.481 6.266V.483zm0 27.468q0-1.831 1.301-3.132t3.229-1.301 3.181 1.253 1.253 3.181-1.301 3.229-3.132 1.301q-1.928 0-3.229-1.301T-.48 27.952z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="search" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zm10.981 0L32 29.255 29.255 32l-9.094-9.094v-1.458l-.515-.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432T.001 11.925t3.474-8.45 8.45-3.474 8.407 3.474 3.432 8.45q0 1.802-.858 4.075t-1.973 3.646l.515.515h1.458z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="security" xmlns="http://www.w3.org/2000/svg"><path d="M16 0l13.072 5.855v8.715q0 6.059-3.745 11.063T16 31.999q-5.583-1.362-9.327-6.366T2.928 14.57V5.855zm0 16v13.004q4.017-1.294 6.808-4.868T26.144 16H16zm0 0V3.2L5.856 7.693v8.306H16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="telescope" xmlns="http://www.w3.org/2000/svg"><path d="M25.026 3.335a.466.466 0 00-.646-.238L13.362 8.91a.463.463 0 00-.216.575l.227.593-6.36 3.488a.462.462 0 00-.205.583l.211.508-6.755 3.228a.463.463 0 00-.228.595l1.386 3.341a.463.463 0 00.583.259l7.056-2.5.211.508a.462.462 0 00.557.267l6.733-1.941.202.527a.46.46 0 00.566.277l12.03-3.702a.46.46 0 00.293-.613L25.026 3.335zM2.109 21.061l-1.049-2.53 6.314-3.018 1.332 3.211-6.596 2.337zm7.857-1.708l-.22-.531-1.706-4.113-.22-.53 5.863-3.216 2.197 5.676.347.908-6.261 1.806zm7.505-1.146l-.188-.491c-.003-.01-.001-.022-.006-.032l-.572-1.478-2.549-6.668 10.201-5.381 4.249 10.624-11.136 3.428zm8.943-16.723a.463.463 0 00-.86.344l5.552 13.881a.464.464 0 00.602.258.464.464 0 00.258-.602L26.413 1.484zM16.268 20.627h-2.776c-1.055 0-1.851.796-1.851 1.851v1.217l-5.44 6.347a.462.462 0 10.702.602l5.415-6.316h2.101v6.015a.463.463 0 00.926 0v-6.015h2.101l5.414 6.316a.462.462 0 10.703-.602l-5.44-6.347v-1.148c0-1.076-.813-1.92-1.851-1.92zm.925 2.777h-4.627v-.925c0-.545.38-.925.925-.925h2.776c.527 0 .925.428.925.995v.856z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="timer" xmlns="http://www.w3.org/2000/svg"><path d="M16 29q4.428 0 7.536-3.143t3.107-7.571-3.107-7.536T16 7.643 8.464 10.75t-3.107 7.536 3.107 7.571T16 29zM26.714 9.786q1.214 1.571 2.107 4.036t.893 4.464q0 5.643-4 9.678T16 32t-9.714-4.036-4-9.678 4-9.678T16 4.572q1.929 0 4.464.929t4.107 2.143l2.143-2.214q1.143.929 2.143 2.143zM14.5 19.857v-9.143h3v9.143h-3zM20.571.001v3.071h-9.143V.001h9.143z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="tree" xmlns="http://www.w3.org/2000/svg"><path d="M32 14.423H20.808V9.616h-3.23v12.77h3.23v-4.807H32v12.845H20.808v-4.807h-6.385v-16h-3.23v4.807H.001V1.579h11.192v4.807h9.615V1.579H32v12.845z"/></symbol></svg>
+
+    <div class="wrapper">
+        <header class="gblog-header">
+    <div class="container flex align-center justify-center">
+        <a class="gblog-header__link" rel="me" href="https://xixiliguo.github.io/">
+            <span class="gblog-brand flex align-center justify-center">
+                <img class="gblog-brand__img" src="/brand.svg" alt="" width=60 height=60>
+                My personal Blog
+            </span>
+            
+        </a>
     </div>
-    
-    
-  <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
-  
-  <h2 class="title">个人网站</h2>
-  
-  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
-      
-        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
 </header>
+<nav class="gblog-nav">
+    <input type="checkbox" id="menu-control" class="hidden">
+    <div class="gblog-nav__control">
+        <label for="menu-control"  class="flex align-center justify-center">
+            <svg class="icon menu"><use xlink:href="#menu"></use></svg>
+            <svg class="icon clear"><use xlink:href="#clear"></use></svg>
+            <span>Nav</span>
+        </label>
+    </div>
+    <ul class="gblog-nav__list container flex flex-wrap justify-center menu-content">
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/BM/">BM</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Bandersnatch/">Bandersnatch</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Hash/">Hash</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/KMP/">KMP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Lua/">Lua</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NTP/">NTP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NetWork/">NetWork</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/OpenStack/">OpenStack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Pypi/">Pypi</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Python/">Python</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/RSS/">RSS</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/atop/">atop</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/boot/">boot</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/c/">c</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/cloud-init/">cloud-init</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/command/">command</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/crypt/">crypt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/dns/">dns</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/docker/">docker</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/golang/">golang</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/httprouter/">httprouter</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/iptables/">iptables</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/libvirt/">libvirt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/linux/">linux</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/net-stack/">net stack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/os/exec/">os/exec</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/proc/">proc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/radix-tree/">radix-tree</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/runc/">runc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/shadow/">shadow</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/systemd/">systemd</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/tcp/">tcp</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/yum/">yum</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%BB%E6%92%AD/">任播</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97/">多网卡队列</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E7%89%87%E6%AE%B5/">片段</a>
+        </li>
+        
+        
+        
+    </ul>
+</nav>
 
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">Lua实现原理 - GC垃圾回收</h1>
-      <p class="post-meta">@Peter Wang · Sep 30, 2020 · 2 min read</p>
-    </header>
-    <article class="post-content"><p>Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
+
+        <main class="gblog-page container">
+            
+    <article class="gblog-post">
+        <header class="gblog-post__header">
+            
+            
+
+            <h1>Lua实现原理 - GC垃圾回收</h1>
+            
+            <div class="gblog-post__meta">
+                <span class="no-wrap">
+                    <svg class="icon date"><use xlink:href="#date"></use></svg>
+                    <span class="gblog-post__tag">
+                        <time datetime="2020-09-30T21:17:14&#43;08:00">
+                            
+                            Sep 30, 2020
+                        </time>
+                    </span>
+                </span>
+
+                <span class="no-wrap">
+                    <svg class="icon timer"><use xlink:href="#timer"></use></svg>
+                    <span class="gblog-post__tag">3 min read</span>
+                </span>
+            </div>
+            
+        </header>
+
+        <section class="gblog-markdown">
+            <p>Lua是巴西人发明的脚本语言,作者称之为穿过针孔的语言.体积非常小巧(Lua 5.3.1在Linux下编译后仅为546K),同时功能很强大(支持闭包,协程等).
 本文主要介绍它的垃圾回收算法</p>
-
-<p>
-通常的垃圾回收算法主要有两种, 引用计数和标记清除<br />
-1. 引用计数主要是当对象被创建时计数为1.以后当该对象再次被引用时则计数加1.当取消引用时计数减1.这样当计数为0时则释放对象.该方法较容易理解,目前CPython是这样实现的.但该方法会遇到循环引用的问题.比如A和B都是列表,A包含B,B也同时包含A.即<code>A[0] = B; B[0]=A</code>.这样当取消引用时,A和B所引用的列表计数仍为1,即不会释放.但显然这时需要释放.CPython通过标记清除来解决循环引用的问题.<br />
-2. 标记清除原理是从根开始扫描(通常指全局变量和栈),发现一个存活对象则mark一下.等完成扫描动作后没有mark的则为需要清除的对象.直接释放.将mark过的对象reset后为下一次GC做准备.</p>
-
-<p>Lua 5.3.1使用增量的三色标记清除的GC算法, 对象刚被创建时默认标记颜色为白色,GC具体步骤如下:<br />
-1. 确定根部为全局变量(内部是hash table实现)和内部称之为therad的数据结构(它的一个成员指向一段连续内存,对应lua函数执行的逻辑栈)<br />
-2. 从根开始扫描, 如果该对象内部并不引用其他对象,则直接标记为黑色.如果该对象引用了其他对象,则该对象标记为灰色并加入灰色链表里(例如 <code>b = 1; a[&quot;abc&quot;] = b</code>即啊引用b, 此时标记a为灰色).当扫描完一遍后,检查灰色列表是否为空, 为空则调到4, 否则继续执行步骤3.这一步称之为mark<br />
-3. 取灰色链表上一个对象,首先设置为黑色并从该链接上去除,然后按步骤2的方法mark这个对象所引用的所有对象.(这里有个例外thread的处理仍然为灰色,会放入另一个灰色链接,暂纪委grayagain), 这步称之为traverse, 循环提取对象traverse直到灰色链接表为空<br />
-4. 检查grayagain是否为空,不为空则继续按步骤3的原则继续traverse, 直到为空.写屏障生成的灰色对象会放在grayagain里<br />
-5. 此时没有颜色为灰色的对象, GC进入sweep阶段,系统开始把标记为黑色的转换为白色,将当前白色的对象(即未mark到的对象)全部释放掉.<br />
-6. reset相关状态,等下一个GC的触发条件达到时候继续按步骤1进行. lua默认当前内存申请的大小为上次GC后存活的所有对象大小的2倍时启动next GC</p>
-
+<p>通常的垃圾回收算法主要有两种, 引用计数和标记清除</p>
+<ol>
+<li>引用计数主要是当对象被创建时计数为1.以后当该对象再次被引用时则计数加1.当取消引用时计数减1.这样当计数为0时则释放对象.该方法较容易理解,目前CPython是这样实现的.但该方法会遇到循环引用的问题.比如A和B都是列表,A包含B,B也同时包含A.即<code>A[0] = B; B[0]=A</code>.这样当取消引用时,A和B所引用的列表计数仍为1,即不会释放.但显然这时需要释放.CPython通过标记清除来解决循环引用的问题.</li>
+<li>标记清除原理是从根开始扫描(通常指全局变量和栈),发现一个存活对象则mark一下.等完成扫描动作后没有mark的则为需要清除的对象.直接释放.将mark过的对象reset后为下一次GC做准备.</li>
+</ol>
+<p>Lua 5.3.1使用增量的三色标记清除的GC算法, 对象刚被创建时默认标记颜色为白色,GC具体步骤如下:</p>
+<ol>
+<li>确定根部为全局变量(内部是hash table实现)和内部称之为therad的数据结构(它的一个成员指向一段连续内存,对应lua函数执行的逻辑栈)</li>
+<li>从根开始扫描, 如果该对象内部并不引用其他对象,则直接标记为黑色.如果该对象引用了其他对象,则该对象标记为灰色并加入灰色链表里(例如 <code>b = 1; a[&quot;abc&quot;] = b</code>即啊引用b, 此时标记a为灰色).当扫描完一遍后,检查灰色列表是否为空, 为空则调到4, 否则继续执行步骤3.这一步称之为mark</li>
+<li>取灰色链表上一个对象,首先设置为黑色并从该链接上去除,然后按步骤2的方法mark这个对象所引用的所有对象.(这里有个例外thread的处理仍然为灰色,会放入另一个灰色链接,暂纪委grayagain), 这步称之为traverse, 循环提取对象traverse直到灰色链接表为空</li>
+<li>检查grayagain是否为空,不为空则继续按步骤3的原则继续traverse, 直到为空.写屏障生成的灰色对象会放在grayagain里</li>
+<li>此时没有颜色为灰色的对象, GC进入sweep阶段,系统开始把标记为黑色的转换为白色,将当前白色的对象(即未mark到的对象)全部释放掉.</li>
+<li>reset相关状态,等下一个GC的触发条件达到时候继续按步骤1进行. lua默认当前内存申请的大小为上次GC后存活的所有对象大小的2倍时启动next GC</li>
+</ol>
 <p>如果上述步骤连续一次性运行,这样会导致STW(stop the world)很长, Lua实现比较巧妙, 一次只做一点. 比如在步骤3里按每个对象的大小作为参考值.Traverse一定量后停止GC操作,继续执行Lua字节码的操作. 下次Check时继续运行, 达到一定量再次回到Lua字节码的执行. 这样STW中断时间很短,提高了程序响应时间,这是称之为增量GC的原因.</p>
-
-<p>这样GC和程序逻辑交错运行会引入一个问题,对象A是hash table在一次GC中已经标记为黑色,紧接着执行业务逻辑<code>A[&quot;abc&quot;] = B</code>.假设B对象为白色,按因对象A已经是黑色,所有永远不会扫描到B, 则可能出现被意外释放的风险. 写屏障是用来解决这个问题的.当执行操作码<code>OP_SETLIST</code>时,为键赋新值后都要执行宏定义<code>LuaC_barrierback</code>, 当hash table 为黑, 值为白时,则将hash table由黑转为灰, 放到grayagain链表里,会在步骤4里重新traverse一遍<br />
+<p>这样GC和程序逻辑交错运行会引入一个问题,对象A是hash table在一次GC中已经标记为黑色,紧接着执行业务逻辑<code>A[&quot;abc&quot;] = B</code>.假设B对象为白色,按因对象A已经是黑色,所有永远不会扫描到B, 则可能出现被意外释放的风险. 写屏障是用来解决这个问题的.当执行操作码<code>OP_SETLIST</code>时,为键赋新值后都要执行宏定义<code>LuaC_barrierback</code>, 当hash table 为黑, 值为白时,则将hash table由黑转为灰, 放到grayagain链表里,会在步骤4里重新traverse一遍<br>
 也正是交错运行的原因, 已经扫描过的逻辑栈和马上要进入sweep阶段的逻辑栈肯定不一样了. 这就是thread标记为灰色,放入grayagain的原因, 在进入sweep前执行一个不可被业务逻辑打断的原子操作, 重新mark&amp;traverse一下</p>
-
 <p>在Lua巨大的虚拟机里,当执行<code>OP_NEWTABLE</code>,<code>OP_CONCAT</code>,<code>OP_CLOSURE</code>时执行宏<code>checkGC(L, ra + 1)</code>,展开如下,主要是调用了<code>luaC_step</code>这个函数</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define checkGC(L,c)  \
-</span><span style="color:#75715e"></span><span style="">  </span><span style="">Protect</span><span style="">(</span><span style=""> </span><span style="">luaC_condGC</span><span style="">(</span><span style="">L</span><span style="">,{</span><span style="">L</span><span style="color:#f92672">-&gt;</span><span style="">top</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="">c</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* limit of live values */</span><span style=""> \
-</span><span style="">                          </span><span style="">luaC_step</span><span style="">(</span><span style="">L</span><span style="">);</span><span style=""> \
-</span><span style="">                          </span><span style="">L</span><span style="color:#f92672">-&gt;</span><span style="">top</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">ci</span><span style="color:#f92672">-&gt;</span><span style="">top</span><span style="">;})</span><span style="">  </span><span style="color:#75715e">/* restore top */</span><span style=""> \
-</span><span style="">           </span><span style="">luai_threadyield</span><span style="">(</span><span style="">L</span><span style="">);</span><span style=""> </span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">/*只有当debt大于0时才正是开始执行GC,在实际运行时,此值通常小于负的一个步长, 随着新对象的创建,达到一个步长时,则启动GC */</span><span style="">
-</span><span style=""></span><span style="color:#75715e">#define luaC_condGC(L,c) \
-</span><span style="color:#75715e"></span><span style="">	</span><span style="">{</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">G</span><span style="">(</span><span style="">L</span><span style="">)</span><span style="color:#f92672">-&gt;</span><span style="">GCdebt</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">c</span><span style="">;};</span><span style=""> </span><span style="">condchangemem</span><span style="">(</span><span style="">L</span><span style="">);}</span><span style="">   
-</span><span style=""></span><span style="color:#75715e">#define luaC_checkGC(L)		luaC_condGC(L, luaC_step(L);)
-</span><span style="color:#75715e"></span><span style="">
-</span><span style=""></span><span style="color:#75715e">/*
-</span><span style="color:#75715e">** performs a basic GC step when collector is running
-</span><span style="color:#75715e">*/</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="">luaC_step</span><span style=""> </span><span style="">(</span><span style="">lua_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">L</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="">global_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">g</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">G</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
-</span><span style="">  </span><span style="">l_mem</span><span style=""> </span><span style="">debt</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">getdebt</span><span style="">(</span><span style="">g</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* GC deficit (be paid now) */</span><span style="">  </span><span style="color:#75715e">/*所有新创对象都会增加debt的值*/</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="color:#f92672">!</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcrunning</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* not running? */</span><span style="">
-</span><span style="">    </span><span style="">luaE_setdebt</span><span style="">(</span><span style="">g</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="">GCSTEPSIZE</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#ae81ff">10</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* avoid being called too often */</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">return</span><span style="">;</span><span style="">
-</span><span style="">  </span><span style="">}</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">do</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* repeat until pause or enough &#34;credit&#34; (negative debt) */</span><span style="">
-</span><span style="">    </span><span style="">lu_mem</span><span style=""> </span><span style="">work</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">singlestep</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* perform one single step */</span><span style=""> </span><span style="color:#75715e">/*work代表单次step(mark或者sweep)的成本*/</span><span style="">
-</span><span style="">    </span><span style="">debt</span><span style=""> </span><span style="color:#f92672">-=</span><span style=""> </span><span style="">work</span><span style="">;</span><span style="">
-</span><span style="">  </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">(</span><span style="">debt</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#f92672">-</span><span style="">GCSTEPSIZE</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">GCSpause</span><span style="">);</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">GCSpause</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">setpause</span><span style="">(</span><span style="">g</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* pause until next cycle */</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="">debt</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="">debt</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstepmul</span><span style="">)</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">STEPMULADJ</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* convert &#39;work units&#39; to Kb */</span><span style="">
-</span><span style="">    </span><span style="">luaE_setdebt</span><span style="">(</span><span style="">g</span><span style="">,</span><span style=""> </span><span style="">debt</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="">runafewfinalizers</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
-</span><span style="">  </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>singlestep函数用来控制GC内部状态过程的迁移</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">static</span><span style=""> </span><span style="">lu_mem</span><span style=""> </span><span style="color:#a6e22e">singlestep</span><span style=""> </span><span style="">(</span><span style="">lua_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">L</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="">global_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">g</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">G</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="">(</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSpause</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">      </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">GCmemtrav</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">strt</span><span style="">.</span><span style="">size</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">GCObject</span><span style="color:#f92672">*</span><span style="">);</span><span style="">
-</span><span style="">      </span><span style="">restartcollection</span><span style="">(</span><span style="">g</span><span style="">);</span><span style=""> </span><span style="color:#75715e">/*启动GC,并mark根部(全局变量表和内部的thread(又称协程, 每个协程有自己的独立逻辑栈))*/</span><span style="">
-</span><span style="">      </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GCSpropagate</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">GCmemtrav</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/*返回work成本,用于增量GC控制*/</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSpropagate</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">      </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">GCmemtrav</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="">lua_assert</span><span style="">(</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gray</span><span style="">);</span><span style="">
-</span><span style="">      </span><span style="">propagatemark</span><span style="">(</span><span style="">g</span><span style="">);</span><span style="">     </span><span style="color:#75715e">/*Traverse灰色链表中的一个对象*/</span><span style="">
-</span><span style="">       </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gray</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">NULL</span><span style="">)</span><span style="">  </span><span style="color:#75715e">/* no more gray objects? */</span><span style="">
-</span><span style="">        </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GCSatomic</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* finish propagate phase */</span><span style=""> </span><span style="color:#75715e">/*当灰色链接中没有对象后,迁移到下一个状态*/</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">GCmemtrav</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* memory traversed in this step */</span><span style="">  </span><span style="color:#75715e">/*返回work成本,用于增量GC控制*/</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSatomic</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">      </span><span style="">lu_mem</span><span style=""> </span><span style="">work</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">sw</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="">propagateall</span><span style="">(</span><span style="">g</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* make sure gray list is empty */</span><span style="">  </span><span style="color:#75715e">/*再次检查灰色链表是否还有对象*/</span><span style="">
-</span><span style="">      </span><span style="">work</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">atomic</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* work is what was traversed by &#39;atomic&#39; */</span><span style=""> </span><span style="color:#75715e">/*这块操作是不可中断的,主要是将一些写屏障导致的灰色对象继续traverse*/</span><span style="">
-</span><span style="">      </span><span style="">sw</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">entersweep</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
-</span><span style="">      </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">GCestimate</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">gettotalbytes</span><span style="">(</span><span style="">g</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* first estimate */</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">work</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">sw</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">GCSWEEPCOST</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSswpallgc</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* sweep &#34;regular&#34; objects */</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">sweepstep</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">g</span><span style="">,</span><span style=""> </span><span style="">GCSswpfinobj</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">finobj</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSswpfinobj</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* sweep objects with finalizers */</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">sweepstep</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">g</span><span style="">,</span><span style=""> </span><span style="">GCSswptobefnz</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">tobefnz</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSswptobefnz</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* sweep objects to be finalized */</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">sweepstep</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">g</span><span style="">,</span><span style=""> </span><span style="">GCSswpend</span><span style="">,</span><span style=""> </span><span style="">NULL</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCSswpend</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* finish sweeps */</span><span style="">
-</span><span style="">      </span><span style="">makewhite</span><span style="">(</span><span style="">g</span><span style="">,</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">mainthread</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* sweep main thread */</span><span style="">
-</span><span style="">      </span><span style="">checkSizes</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">g</span><span style="">);</span><span style="">
-</span><span style="">      </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GCScallfin</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">GCScallfin</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* call remaining finalizers */</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">tobefnz</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gckind</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">KGC_EMERGENCY</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">n</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">runafewfinalizers</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">(</span><span style="">n</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">GCFINALIZECOST</span><span style="">);</span><span style="">
-</span><span style="">      </span><span style="">}</span><span style="">
-</span><span style="">      </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">  </span><span style="color:#75715e">/* emergency mode or no more finalizers */</span><span style="">
-</span><span style="">        </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">gcstate</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GCSpause</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* finish collection */</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">default</span><span style="color:#f92672">:</span><span style=""> </span><span style="">lua_assert</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">);</span><span style=""> </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">  </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>写屏障的具体相关函数</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="">      </span><span style="">vmcase</span><span style="">(</span><span style="">OP_SETLIST</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">n</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GETARG_B</span><span style="">(</span><span style="">i</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">c</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GETARG_C</span><span style="">(</span><span style="">i</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">unsigned</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">last</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="">Table</span><span style=""> </span><span style="color:#f92672">*</span><span style="">h</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">n</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">n</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">cast_int</span><span style="">(</span><span style="">L</span><span style="color:#f92672">-&gt;</span><span style="">top</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">ra</span><span style="">)</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">c</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">          </span><span style="">lua_assert</span><span style="">(</span><span style="">GET_OPCODE</span><span style="">(</span><span style="color:#f92672">*</span><span style="">ci</span><span style="color:#f92672">-&gt;</span><span style="">u</span><span style="">.</span><span style="">l</span><span style="">.</span><span style="">savedpc</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">OP_EXTRAARG</span><span style="">);</span><span style="">
-</span><span style="">          </span><span style="">c</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">GETARG_Ax</span><span style="">(</span><span style="color:#f92672">*</span><span style="">ci</span><span style="color:#f92672">-&gt;</span><span style="">u</span><span style="">.</span><span style="">l</span><span style="">.</span><span style="">savedpc</span><span style="color:#f92672">++</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="">luai_runtimecheck</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">ttistable</span><span style="">(</span><span style="">ra</span><span style="">));</span><span style="">
-</span><span style="">        </span><span style="">h</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">hvalue</span><span style="">(</span><span style="">ra</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">last</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">((</span><span style="">c</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="color:#f92672">*</span><span style="">LFIELDS_PER_FLUSH</span><span style="">)</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">n</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">last</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">h</span><span style="color:#f92672">-&gt;</span><span style="">sizearray</span><span style="">)</span><span style="">  </span><span style="color:#75715e">/* needs more space? */</span><span style="">
-</span><span style="">          </span><span style="">luaH_resizearray</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">h</span><span style="">,</span><span style=""> </span><span style="">last</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* pre-allocate it at once */</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(;</span><span style=""> </span><span style="">n</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">n</span><span style="color:#f92672">--</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">          </span><span style="">TValue</span><span style=""> </span><span style="color:#f92672">*</span><span style="">val</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">ra</span><span style="color:#f92672">+</span><span style="">n</span><span style="">;</span><span style="">
-</span><span style="">          </span><span style="">luaH_setint</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">h</span><span style="">,</span><span style=""> </span><span style="">last</span><span style="color:#f92672">--</span><span style="">,</span><span style=""> </span><span style="">val</span><span style="">);</span><span style="">
-</span><span style="">          </span><span style="">luaC_barrierback</span><span style="">(</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">h</span><span style="">,</span><span style=""> </span><span style="">val</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="">L</span><span style="color:#f92672">-&gt;</span><span style="">top</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">ci</span><span style="color:#f92672">-&gt;</span><span style="">top</span><span style="">;</span><span style="">  </span><span style="color:#75715e">/* correct top (in case of previous open call) */</span><span style="">
-</span><span style="">        </span><span style="">vmbreak</span><span style="">;</span><span style="">
-</span><span style="">      </span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">#define luaC_barrierback(L,p,v) {  \
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">iscollectable</span><span style="">(</span><span style="">v</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">isblack</span><span style="">(</span><span style="">p</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">iswhite</span><span style="">(</span><span style="">gcvalue</span><span style="">(</span><span style="">v</span><span style="">)))</span><span style="">  \
-</span><span style="">	</span><span style="">luaC_barrierback_</span><span style="">(</span><span style="">L</span><span style="">,</span><span style="">p</span><span style="">);</span><span style=""> </span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">/*
-</span><span style="color:#75715e">** barrier that moves collector backward, that is, mark the black object
-</span><span style="color:#75715e">** pointing to a white object as gray again.
-</span><span style="color:#75715e">*/</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="">luaC_barrierback_</span><span style=""> </span><span style="">(</span><span style="">lua_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">L</span><span style="">,</span><span style=""> </span><span style="">Table</span><span style=""> </span><span style="color:#f92672">*</span><span style="">t</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="">global_State</span><span style=""> </span><span style="color:#f92672">*</span><span style="">g</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">G</span><span style="">(</span><span style="">L</span><span style="">);</span><span style="">
-</span><span style="">  </span><span style="">lua_assert</span><span style="">(</span><span style="">isblack</span><span style="">(</span><span style="">t</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#f92672">!</span><span style="">isdead</span><span style="">(</span><span style="">g</span><span style="">,</span><span style=""> </span><span style="">t</span><span style="">));</span><span style="">
-</span><span style="">  </span><span style="">black2gray</span><span style="">(</span><span style="">t</span><span style="">);</span><span style="">  </span><span style="color:#75715e">/* make table gray (again) */</span><span style="">
-</span><span style="">  </span><span style="">linkgclist</span><span style="">(</span><span style="">t</span><span style="">,</span><span style=""> </span><span style="">g</span><span style="color:#f92672">-&gt;</span><span style="">grayagain</span><span style="">);</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div></article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define checkGC(L,c)  \
+</span><span class="cp">  Protect( luaC_condGC(L,{L-&gt;top = (c);  </span><span class="cm">/* limit of live values */</span><span class="cp"> \
+</span><span class="cp">                          luaC_step(L); \
+</span><span class="cp">                          L-&gt;top = ci-&gt;top;})  </span><span class="cm">/* restore top */</span><span class="cp"> \
+</span><span class="cp">           luai_threadyield(L); )
+</span><span class="cp"></span>
+<span class="cm">/*只有当debt大于0时才正是开始执行GC,在实际运行时,此值通常小于负的一个步长, 随着新对象的创建,达到一个步长时,则启动GC */</span>
+<span class="cp">#define luaC_condGC(L,c) \
+</span><span class="cp">	{if (G(L)-&gt;GCdebt &gt; 0) {c;}; condchangemem(L);}   
+</span><span class="cp">#define luaC_checkGC(L)		luaC_condGC(L, luaC_step(L);)
+</span><span class="cp"></span>
+<span class="cm">/*
+</span><span class="cm">** performs a basic GC step when collector is running
+</span><span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">luaC_step</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">global_State</span> <span class="o">*</span><span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+  <span class="n">l_mem</span> <span class="n">debt</span> <span class="o">=</span> <span class="n">getdebt</span><span class="p">(</span><span class="n">g</span><span class="p">);</span>  <span class="cm">/* GC deficit (be paid now) */</span>  <span class="cm">/*所有新创对象都会增加debt的值*/</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">gcrunning</span><span class="p">)</span> <span class="p">{</span>  <span class="cm">/* not running? */</span>
+    <span class="n">luaE_setdebt</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">-</span><span class="n">GCSTEPSIZE</span> <span class="o">*</span> <span class="mi">10</span><span class="p">);</span>  <span class="cm">/* avoid being called too often */</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">do</span> <span class="p">{</span>  <span class="cm">/* repeat until pause or enough &#34;credit&#34; (negative debt) */</span>
+    <span class="n">lu_mem</span> <span class="n">work</span> <span class="o">=</span> <span class="n">singlestep</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>  <span class="cm">/* perform one single step */</span> <span class="cm">/*work代表单次step(mark或者sweep)的成本*/</span>
+    <span class="n">debt</span> <span class="o">-=</span> <span class="n">work</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">debt</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">GCSTEPSIZE</span> <span class="o">&amp;&amp;</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span> <span class="o">!=</span> <span class="n">GCSpause</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span> <span class="o">==</span> <span class="n">GCSpause</span><span class="p">)</span>
+    <span class="n">setpause</span><span class="p">(</span><span class="n">g</span><span class="p">);</span>  <span class="cm">/* pause until next cycle */</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="n">debt</span> <span class="o">=</span> <span class="p">(</span><span class="n">debt</span> <span class="o">/</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstepmul</span><span class="p">)</span> <span class="o">*</span> <span class="n">STEPMULADJ</span><span class="p">;</span>  <span class="cm">/* convert &#39;work units&#39; to Kb */</span>
+    <span class="n">luaE_setdebt</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">debt</span><span class="p">);</span>
+    <span class="n">runafewfinalizers</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><p>singlestep函数用来控制GC内部状态过程的迁移</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">lu_mem</span> <span class="nf">singlestep</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">global_State</span> <span class="o">*</span><span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nl">GCSpause</span><span class="p">:</span> <span class="p">{</span>
+      <span class="n">g</span><span class="o">-&gt;</span><span class="n">GCmemtrav</span> <span class="o">=</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">strt</span><span class="p">.</span><span class="n">size</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">GCObject</span><span class="o">*</span><span class="p">);</span>
+      <span class="n">restartcollection</span><span class="p">(</span><span class="n">g</span><span class="p">);</span> <span class="cm">/*启动GC,并mark根部(全局变量表和内部的thread(又称协程, 每个协程有自己的独立逻辑栈))*/</span>
+      <span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span> <span class="o">=</span> <span class="n">GCSpropagate</span><span class="p">;</span>
+      <span class="k">return</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">GCmemtrav</span><span class="p">;</span>  <span class="cm">/*返回work成本,用于增量GC控制*/</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCSpropagate</span><span class="p">:</span> <span class="p">{</span>
+      <span class="n">g</span><span class="o">-&gt;</span><span class="n">GCmemtrav</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="n">lua_assert</span><span class="p">(</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">gray</span><span class="p">);</span>
+      <span class="n">propagatemark</span><span class="p">(</span><span class="n">g</span><span class="p">);</span>     <span class="cm">/*Traverse灰色链表中的一个对象*/</span>
+       <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">gray</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>  <span class="cm">/* no more gray objects? */</span>
+        <span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span> <span class="o">=</span> <span class="n">GCSatomic</span><span class="p">;</span>  <span class="cm">/* finish propagate phase */</span> <span class="cm">/*当灰色链接中没有对象后,迁移到下一个状态*/</span>
+      <span class="k">return</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">GCmemtrav</span><span class="p">;</span>  <span class="cm">/* memory traversed in this step */</span>  <span class="cm">/*返回work成本,用于增量GC控制*/</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCSatomic</span><span class="p">:</span> <span class="p">{</span>
+      <span class="n">lu_mem</span> <span class="n">work</span><span class="p">;</span>
+      <span class="kt">int</span> <span class="n">sw</span><span class="p">;</span>
+      <span class="n">propagateall</span><span class="p">(</span><span class="n">g</span><span class="p">);</span>  <span class="cm">/* make sure gray list is empty */</span>  <span class="cm">/*再次检查灰色链表是否还有对象*/</span>
+      <span class="n">work</span> <span class="o">=</span> <span class="n">atomic</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>  <span class="cm">/* work is what was traversed by &#39;atomic&#39; */</span> <span class="cm">/*这块操作是不可中断的,主要是将一些写屏障导致的灰色对象继续traverse*/</span>
+      <span class="n">sw</span> <span class="o">=</span> <span class="n">entersweep</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+      <span class="n">g</span><span class="o">-&gt;</span><span class="n">GCestimate</span> <span class="o">=</span> <span class="n">gettotalbytes</span><span class="p">(</span><span class="n">g</span><span class="p">);</span>  <span class="cm">/* first estimate */</span><span class="p">;</span>
+      <span class="k">return</span> <span class="n">work</span> <span class="o">+</span> <span class="n">sw</span> <span class="o">*</span> <span class="n">GCSWEEPCOST</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCSswpallgc</span><span class="p">:</span> <span class="p">{</span>  <span class="cm">/* sweep &#34;regular&#34; objects */</span>
+      <span class="k">return</span> <span class="n">sweepstep</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">GCSswpfinobj</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">finobj</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCSswpfinobj</span><span class="p">:</span> <span class="p">{</span>  <span class="cm">/* sweep objects with finalizers */</span>
+      <span class="k">return</span> <span class="n">sweepstep</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">GCSswptobefnz</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">tobefnz</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCSswptobefnz</span><span class="p">:</span> <span class="p">{</span>  <span class="cm">/* sweep objects to be finalized */</span>
+      <span class="k">return</span> <span class="n">sweepstep</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">GCSswpend</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCSswpend</span><span class="p">:</span> <span class="p">{</span>  <span class="cm">/* finish sweeps */</span>
+      <span class="n">makewhite</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">mainthread</span><span class="p">);</span>  <span class="cm">/* sweep main thread */</span>
+      <span class="n">checkSizes</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">g</span><span class="p">);</span>
+      <span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span> <span class="o">=</span> <span class="n">GCScallfin</span><span class="p">;</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">case</span> <span class="nl">GCScallfin</span><span class="p">:</span> <span class="p">{</span>  <span class="cm">/* call remaining finalizers */</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="o">-&gt;</span><span class="n">tobefnz</span> <span class="o">&amp;&amp;</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">gckind</span> <span class="o">!=</span> <span class="n">KGC_EMERGENCY</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">runafewfinalizers</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">GCFINALIZECOST</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="p">{</span>  <span class="cm">/* emergency mode or no more finalizers */</span>
+        <span class="n">g</span><span class="o">-&gt;</span><span class="n">gcstate</span> <span class="o">=</span> <span class="n">GCSpause</span><span class="p">;</span>  <span class="cm">/* finish collection */</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">default</span><span class="o">:</span> <span class="n">lua_assert</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>写屏障的具体相关函数</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">      <span class="n">vmcase</span><span class="p">(</span><span class="n">OP_SETLIST</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">GETARG_B</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">GETARG_C</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">last</span><span class="p">;</span>
+        <span class="n">Table</span> <span class="o">*</span><span class="n">h</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">n</span> <span class="o">=</span> <span class="n">cast_int</span><span class="p">(</span><span class="n">L</span><span class="o">-&gt;</span><span class="n">top</span> <span class="o">-</span> <span class="n">ra</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">lua_assert</span><span class="p">(</span><span class="n">GET_OPCODE</span><span class="p">(</span><span class="o">*</span><span class="n">ci</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">.</span><span class="n">l</span><span class="p">.</span><span class="n">savedpc</span><span class="p">)</span> <span class="o">==</span> <span class="n">OP_EXTRAARG</span><span class="p">);</span>
+          <span class="n">c</span> <span class="o">=</span> <span class="n">GETARG_Ax</span><span class="p">(</span><span class="o">*</span><span class="n">ci</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">.</span><span class="n">l</span><span class="p">.</span><span class="n">savedpc</span><span class="o">++</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">luai_runtimecheck</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">ttistable</span><span class="p">(</span><span class="n">ra</span><span class="p">));</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">hvalue</span><span class="p">(</span><span class="n">ra</span><span class="p">);</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="p">((</span><span class="n">c</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">LFIELDS_PER_FLUSH</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">last</span> <span class="o">&gt;</span> <span class="n">h</span><span class="o">-&gt;</span><span class="n">sizearray</span><span class="p">)</span>  <span class="cm">/* needs more space? */</span>
+          <span class="n">luaH_resizearray</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">last</span><span class="p">);</span>  <span class="cm">/* pre-allocate it at once */</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">TValue</span> <span class="o">*</span><span class="n">val</span> <span class="o">=</span> <span class="n">ra</span><span class="o">+</span><span class="n">n</span><span class="p">;</span>
+          <span class="n">luaH_setint</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">last</span><span class="o">--</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+          <span class="n">luaC_barrierback</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">L</span><span class="o">-&gt;</span><span class="n">top</span> <span class="o">=</span> <span class="n">ci</span><span class="o">-&gt;</span><span class="n">top</span><span class="p">;</span>  <span class="cm">/* correct top (in case of previous open call) */</span>
+        <span class="n">vmbreak</span><span class="p">;</span>
+      <span class="p">}</span>
+
+<span class="cp">#define luaC_barrierback(L,p,v) {  \
+</span><span class="cp">	if (iscollectable(v) &amp;&amp; isblack(p) &amp;&amp; iswhite(gcvalue(v)))  \
+</span><span class="cp">	luaC_barrierback_(L,p); }
+</span><span class="cp"></span>
+<span class="cm">/*
+</span><span class="cm">** barrier that moves collector backward, that is, mark the black object
+</span><span class="cm">** pointing to a white object as gray again.
+</span><span class="cm">*/</span>
+<span class="kt">void</span> <span class="n">luaC_barrierback_</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="n">Table</span> <span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">global_State</span> <span class="o">*</span><span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+  <span class="n">lua_assert</span><span class="p">(</span><span class="n">isblack</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">isdead</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">t</span><span class="p">));</span>
+  <span class="n">black2gray</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>  <span class="cm">/* make table gray (again) */</span>
+  <span class="n">linkgclist</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">g</span><span class="o">-&gt;</span><span class="n">grayagain</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+        </section>
+    </article>
+
+        </main>
+
+        <footer class="gblog-footer">
+    <nav class="container">
+        <section class="flex flex-wrap align-center">
+            
+            
+            
+            
+        </section>
+        <section class="flex flex-wrap align-center">
+            <span class="gblog-footer__item">
+                Built with <a href="https://gohugo.io/" class="gblog-footer__link">Hugo</a> and
+                <svg class="icon heart"><use xlink:href="#heart"></use></svg>
+            </span>
+        </section>
         
-          <li><a href="https://xixiliguo.github.io/tags/lua"><span class="tag">Lua</span></a></li>
-        
-          <li><a href="https://xixiliguo.github.io/tags/c"><span class="tag">C</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
-      </p>
-    </footer>
-    
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2020 个人网站</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+    </nav>
 </footer>
 
+    </div>
 
-
-<script src="https://xixiliguo.github.io/js/bundle.js"></script>
-
-
+    
+<script defer src="/js/clipboard-f06c52bfdd.min.js"></script>
 <script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-107151468-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var clipboard = new ClipboardJS('.clip');
+    });
 </script>
 
 
-
-  </body>
+</body>
 </html>

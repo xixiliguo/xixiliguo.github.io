@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pypi on My personal Blog</title>
+    <link>https://xixiliguo.github.io/tags/Pypi/</link>
+    <description>Recent content in Pypi on My personal Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 02 Jan 2018 22:14:04 +0800</lastBuildDate>
+    
+	<atom:link href="https://xixiliguo.github.io/tags/Pypi/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>使用Bandersnatch搭建私有Pypi源</title>
+      <link>https://xixiliguo.github.io/post/bandersnatch-pypi/</link>
+      <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/bandersnatch-pypi/</guid>
+      <description>&lt;p&gt;经常使用python的公司,考虑到pypi.python.org不稳定,都会自己搭建私有的Pypi源.这里简单介绍下方法.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

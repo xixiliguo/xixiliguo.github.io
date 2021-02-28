@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Httprouter on 个人网站</title>
+    <title>httprouter on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/httprouter/</link>
-    <description>Recent content in Httprouter on 个人网站</description>
+    <description>Recent content in httprouter on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Sat, 23 Mar 2019 17:52:44 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/httprouter/index.xml" rel="self" type="application/rss+xml" />
@@ -18,10 +16,8 @@
       <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/radix-tree/</guid>
-      <description>&lt;p&gt;Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.&lt;br /&gt;
-Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;Trie又叫前缀树, 广泛应用于字符串搜索. 它是多叉树结构, 每个节点代表一个字符, 从根出发到叶子, 所访问过的字符连接起来就是一个字符串.&lt;br&gt;
+Radix tree 是Trie的一种优化方式, 对空间进一步压缩.&lt;/p&gt;</description>
     </item>
     
   </channel>

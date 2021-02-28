@@ -1,252 +1,457 @@
 <!DOCTYPE html>
-<html lang="en">
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+
 <head>
-
-  <meta charset="utf-8" />
-
-  
-  <title>Golang os/exec 实现</title>
-
-  
-  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 
 
-  
-  <meta name="author" content="Peter Wang" />
-  <meta name="description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.
 
-" />
 
-  
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="Golang os/exec 实现" />
-    <meta name="twitter:description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.
-
-" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+    <meta name="description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.">
 
 
 
+    
+    
+        
+    
 
-<meta name="generator" content="Hugo 0.28" />
-
-
-<link rel="canonical" href="https://xixiliguo.github.io/post/golang-exec/" />
-<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+    
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+    <title>Golang os/exec 实现 | My personal Blog</title>
 
-<meta name="baidu-site-verification" content="xijFMBD2HS" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
 
+    
 
+    <meta property="og:title" content="Golang os/exec 实现" />
+<meta property="og:description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xixiliguo.github.io/post/golang-exec/" />
+<meta property="article:published_time" content="2019-06-02T23:22:44+08:00" />
+<meta property="article:modified_time" content="2019-06-02T23:22:44+08:00" />
 
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="个人网站" />
-<meta name="msapplication-tooltip" content="个人网站" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang os/exec 实现"/>
+<meta name="twitter:description" content="os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结."/>
 
 
+    <link rel="preload" as="font" href="/fonts/Metropolis.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Bold.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-BoldItalic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Italic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationMono.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/DroidSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/GeekblogIcons.woff2" type="font/woff2" crossorigin="anonymous">
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+<link rel="preload" href="/main-342b625c73.min.css" as="style">
+<link rel="stylesheet" href="/main-342b625c73.min.css" media="all">
 
-<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+<link rel="preload" href="/mobile-14fbbb71d2.min.css" as="style">
+<link rel="stylesheet" href="/mobile-14fbbb71d2.min.css" media="screen and (max-width: 45rem)">
 
+<link rel="preload" href="/print-86167e859a.min.css" as="style">
+<link rel="stylesheet" href="/print-86167e859a.min.css" media="print">
 
-  
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
-
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
+<link rel="preload" href="/custom.css" as="style">
+<link rel="stylesheet" href="/custom.css" media="all">
 
 
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+<!-- Made with Geekblog theme https://github.com/thegeeklab/hugo-geekblog -->
+
+    
 
 
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "articleSection": "post",
+    "name": "Golang os\/exec 实现",
+    "headline": "Golang os\/exec 实现",
+    "alternativeHeadline": "",
+    "description": "\x3cp\x3eos\/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.\x3c\/p\x3e",
+    "inLanguage": "en",
+    "isFamilyFriendly": "true",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https:\/\/xixiliguo.github.io\/post\/golang-exec\/"
+    },
+    "author" : [
+    ],
+    "copyrightHolder" : "My personal Blog",
+    "copyrightYear" : "2019",
+    "dateCreated": "2019-06-02T23:22:44.00Z",
+    "datePublished": "2019-06-02T23:22:44.00Z",
+    "dateModified": "2019-06-02T23:22:44.00Z",
+    "publisher":{
+        "@type":"Organization",
+        "name": "My personal Blog",
+        "url": "https://xixiliguo.github.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/xixiliguo.github.io\/brand.svg",
+            "width":"32",
+            "height":"32"
+        }
+    },
+    "url" : "https:\/\/xixiliguo.github.io\/post\/golang-exec\/",
+    "wordCount" : "1061",
+    "genre" : [ "os\/exec" ]
+}
+</script>
 
 
 </head>
-  <body>
-    
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
-      
-        
-      
+
+<body>
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_back" xmlns="http://www.w3.org/2000/svg"><path d="M31.999 14.035v3.93H7.673l11.134 11.228L16 32 .001 16.001 16 .002l2.807 2.807L7.673 14.037h24.326z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M7.954 17.965v5.988L.001 16l7.953-7.953v5.988H32v3.93H7.954z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M24.046 14.035V8.047L31.999 16l-7.953 7.953v-5.988H0v-3.93h24.046z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="bitbucket" xmlns="http://www.w3.org/2000/svg"><path d="M15.905 13.355c.189 1.444-1.564 2.578-2.784 1.839-1.375-.602-1.375-2.784-.034-3.403 1.151-.705 2.818.223 2.818 1.564zm1.907-.361c-.309-2.44-3.076-4.056-5.328-3.042-1.426.636-2.389 2.148-2.32 3.747.086 2.097 2.08 3.815 4.176 3.626s3.729-2.234 3.472-4.331zm4.108-9.315c-.756-.997-2.045-1.169-3.179-1.358-3.214-.516-6.513-.533-9.727.034-1.066.172-2.269.361-2.939 1.323 1.1 1.031 2.664 1.186 4.073 1.358 2.544.327 5.156.344 7.699.017 1.426-.172 3.008-.309 4.073-1.375zm.979 17.788c-.481 1.684-.206 3.953-1.994 4.932-3.076 1.701-6.806 1.89-10.191 1.289-1.787-.327-3.884-.894-4.864-2.578-.43-1.65-.705-3.334-.98-5.018l.103-.275.309-.155c5.121 3.386 12.288 3.386 17.427 0 .808.241.206 1.22.189 1.805zM26.01 4.951c-.584 3.764-1.255 7.51-1.908 11.257-.189 1.1-1.255 1.719-2.148 2.183-3.214 1.615-6.96 1.89-10.483 1.512-2.389-.258-4.829-.894-6.771-2.389-.911-.705-.911-1.908-1.083-2.922-.602-3.523-1.289-7.046-1.719-10.604.206-1.547 1.942-2.217 3.231-2.698C6.848.654 8.686.362 10.508.19c3.884-.378 7.854-.241 11.618.859 1.341.395 2.784.945 3.695 2.097.412.533.275 1.203.189 1.805z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="bookmarks" xmlns="http://www.w3.org/2000/svg"><path d="M20.357 5.856q1.157 0 2.043.851t.885 2.008v23.284l-10.212-4.357-10.144 4.357V8.715q0-1.157.885-2.008t2.042-.851h14.502zm5.787 18.859V5.856q0-1.157-.851-2.042t-2.008-.885H8.715q0-1.157.885-2.042t2.043-.885h14.502q1.157 0 2.043.885t.885 2.042v23.216z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="clear" xmlns="http://www.w3.org/2000/svg"><path d="M32 3.222L19.222 16 32 28.778l-3.221 3.221-12.778-12.778L3.223 31.999.002 28.778 12.78 16 .002 3.222 3.223.001l12.778 12.778L28.779.001z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="code" xmlns="http://www.w3.org/2000/svg"><path d="M9.917 24.5a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm0-21a1.75 1.75 0 10-3.501.001A1.75 1.75 0 009.917 3.5zm11.666 2.333a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm1.75 0a3.502 3.502 0 01-1.75 3.026c-.055 6.581-4.721 8.039-7.82 9.023-2.898.911-3.846 1.349-3.846 3.117v.474a3.502 3.502 0 011.75 3.026c0 1.932-1.568 3.5-3.5 3.5s-3.5-1.568-3.5-3.5c0-1.294.711-2.424 1.75-3.026V6.526A3.502 3.502 0 014.667 3.5c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5a3.502 3.502 0 01-1.75 3.026v9.06c.93-.456 1.914-.766 2.807-1.039 3.391-1.075 5.323-1.878 5.359-5.687a3.502 3.502 0 01-1.75-3.026c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="contacts" xmlns="http://www.w3.org/2000/svg"><path d="M22.688 22.688v-2q0-1.5-2.281-2.438t-4.406-.938-4.406.938-2.281 2.438v2h13.375zM16 9q-1.25 0-2.125.875T13 12t.875 2.125T16 15t2.125-.875T19 12t-.875-2.125T16 9zm10.688-3.687q1.063 0 1.844.813t.781 1.875v16q0 1.063-.781 1.875t-1.844.813H5.313q-1.063 0-1.844-.813t-.781-1.875v-16q0-1.063.781-1.875t1.844-.813h21.375zM5.313 32v-2.688h21.375V32H5.313zM26.688 0v2.688H5.313V0h21.375z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="create" xmlns="http://www.w3.org/2000/svg"><path d="M31.499 7.167l-3.25 3.25-6.666-6.666 3.25-3.25q.5-.5 1.25-.5t1.25.5l4.166 4.166q.5.5.5 1.25t-.5 1.25zM.001 25.333L19.667 5.667l6.666 6.666L6.667 31.999H.001v-6.666z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="date" xmlns="http://www.w3.org/2000/svg"><path d="M27.192 28.844V11.192H4.808v17.652h22.384zm0-25.689q1.277 0 2.253.976t.976 2.253v22.459q0 1.277-.976 2.216t-2.253.939H4.808q-1.352 0-2.291-.901t-.939-2.253V6.385q0-1.277.939-2.253t2.291-.976h1.577V.001h3.23v3.155h12.769V.001h3.23v3.155h1.577zm-3.155 11.267v3.155h-3.23v-3.155h3.23zm-6.46 0v3.155h-3.155v-3.155h3.155zm-6.384 0v3.155h-3.23v-3.155h3.23z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="download" xmlns="http://www.w3.org/2000/svg"><path d="M2.866 28.209h26.269v3.79H2.866v-3.79zm26.268-16.925L16 24.418 2.866 11.284h7.493V.001h11.283v11.283h7.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="email" xmlns="http://www.w3.org/2000/svg"><path d="M28.845 9.615v-3.23L16 14.422 3.155 6.385v3.23L16 17.577zm0-6.46q1.277 0 2.216.977T32 6.385v19.23q0 1.277-.939 2.253t-2.216.977H3.155q-1.277 0-2.216-.977T0 25.615V6.385q0-1.277.939-2.253t2.216-.977h25.69z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="git" xmlns="http://www.w3.org/2000/svg"><path d="M27.472 12.753L15.247.529a1.803 1.803 0 00-2.55 0l-2.84 2.84 2.137 2.137a2.625 2.625 0 013.501 3.501l3.499 3.499a2.625 2.625 0 11-1.237 1.237l-3.499-3.499c-.083.04-.169.075-.257.106v7.3a2.626 2.626 0 11-1.75 0v-7.3a2.626 2.626 0 01-1.494-3.607L8.62 4.606l-8.09 8.09a1.805 1.805 0 000 2.551l12.225 12.224a1.803 1.803 0 002.55 0l12.168-12.168a1.805 1.805 0 000-2.551z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="github" xmlns="http://www.w3.org/2000/svg"><path d="M16 .394c8.833 0 15.999 7.166 15.999 15.999 0 7.062-4.583 13.062-10.937 15.187-.813.146-1.104-.354-1.104-.771 0-.521.021-2.25.021-4.396 0-1.5-.5-2.458-1.083-2.958 3.562-.396 7.312-1.75 7.312-7.896 0-1.75-.625-3.167-1.646-4.291.167-.417.708-2.042-.167-4.25-1.333-.417-4.396 1.646-4.396 1.646a15.032 15.032 0 00-8 0S8.937 6.602 7.603 7.018c-.875 2.208-.333 3.833-.167 4.25-1.021 1.125-1.646 2.542-1.646 4.291 0 6.125 3.729 7.5 7.291 7.896-.458.417-.875 1.125-1.021 2.146-.917.417-3.25 1.125-4.646-1.333-.875-1.521-2.458-1.646-2.458-1.646-1.562-.021-.104.979-.104.979 1.042.479 1.771 2.333 1.771 2.333.938 2.854 5.396 1.896 5.396 1.896 0 1.333.021 2.583.021 2.979 0 .417-.292.917-1.104.771C4.582 29.455-.001 23.455-.001 16.393-.001 7.56 7.165.394 15.998.394zM6.063 23.372c.042-.083-.021-.187-.146-.25-.125-.042-.229-.021-.271.042-.042.083.021.187.146.25.104.062.229.042.271-.042zm.646.709c.083-.062.062-.208-.042-.333-.104-.104-.25-.146-.333-.062-.083.062-.062.208.042.333.104.104.25.146.333.062zm.625.937c.104-.083.104-.25 0-.396-.083-.146-.25-.208-.354-.125-.104.062-.104.229 0 .375s.271.208.354.146zm.875.875c.083-.083.042-.271-.083-.396-.146-.146-.333-.167-.417-.062-.104.083-.062.271.083.396.146.146.333.167.417.062zm1.187.521c.042-.125-.083-.271-.271-.333-.167-.042-.354.021-.396.146s.083.271.271.312c.167.062.354 0 .396-.125zm1.313.104c0-.146-.167-.25-.354-.229-.187 0-.333.104-.333.229 0 .146.146.25.354.229.187 0 .333-.104.333-.229zm1.208-.208c-.021-.125-.187-.208-.375-.187-.187.042-.312.167-.292.312.021.125.187.208.375.167s.312-.167.292-.292z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="gitlab" xmlns="http://www.w3.org/2000/svg"><path d="M1.629 11.034L14 26.888.442 17.048a1.09 1.09 0 01-.39-1.203l1.578-4.811zm7.217 0h10.309l-5.154 15.854zM5.753 1.475l3.093 9.559H1.63l3.093-9.559a.548.548 0 011.031 0zm20.618 9.559l1.578 4.811c.141.437-.016.922-.39 1.203l-13.558 9.84 12.371-15.854zm0 0h-7.216l3.093-9.559a.548.548 0 011.031 0z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="heart" xmlns="http://www.w3.org/2000/svg"><path d="M16 29.714a1.11 1.11 0 01-.786-.321L4.072 18.643c-.143-.125-4.071-3.714-4.071-8 0-5.232 3.196-8.357 8.535-8.357 3.125 0 6.053 2.464 7.464 3.857 1.411-1.393 4.339-3.857 7.464-3.857 5.339 0 8.535 3.125 8.535 8.357 0 4.286-3.928 7.875-4.089 8.035L16.785 29.392c-.214.214-.5.321-.786.321z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M25.875 28.25L22.125 32 6.126 16.001 22.125.002l3.75 3.75-12.25 12.25z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M6.125 28.25L18.375 16 6.125 3.75 9.875 0l15.999 15.999L9.875 31.998z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="link" xmlns="http://www.w3.org/2000/svg"><path d="M24.037 7.963q3.305 0 5.634 2.366T32 16t-2.329 5.671-5.634 2.366h-6.46v-3.08h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.08h6.46zM9.615 17.578v-3.155h12.77v3.155H9.615zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.08h-6.46q-3.305 0-5.634-2.366T0 16.001t2.329-5.671 5.634-2.366h6.46v3.08h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="menu" xmlns="http://www.w3.org/2000/svg"><path d="M.001 5.334h31.998v3.583H.001V5.334zm0 12.416v-3.5h31.998v3.5H.001zm0 8.916v-3.583h31.998v3.583H.001z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="notifications" xmlns="http://www.w3.org/2000/svg"><path d="M25.846 22.154l3.308 3.308v1.615H2.847v-1.615l3.308-3.308V14q0-3.846 1.961-6.692t5.423-3.692V2.462q0-1 .692-1.731T16 0t1.769.731.692 1.731v1.154q3.461.846 5.423 3.692T25.846 14v8.154zM16 32q-1.385 0-2.346-.923t-.962-2.308h6.615q0 1.308-1 2.269T15.999 32z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="person" xmlns="http://www.w3.org/2000/svg"><path d="M16 20.023q5.052 0 10.526 2.199t5.473 5.754v4.023H0v-4.023q0-3.555 5.473-5.754t10.526-2.199zM16 16q-3.275 0-5.614-2.339T8.047 8.047t2.339-5.661T16 0t5.614 2.386 2.339 5.661-2.339 5.614T16 16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="pin" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 19.2h9.6v-1.6L22.4 16V3.2l4.8-1.6V0H4.8v1.6l4.8 1.6V16l-4.8 1.6v1.6h9.6v11.2L16 32l1.6-1.6V19.2z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="rss_feed" xmlns="http://www.w3.org/2000/svg"><path d="M-.481 12.048q8.482 0 14.457 5.976t5.976 14.457h-5.879q0-5.976-4.289-10.264T-.48 17.928v-5.879zm0-11.565q13.204 0 22.601 9.397t9.397 22.601h-5.783q0-10.891-7.662-18.553T-.481 6.266V.483zm0 27.468q0-1.831 1.301-3.132t3.229-1.301 3.181 1.253 1.253 3.181-1.301 3.229-3.132 1.301q-1.928 0-3.229-1.301T-.48 27.952z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="search" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zm10.981 0L32 29.255 29.255 32l-9.094-9.094v-1.458l-.515-.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432T.001 11.925t3.474-8.45 8.45-3.474 8.407 3.474 3.432 8.45q0 1.802-.858 4.075t-1.973 3.646l.515.515h1.458z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="security" xmlns="http://www.w3.org/2000/svg"><path d="M16 0l13.072 5.855v8.715q0 6.059-3.745 11.063T16 31.999q-5.583-1.362-9.327-6.366T2.928 14.57V5.855zm0 16v13.004q4.017-1.294 6.808-4.868T26.144 16H16zm0 0V3.2L5.856 7.693v8.306H16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="telescope" xmlns="http://www.w3.org/2000/svg"><path d="M25.026 3.335a.466.466 0 00-.646-.238L13.362 8.91a.463.463 0 00-.216.575l.227.593-6.36 3.488a.462.462 0 00-.205.583l.211.508-6.755 3.228a.463.463 0 00-.228.595l1.386 3.341a.463.463 0 00.583.259l7.056-2.5.211.508a.462.462 0 00.557.267l6.733-1.941.202.527a.46.46 0 00.566.277l12.03-3.702a.46.46 0 00.293-.613L25.026 3.335zM2.109 21.061l-1.049-2.53 6.314-3.018 1.332 3.211-6.596 2.337zm7.857-1.708l-.22-.531-1.706-4.113-.22-.53 5.863-3.216 2.197 5.676.347.908-6.261 1.806zm7.505-1.146l-.188-.491c-.003-.01-.001-.022-.006-.032l-.572-1.478-2.549-6.668 10.201-5.381 4.249 10.624-11.136 3.428zm8.943-16.723a.463.463 0 00-.86.344l5.552 13.881a.464.464 0 00.602.258.464.464 0 00.258-.602L26.413 1.484zM16.268 20.627h-2.776c-1.055 0-1.851.796-1.851 1.851v1.217l-5.44 6.347a.462.462 0 10.702.602l5.415-6.316h2.101v6.015a.463.463 0 00.926 0v-6.015h2.101l5.414 6.316a.462.462 0 10.703-.602l-5.44-6.347v-1.148c0-1.076-.813-1.92-1.851-1.92zm.925 2.777h-4.627v-.925c0-.545.38-.925.925-.925h2.776c.527 0 .925.428.925.995v.856z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="timer" xmlns="http://www.w3.org/2000/svg"><path d="M16 29q4.428 0 7.536-3.143t3.107-7.571-3.107-7.536T16 7.643 8.464 10.75t-3.107 7.536 3.107 7.571T16 29zM26.714 9.786q1.214 1.571 2.107 4.036t.893 4.464q0 5.643-4 9.678T16 32t-9.714-4.036-4-9.678 4-9.678T16 4.572q1.929 0 4.464.929t4.107 2.143l2.143-2.214q1.143.929 2.143 2.143zM14.5 19.857v-9.143h3v9.143h-3zM20.571.001v3.071h-9.143V.001h9.143z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="tree" xmlns="http://www.w3.org/2000/svg"><path d="M32 14.423H20.808V9.616h-3.23v12.77h3.23v-4.807H32v12.845H20.808v-4.807h-6.385v-16h-3.23v4.807H.001V1.579h11.192v4.807h9.615V1.579H32v12.845z"/></symbol></svg>
+
+    <div class="wrapper">
+        <header class="gblog-header">
+    <div class="container flex align-center justify-center">
+        <a class="gblog-header__link" rel="me" href="https://xixiliguo.github.io/">
+            <span class="gblog-brand flex align-center justify-center">
+                <img class="gblog-brand__img" src="/brand.svg" alt="" width=60 height=60>
+                My personal Blog
+            </span>
+            
+        </a>
     </div>
-    
-    
-  <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
-  
-  <h2 class="title">个人网站</h2>
-  
-  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
-      
-        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
 </header>
+<nav class="gblog-nav">
+    <input type="checkbox" id="menu-control" class="hidden">
+    <div class="gblog-nav__control">
+        <label for="menu-control"  class="flex align-center justify-center">
+            <svg class="icon menu"><use xlink:href="#menu"></use></svg>
+            <svg class="icon clear"><use xlink:href="#clear"></use></svg>
+            <span>Nav</span>
+        </label>
+    </div>
+    <ul class="gblog-nav__list container flex flex-wrap justify-center menu-content">
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/BM/">BM</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Bandersnatch/">Bandersnatch</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Hash/">Hash</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/KMP/">KMP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Lua/">Lua</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NTP/">NTP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NetWork/">NetWork</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/OpenStack/">OpenStack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Pypi/">Pypi</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Python/">Python</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/RSS/">RSS</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/atop/">atop</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/boot/">boot</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/c/">c</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/cloud-init/">cloud-init</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/command/">command</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/crypt/">crypt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/dns/">dns</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/docker/">docker</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/golang/">golang</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/httprouter/">httprouter</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/iptables/">iptables</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/libvirt/">libvirt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/linux/">linux</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/net-stack/">net stack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/os/exec/">os/exec</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/proc/">proc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/radix-tree/">radix-tree</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/runc/">runc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/shadow/">shadow</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/systemd/">systemd</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/tcp/">tcp</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/yum/">yum</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%BB%E6%92%AD/">任播</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97/">多网卡队列</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E7%89%87%E6%AE%B5/">片段</a>
+        </li>
+        
+        
+        
+    </ul>
+</nav>
 
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">Golang os/exec 实现</h1>
-      <p class="post-meta">@Peter Wang · Jun 2, 2019 · 2 min read</p>
-    </header>
-    <article class="post-content"><p>os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.</p>
 
-<p></p>
+        <main class="gblog-page container">
+            
+    <article class="gblog-post">
+        <header class="gblog-post__header">
+            
+            
 
+            <h1>Golang os/exec 实现</h1>
+            
+            <div class="gblog-post__meta">
+                <span class="no-wrap">
+                    <svg class="icon date"><use xlink:href="#date"></use></svg>
+                    <span class="gblog-post__tag">
+                        <time datetime="2019-06-02T23:22:44&#43;08:00">
+                            
+                            Jun 2, 2019
+                        </time>
+                    </span>
+                </span>
+
+                <span class="no-wrap">
+                    <svg class="icon timer"><use xlink:href="#timer"></use></svg>
+                    <span class="gblog-post__tag">5 min read</span>
+                </span>
+            </div>
+            
+        </header>
+
+        <section class="gblog-markdown">
+            <p>os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.</p>
 <h1 id="基本使用">基本使用</h1>
-
 <p>一. 如果要运行<code>ls -rlt</code>,代码如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;log&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;os/exec&#34;</span><span style="">
-</span><span style=""></span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;ls&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;-rlt&#34;</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">stdoutStderr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">CombinedOutput</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>如果要运行<code>ls -rlt /root/*.go</code>, 使用<code>cmd := exec.Command(&quot;ls&quot;, &quot;-rlt&quot;, &quot;/root/*.go&quot;)</code>是错误的.<br />
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os/exec&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="s">&#34;ls&#34;</span><span class="p">,</span> <span class="s">&#34;-rlt&#34;</span><span class="p">)</span>
+	<span class="nx">stdoutStderr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">CombinedOutput</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">stdoutStderr</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>如果要运行<code>ls -rlt /root/*.go</code>, 使用<code>cmd := exec.Command(&quot;ls&quot;, &quot;-rlt&quot;, &quot;/root/*.go&quot;)</code>是错误的.<br>
 因为底层是直接使用系统调用<code>execve</code>的.它并不会向Shell那样解析通配符. 变通方案为golang执行bash命令, 如:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;log&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;os/exec&#34;</span><span style="">
-</span><span style=""></span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;bash&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;-c&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ls -rlt /root/*.go&#34;</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">stdoutStderr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">CombinedOutput</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>二. 新进程默认继承父进程的环境变量, 要单独指定, 可以使用将类型为<code>[]string</code>的值赋给<code>cmd.Env</code>.  其行为不是增加, 是覆盖父进程的环境变量.<br />
-三. 新进程的标准输入,标准输出,标准错误是可以指定随意配置的, 可以是文件, 也可以是<code>bytes.Buffer</code>这种满足<code>io.reader</code>或者<code>io.writer</code>的数据结构<br />
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os/exec&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="s">&#34;bash&#34;</span><span class="p">,</span> <span class="s">&#34;-c&#34;</span><span class="p">,</span><span class="s">&#34;ls -rlt /root/*.go&#34;</span><span class="p">)</span>
+	<span class="nx">stdoutStderr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">CombinedOutput</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">stdoutStderr</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>二. 新进程默认继承父进程的环境变量, 要单独指定, 可以使用将类型为<code>[]string</code>的值赋给<code>cmd.Env</code>.  其行为不是增加, 是覆盖父进程的环境变量.<br>
+三. 新进程的标准输入,标准输出,标准错误是可以指定随意配置的, 可以是文件, 也可以是<code>bytes.Buffer</code>这种满足<code>io.reader</code>或者<code>io.writer</code>的数据结构<br>
 四. 默认新进程只有0,1,2三个文件描述符, 如果新进程想继承其他已打开的文件, 可以将它放入<code>cmd.ExtraFiles</code>. 该字段的英文解释如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// ExtraFiles specifies additional open files to be inherited by the
-</span><span style="color:#75715e">// new process. It does not include standard input, standard output, or
-</span><span style="color:#75715e">// standard error. If non-nil, entry i becomes file descriptor 3+i.
-</span><span style="color:#75715e"></span><span style="color:#f92672">//</span></code></pre>
-</div>
-<p>这里有例外, 如果golang程序时从其他进程拉起的, 那么父进程本身可能从父父进程继承了一些没有标记为close-exec的文件, 这个在<code>execve</code>时无法close.</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// ExtraFiles specifies additional open files to be inherited by the
+</span><span class="c1">// new process. It does not include standard input, standard output, or
+</span><span class="c1">// standard error. If non-nil, entry i becomes file descriptor 3+i.
+</span><span class="c1">//
+</span></code></pre></div><p>这里有例外, 如果golang程序时从其他进程拉起的, 那么父进程本身可能从父父进程继承了一些没有标记为close-exec的文件, 这个在<code>execve</code>时无法close.</p>
 <h1 id="源码分析">源码分析</h1>
-
 <p>一. os/exec是高阶库,大概的调用关系如下:</p>
-
 <pre><code>                                                                 
                          +----------------+                      
                          | (*Cmd).Start() |                      
@@ -261,373 +466,349 @@
           +-------------------------------------------+          
           | syscall.StartProcess(name, argv, sysattr) |          
           +-------------------------------------------+          
-</code></pre>
-
-<p>二. (*Cmd).Start()主要处理如何与创建后的通信. 比如如何将一个文件内容作为子进程的标准输入, 如何获取子进程的标准输出.  具体创建进程在<code>os.StartProcess</code>里实现<br />
+</code></pre><p>二. (*Cmd).Start()主要处理如何与创建后的通信. 比如如何将一个文件内容作为子进程的标准输入, 如何获取子进程的标准输出.  具体创建进程在<code>os.StartProcess</code>里实现 <br>
 如下是处理子进程标准输入的具体代码注释.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// 该函数返回子进程标准输入对应的文件信息. 在fork/exec后子进程里面将其对应的文件描述符设置为0
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">c</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">Cmd</span><span style="">)</span><span style=""> </span><span style="color:#a6e22e">stdin</span><span style="">()</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">f</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">File</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 如果没有定义的标准输入来源, 则默认是/dev/null
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Stdin</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">f</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Open</span><span style="">(</span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">DevNull</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">return</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 如果定义子进程的标准输入为父进程已打开的文件, 则直接返回
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">ok</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Stdin</span><span style="">.(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">File</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">ok</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 如果是其他的,比如实现了io.Reader的一段字符串, 则通过pipe从父进程传入子进程
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// 创建pipe, 成功execve后,在父进程里关闭读. 从父进程写, 从子进程读.
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// 一旦父进程获取子进程的结果, 即子进程运行结束, 在父进程里关闭写.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">pr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pw</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Pipe</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 读端对父进程没有用,一旦子进程创建出来继承后, 父进程关闭它
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterStart</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pr</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 父进程要等子进程运行结束后,才能将写端关闭, 因为子进程不存在了,不需要读了
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterWait</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">closeAfterWait</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pw</span><span style="">)</span><span style="">
-</span><span style="">    
-</span><span style="">    </span><span style="color:#75715e">// 通过goroutine将c.Stdin的数据写入到pipe的写端
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">goroutine</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">goroutine</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">()</span><span style=""> </span><span style="color:#66d9ef">error</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">io</span><span style="">.</span><span style="color:#a6e22e">Copy</span><span style="">(</span><span style="color:#a6e22e">pw</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Stdin</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">skip</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">skipStdinCopyError</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">skip</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">skip</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">pw</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">();</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">
-</span><span style="">	</span><span style="">})</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">pr</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>三. golang里使用<code>os.OpenFile</code>打开的文件默认是`close-on-exec&rdquo;<br />
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// 该函数返回子进程标准输入对应的文件信息. 在fork/exec后子进程里面将其对应的文件描述符设置为0
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Cmd</span><span class="p">)</span> <span class="nf">stdin</span><span class="p">()</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 如果没有定义的标准输入来源, 则默认是/dev/null
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Stdin</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">DevNull</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">closeAfterStart</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">closeAfterStart</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+    <span class="c1">// 如果定义子进程的标准输入为父进程已打开的文件, 则直接返回
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Stdin</span><span class="p">.(</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">f</span><span class="p">,</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+
+    <span class="c1">// 如果是其他的,比如实现了io.Reader的一段字符串, 则通过pipe从父进程传入子进程
+</span><span class="c1"></span>    <span class="c1">// 创建pipe, 成功execve后,在父进程里关闭读. 从父进程写, 从子进程读.
+</span><span class="c1"></span>    <span class="c1">// 一旦父进程获取子进程的结果, 即子进程运行结束, 在父进程里关闭写.
+</span><span class="c1"></span>	<span class="nx">pr</span><span class="p">,</span> <span class="nx">pw</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Pipe</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 读端对父进程没有用,一旦子进程创建出来继承后, 父进程关闭它
+</span><span class="c1"></span>	<span class="nx">c</span><span class="p">.</span><span class="nx">closeAfterStart</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">closeAfterStart</span><span class="p">,</span> <span class="nx">pr</span><span class="p">)</span>
+	<span class="c1">// 父进程要等子进程运行结束后,才能将写端关闭, 因为子进程不存在了,不需要读了
+</span><span class="c1"></span>    <span class="nx">c</span><span class="p">.</span><span class="nx">closeAfterWait</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">closeAfterWait</span><span class="p">,</span> <span class="nx">pw</span><span class="p">)</span>
+    
+    <span class="c1">// 通过goroutine将c.Stdin的数据写入到pipe的写端
+</span><span class="c1"></span>	<span class="nx">c</span><span class="p">.</span><span class="nx">goroutine</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">goroutine</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+		<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="nx">pw</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Stdin</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">skip</span> <span class="o">:=</span> <span class="nx">skipStdinCopyError</span><span class="p">;</span> <span class="nx">skip</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nf">skip</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">err</span> <span class="p">=</span> <span class="kc">nil</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">err1</span> <span class="o">:=</span> <span class="nx">pw</span><span class="p">.</span><span class="nf">Close</span><span class="p">();</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">err</span> <span class="p">=</span> <span class="nx">err1</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">})</span>
+	<span class="k">return</span> <span class="nx">pr</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div><p>三. golang里使用<code>os.OpenFile</code>打开的文件默认是`close-on-exec&rdquo;<br>
 除非它被指定为子进程的标准输入,标准输出或者标准错误输出, 否则在子进程里会被close掉.</p>
-
 <p><code>file_unix.go</code>里是打开文件的逻辑:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// openFileNolog is the Unix implementation of OpenFile.
-</span><span style="color:#75715e">// Changes here should be reflected in openFdAt, if relevant.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">openFileNolog</span><span style="">(</span><span style="color:#a6e22e">name</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">flag</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">perm</span><span style=""> </span><span style="color:#a6e22e">FileMode</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">File</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">setSticky</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">false</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">!</span><span style="color:#a6e22e">supportsCreateWithStickyBit</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">flag</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">O_CREATE</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">perm</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ModeSticky</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">Stat</span><span style="">(</span><span style="color:#a6e22e">name</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">IsNotExist</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">setSticky</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">e</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">r</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">e</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">Open</span><span style="">(</span><span style="color:#a6e22e">name</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">flag</span><span style="">|</span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">O_CLOEXEC</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">syscallMode</span><span style="">(</span><span style="color:#a6e22e">perm</span><span style="">))</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">e</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">break</span><span style="">
-</span><span style="">		</span><span style="">}</span></code></pre>
-</div>
-<p>如果要让子进程继承指定的文件, 需要使用<code>ExtraFiles</code>字段</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">a</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">os</span><span style="">.</span><span style="color:#a6e22e">Create</span><span style="">(</span><span style="color:#e6db74">&#34;abc&#34;</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;ls&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;-rlt&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;/proc/self/fd&#34;</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">ExtraFiles</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">ExtraFiles</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">a</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">stdoutStderr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">CombinedOutput</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">log</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stdoutStderr</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>关于文件描述符(the processes&rsquo; local file descriptor table)和系统级的文件打开表(OS&rsquo; open file table)的关系, 可参见文章 <a href="https://www.cnblogs.com/Orgliny/articles/5699479.html">https://www.cnblogs.com/Orgliny/articles/5699479.html</a><br />
-如果两个文件描述符指向同一个文件打开项, 则共享打开的标志, 偏移量. (close-exec 是进程级文件描述符里的标志)<br />
-每次<code>open</code>都会创建一个新的文件打开项, 所以同一个进程打开同一个文件两次, 那么文件打开项是不一样的. 不共享偏移量等信息</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// openFileNolog is the Unix implementation of OpenFile.
+</span><span class="c1">// Changes here should be reflected in openFdAt, if relevant.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">openFileNolog</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">flag</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">perm</span> <span class="nx">FileMode</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">setSticky</span> <span class="o">:=</span> <span class="kc">false</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">supportsCreateWithStickyBit</span> <span class="o">&amp;&amp;</span> <span class="nx">flag</span><span class="o">&amp;</span><span class="nx">O_CREATE</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">perm</span><span class="o">&amp;</span><span class="nx">ModeSticky</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">Stat</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span> <span class="nf">IsNotExist</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">setSticky</span> <span class="p">=</span> <span class="kc">true</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
 
+	<span class="kd">var</span> <span class="nx">r</span> <span class="kt">int</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">e</span> <span class="kt">error</span>
+		<span class="nx">r</span><span class="p">,</span> <span class="nx">e</span> <span class="p">=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">flag</span><span class="p">|</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">O_CLOEXEC</span><span class="p">,</span> <span class="nf">syscallMode</span><span class="p">(</span><span class="nx">perm</span><span class="p">))</span>
+		<span class="k">if</span> <span class="nx">e</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+</code></pre></div><p>如果要让子进程继承指定的文件, 需要使用<code>ExtraFiles</code>字段</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;abc&#34;</span><span class="p">)</span>
+	<span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="s">&#34;ls&#34;</span><span class="p">,</span> <span class="s">&#34;-rlt&#34;</span><span class="p">,</span> <span class="s">&#34;/proc/self/fd&#34;</span><span class="p">)</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nx">ExtraFiles</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">cmd</span><span class="p">.</span><span class="nx">ExtraFiles</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span>
+	<span class="nx">stdoutStderr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">CombinedOutput</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">stdoutStderr</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>关于文件描述符(the processes&rsquo; local file descriptor table)和系统级的文件打开表(OS&rsquo; open file table)的关系, 可参见文章 <a href="https://www.cnblogs.com/Orgliny/articles/5699479.html">https://www.cnblogs.com/Orgliny/articles/5699479.html</a><br>
+如果两个文件描述符指向同一个文件打开项, 则共享打开的标志, 偏移量. (close-exec 是进程级文件描述符里的标志)<br>
+每次<code>open</code>都会创建一个新的文件打开项, 所以同一个进程打开同一个文件两次, 那么文件打开项是不一样的. 不共享偏移量等信息</p>
 <p>四. 当父进程内存特别大的时候, fork/exec的性能非常差, golang使用clone系统调优并大幅优化性能. 主要思路是创建的子进程和父进程初始时共用堆栈,fork则是复制一份堆栈. 具体代码如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#a6e22e">locked</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">runtime</span><span style="">.</span><span style="color:#a6e22e">GOARCH</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;amd64&#34;</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">CLONE_NEWUSER</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">:</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">r1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">rawVforkSyscall</span><span style="">(</span><span style="color:#a6e22e">SYS_CLONE</span><span style="">,</span><span style=""> </span><span style="">uintptr</span><span style="">(</span><span style="color:#a6e22e">SIGCHLD</span><span style="">|</span><span style="color:#a6e22e">CLONE_VFORK</span><span style="">|</span><span style="color:#a6e22e">CLONE_VM</span><span style="">)|</span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">runtime</span><span style="">.</span><span style="color:#a6e22e">GOARCH</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;s390x&#34;</span><span style="">:</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">r1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">RawSyscall6</span><span style="">(</span><span style="color:#a6e22e">SYS_CLONE</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="">uintptr</span><span style="">(</span><span style="color:#a6e22e">SIGCHLD</span><span style="">)|</span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">default</span><span style="">:</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">r1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">RawSyscall6</span><span style="">(</span><span style="color:#a6e22e">SYS_CLONE</span><span style="">,</span><span style=""> </span><span style="">uintptr</span><span style="">(</span><span style="color:#a6e22e">SIGCHLD</span><span style="">)|</span><span style="color:#a6e22e">sys</span><span style="">.</span><span style="color:#a6e22e">Cloneflags</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span></code></pre>
-</div>
-<p>网上有很多关于讨论该性能的文章:<br />
-<a href="https://zhuanlan.zhihu.com/p/47940999">https://zhuanlan.zhihu.com/p/47940999</a><br />
-<a href="https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/">https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/</a><br />
-<a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a><br />
-如果是C语言, 可以使用<code>posix_spawn</code>代替<code>fork/exec</code>.<br />
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang">	<span class="nx">locked</span> <span class="p">=</span> <span class="kc">true</span>
+	<span class="k">switch</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">GOARCH</span> <span class="o">==</span> <span class="s">&#34;amd64&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">sys</span><span class="p">.</span><span class="nx">Cloneflags</span><span class="o">&amp;</span><span class="nx">CLONE_NEWUSER</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="nx">r1</span><span class="p">,</span> <span class="nx">err1</span> <span class="p">=</span> <span class="nf">rawVforkSyscall</span><span class="p">(</span><span class="nx">SYS_CLONE</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">SIGCHLD</span><span class="p">|</span><span class="nx">CLONE_VFORK</span><span class="p">|</span><span class="nx">CLONE_VM</span><span class="p">)|</span><span class="nx">sys</span><span class="p">.</span><span class="nx">Cloneflags</span><span class="p">)</span>
+	<span class="k">case</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">GOARCH</span> <span class="o">==</span> <span class="s">&#34;s390x&#34;</span><span class="p">:</span>
+		<span class="nx">r1</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err1</span> <span class="p">=</span> <span class="nf">RawSyscall6</span><span class="p">(</span><span class="nx">SYS_CLONE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">SIGCHLD</span><span class="p">)|</span><span class="nx">sys</span><span class="p">.</span><span class="nx">Cloneflags</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="nx">r1</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err1</span> <span class="p">=</span> <span class="nf">RawSyscall6</span><span class="p">(</span><span class="nx">SYS_CLONE</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">SIGCHLD</span><span class="p">)|</span><span class="nx">sys</span><span class="p">.</span><span class="nx">Cloneflags</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">}</span>
+</code></pre></div><p>网上有很多关于讨论该性能的文章:<br>
+<a href="https://zhuanlan.zhihu.com/p/47940999">https://zhuanlan.zhihu.com/p/47940999</a> <br>
+<a href="https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/">https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/</a><br>
+<a href="https://github.com/golang/go/issues/5838">https://github.com/golang/go/issues/5838</a><br>
+如果是C语言, 可以使用<code>posix_spawn</code>代替<code>fork/exec</code>.<br>
 <code>posix_spawn_file_actions_adddup2</code>,<code>posix_spawn_file_actions_addclose</code>,<code>posix_spawn_file_actions_addopen</code>等可以操作继承的文件描述符, 达到改变子进程0,1,2等目的.  详细的参考代码可见 <a href="https://github.com/rtomayko/posix-spawn/blob/master/ext/posix-spawn.c">https://github.com/rtomayko/posix-spawn/blob/master/ext/posix-spawn.c</a></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="">
-</span><span style=""></span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;spawn.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;sys/wait.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;time.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">extern</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">**</span><span style="">environ</span><span style="">;</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">run_cmd_posix_spawn</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">argv</span><span style="">[])</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="">pid_t</span><span style=""> </span><span style="">pid</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">status</span><span style="">;</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="">status</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">posix_spawn</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">NULL</span><span style="">,</span><span style=""> </span><span style="">NULL</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">,</span><span style=""> </span><span style="">environ</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">status</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// printf(&#34;Child pid: %i\n&#34;, pid);
-</span><span style="color:#75715e"></span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">waitpid</span><span style="">(</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">status</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style="">
-</span><span style="">        </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="color:#75715e">// printf(&#34;Child exited with status %i\n&#34;, status);
-</span><span style="color:#75715e"></span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">else</span><span style="">
-</span><span style="">        </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="">perror</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;waitpid&#34;</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;posix_spawn: %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">strerror</span><span style="">(</span><span style="">status</span><span style="">));</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">run_cmd_fork_exec</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">argv</span><span style="">[])</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="">pid_t</span><span style=""> </span><span style="">pid</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">status</span><span style="">;</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="">pid</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">fork</span><span style="">();</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">pid</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// printf(&#34;Child process pid = %u\n&#34;, getpid());
-</span><span style="color:#75715e"></span><span style="">        </span><span style="">execv</span><span style="">(</span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">argv</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">exit</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">else</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// printf(&#34;Parent process\n&#34;);
-</span><span style="color:#75715e"></span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">waitpid</span><span style="">(</span><span style="">pid</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">status</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
-</span><span style="">        </span><span style="">{</span><span style="">
-</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">WIFEXITED</span><span style="">(</span><span style="">status</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#f92672">!</span><span style="">WEXITSTATUS</span><span style="">(</span><span style="">status</span><span style="">))</span><span style="">
-</span><span style="">            </span><span style="">{</span><span style="">
-</span><span style="">                </span><span style="color:#75715e">// printf(&#34;program execution successfull\n&#34;);
-</span><span style="color:#75715e"></span><span style="">            </span><span style="">}</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">WIFEXITED</span><span style="">(</span><span style="">status</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">WEXITSTATUS</span><span style="">(</span><span style="">status</span><span style="">))</span><span style="">
-</span><span style="">            </span><span style="">{</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">WEXITSTATUS</span><span style="">(</span><span style="">status</span><span style="">)</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">127</span><span style="">)</span><span style="">
-</span><span style="">                </span><span style="">{</span><span style="">
-</span><span style="">
-</span><span style="">                    </span><span style="color:#75715e">// execv failed
-</span><span style="color:#75715e"></span><span style="">                    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;execv failed</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
-</span><span style="">                </span><span style="">}</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">else</span><span style="">
-</span><span style="">                    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;program terminated normally,&#34;</span><span style="">
-</span><span style="">                           </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34; but returned a non-zero status</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
-</span><span style="">            </span><span style="">}</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">else</span><span style="">
-</span><span style="">                </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;program didn&#39;t terminate normally</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">else</span><span style="">
-</span><span style="">        </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="color:#75715e">// waitpid() failed
-</span><span style="color:#75715e"></span><span style="">            </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;waitpid() failed</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">(</span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">argc</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">argv</span><span style="">[])</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Run command: &#34;</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">NULL</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;%s &#34;</span><span style="">,</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="">i</span><span style="">]);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">);</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="">clock_t</span><span style=""> </span><span style="">start</span><span style="">,</span><span style=""> </span><span style="">finish</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">double</span><span style=""> </span><span style="">duration</span><span style="">;</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">loop</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">10000</span><span style="">;</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="">start</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="">run_cmd_posix_spawn</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">]);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">finish</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
-</span><span style="">    </span><span style="">duration</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">double</span><span style="">)(</span><span style="">finish</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">start</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">CLOCKS_PER_SEC</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;posix_spawn:  %d times:  %f seconds per one count</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">loop</span><span style="">,</span><span style=""> </span><span style="">duration</span><span style="">);</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="">start</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
-</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="">run_cmd_fork_exec</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">]);</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">finish</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">clock</span><span style="">();</span><span style="">
-</span><span style="">    </span><span style="">duration</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">double</span><span style="">)(</span><span style="">finish</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">start</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">CLOCKS_PER_SEC</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">loop</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;fork/exec:  %d times:  %f seconds per one count</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">loop</span><span style="">,</span><span style=""> </span><span style="">duration</span><span style="">);</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>五. 父进程使用pipe来探测在创建子进程execve时是否有异常.<br />
-在 syscall/exec_unix.go中.<br />
-如果execve成功,则该pipe因close-on-exec在子进程里自动关闭. 父进程从pipe读到的长度为0<br />
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;spawn.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/wait.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">extern</span> <span class="kt">char</span> <span class="o">**</span><span class="n">environ</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">run_cmd_posix_spawn</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="n">pid_t</span> <span class="n">pid</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">status</span><span class="p">;</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="n">posix_spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pid</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">environ</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// printf(&#34;Child pid: %i\n&#34;, pid);
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">waitpid</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">status</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">// printf(&#34;Child exited with status %i\n&#34;, status);
+</span><span class="c1"></span>        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">perror</span><span class="p">(</span><span class="s">&#34;waitpid&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;posix_spawn: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">status</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">run_cmd_fork_exec</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="n">pid_t</span> <span class="n">pid</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">status</span><span class="p">;</span>
+
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">pid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// printf(&#34;Child process pid = %u\n&#34;, getpid());
+</span><span class="c1"></span>        <span class="n">execv</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="c1">// printf(&#34;Parent process\n&#34;);
+</span><span class="c1"></span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">waitpid</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">status</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">WIFEXITED</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">WEXITSTATUS</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="c1">// printf(&#34;program execution successfull\n&#34;);
+</span><span class="c1"></span>            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">WIFEXITED</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">WEXITSTATUS</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">WEXITSTATUS</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">==</span> <span class="mi">127</span><span class="p">)</span>
+                <span class="p">{</span>
+
+                    <span class="c1">// execv failed
+</span><span class="c1"></span>                    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;execv failed</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span>
+                    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;program terminated normally,&#34;</span>
+                           <span class="s">&#34; but returned a non-zero status</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;program didn&#39;t terminate normally</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="c1">// waitpid() failed
+</span><span class="c1"></span>            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;waitpid() failed</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Run command: &#34;</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s &#34;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+
+    <span class="n">clock_t</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">duration</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">loop</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">loop</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">run_cmd_posix_spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">finish</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">finish</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">CLOCKS_PER_SEC</span> <span class="o">/</span> <span class="n">loop</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;posix_spawn:  %d times:  %f seconds per one count</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="n">duration</span><span class="p">);</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">loop</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">run_cmd_fork_exec</span><span class="p">(</span><span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">finish</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">finish</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">CLOCKS_PER_SEC</span> <span class="o">/</span> <span class="n">loop</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;fork/exec:  %d times:  %f seconds per one count</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="n">duration</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>五. 父进程使用pipe来探测在创建子进程execve时是否有异常.<br>
+在 syscall/exec_unix.go中.<br>
+如果execve成功,则该pipe因close-on-exec在子进程里自动关闭. 父进程从pipe读到的长度为0<br>
 如果有异常, 则将错误写入pipd的写端, 父进程读到长度非0的信息, 然后进行下一步处理</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#75715e">// Acquire the fork lock so that no other threads
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// create new fds that are not yet close-on-exec
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// before we fork.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">ForkLock</span><span style="">.</span><span style="color:#a6e22e">Lock</span><span style="">()</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// Allocate child status pipe close on exec.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">forkExecPipe</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[:]);</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">goto</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// Kick off child.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">pid</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">forkAndExecInChild</span><span style="">(</span><span style="color:#a6e22e">argv0p</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">argvp</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">envvp</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">chroot</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">dir</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">attr</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sys</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">])</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">Errno</span><span style="">(</span><span style="color:#a6e22e">err1</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">goto</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">ForkLock</span><span style="">.</span><span style="color:#a6e22e">Unlock</span><span style="">()</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// Read child error status from pipe.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">Close</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">])</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">n</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">readlen</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">],</span><span style=""> </span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#66d9ef">byte</span><span style="">)(</span><span style="color:#a6e22e">unsafe</span><span style="">.</span><span style="color:#a6e22e">Pointer</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">err1</span><span style="">)),</span><span style=""> </span><span style="">int</span><span style="">(</span><span style="color:#a6e22e">unsafe</span><span style="">.</span><span style="color:#a6e22e">Sizeof</span><span style="">(</span><span style="color:#a6e22e">err1</span><span style="">)))</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">Close</span><span style="">(</span><span style="color:#a6e22e">p</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">])</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">||</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">int</span><span style="">(</span><span style="color:#a6e22e">unsafe</span><span style="">.</span><span style="color:#a6e22e">Sizeof</span><span style="">(</span><span style="color:#a6e22e">err1</span><span style="">))</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">Errno</span><span style="">(</span><span style="color:#a6e22e">err1</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">EPIPE</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">		</span><span style="color:#75715e">// Child failed; wait for it to exit, to make sure
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#75715e">// the zombies don&#39;t accumulate.
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">Wait4</span><span style="">(</span><span style="color:#a6e22e">pid</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">wstatus</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">EINTR</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err1</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">Wait4</span><span style="">(</span><span style="color:#a6e22e">pid</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">wstatus</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// Read got EOF, so pipe closed on exec, so exec succeeded.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">pid</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span></code></pre>
-</div>
-<p>六. 当子进程运行完后, 使用系统调用<code>wait4</code>回收资源, 可获取<code>exit code</code>,<code>信号</code>和<code>rusage</code>使用量等信息.<br />
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang">	<span class="c1">// Acquire the fork lock so that no other threads
+</span><span class="c1"></span>	<span class="c1">// create new fds that are not yet close-on-exec
+</span><span class="c1"></span>	<span class="c1">// before we fork.
+</span><span class="c1"></span>	<span class="nx">ForkLock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+
+	<span class="c1">// Allocate child status pipe close on exec.
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nf">forkExecPipe</span><span class="p">(</span><span class="nx">p</span><span class="p">[:]);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">goto</span> <span class="kt">error</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Kick off child.
+</span><span class="c1"></span>	<span class="nx">pid</span><span class="p">,</span> <span class="nx">err1</span> <span class="p">=</span> <span class="nf">forkAndExecInChild</span><span class="p">(</span><span class="nx">argv0p</span><span class="p">,</span> <span class="nx">argvp</span><span class="p">,</span> <span class="nx">envvp</span><span class="p">,</span> <span class="nx">chroot</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">sys</span><span class="p">,</span> <span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+	<span class="k">if</span> <span class="nx">err1</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nf">Errno</span><span class="p">(</span><span class="nx">err1</span><span class="p">)</span>
+		<span class="k">goto</span> <span class="kt">error</span>
+	<span class="p">}</span>
+	<span class="nx">ForkLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+	<span class="c1">// Read child error status from pipe.
+</span><span class="c1"></span>	<span class="nf">Close</span><span class="p">(</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+	<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nf">readlen</span><span class="p">(</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="o">*</span><span class="kt">byte</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">err1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">err1</span><span class="p">)))</span>
+	<span class="nf">Close</span><span class="p">(</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">n</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">err1</span><span class="p">))</span> <span class="p">{</span>
+			<span class="nx">err</span> <span class="p">=</span> <span class="nf">Errno</span><span class="p">(</span><span class="nx">err1</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">err</span> <span class="p">=</span> <span class="nx">EPIPE</span>
+		<span class="p">}</span>
+
+		<span class="c1">// Child failed; wait for it to exit, to make sure
+</span><span class="c1"></span>		<span class="c1">// the zombies don&#39;t accumulate.
+</span><span class="c1"></span>		<span class="nx">_</span><span class="p">,</span> <span class="nx">err1</span> <span class="o">:=</span> <span class="nf">Wait4</span><span class="p">(</span><span class="nx">pid</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wstatus</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+		<span class="k">for</span> <span class="nx">err1</span> <span class="o">==</span> <span class="nx">EINTR</span> <span class="p">{</span>
+			<span class="nx">_</span><span class="p">,</span> <span class="nx">err1</span> <span class="p">=</span> <span class="nf">Wait4</span><span class="p">(</span><span class="nx">pid</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wstatus</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Read got EOF, so pipe closed on exec, so exec succeeded.
+</span><span class="c1"></span>	<span class="k">return</span> <span class="nx">pid</span><span class="p">,</span> <span class="kc">nil</span>
+</code></pre></div><p>六. 当子进程运行完后, 使用系统调用<code>wait4</code>回收资源, 可获取<code>exit code</code>,<code>信号</code>和<code>rusage</code>使用量等信息.<br>
 七. 有超时机制, 如下例子是子进程在5分钟没有运行时也返回.  不会长时间阻塞进程.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;context&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;os/exec&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;time&#34;</span><span style="">
-</span><span style=""></span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">ctx</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">cancel</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">WithTimeout</span><span style="">(</span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">Background</span><span style="">(),</span><span style=""> </span><span style="color:#ae81ff">5</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Minute</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">cancel</span><span style="">()</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">CommandContext</span><span style="">(</span><span style="color:#a6e22e">ctx</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;sleep&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;5&#34;</span><span style="">).</span><span style="color:#a6e22e">Run</span><span style="">();</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#75715e">// This will fail after 100 milliseconds. The 5 second sleep
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#75715e">// will be interrupted.
-</span><span style="color:#75715e"></span><span style="">	</span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>具体是使用<code>context</code>库实现超时机制.  一旦时间达到,就给子进程发送<code>kill</code>信号,强制中止它.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">ctx</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">waitDone</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">make</span><span style="">(</span><span style="color:#66d9ef">chan</span><span style=""> </span><span style="color:#66d9ef">struct</span><span style="">{})</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">select</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">ctx</span><span style="">.</span><span style="color:#a6e22e">Done</span><span style="">():</span><span style="">
-</span><span style="">				</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">Process</span><span style="">.</span><span style="color:#a6e22e">Kill</span><span style="">()</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span><span style="">.</span><span style="color:#a6e22e">waitDone</span><span style="">:</span><span style="">
-</span><span style="">			</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="">}()</span><span style="">
-</span><span style="">	</span><span style="">}</span></code></pre>
-</div>
-<p>八. 假设调用一个脚本A, A有会调用B. 如果此时golang程序超时kill掉A, 那么B就变为pid为1的进程的子进程.<br />
-有时这并不是我们所希望的.因为真正导致长时间没返回结果的可能是B进程.所以更希望将A和B同时杀掉.  默认golang的<code>exec.CommandContext</code>无法实现.<br />
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;os/exec&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="mi">5</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="nf">cancel</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">CommandContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="s">&#34;sleep&#34;</span><span class="p">,</span> <span class="s">&#34;5&#34;</span><span class="p">).</span><span class="nf">Run</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="c1">// This will fail after 100 milliseconds. The 5 second sleep
+</span><span class="c1"></span>		<span class="c1">// will be interrupted.
+</span><span class="c1"></span>	<span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><p>具体是使用<code>context</code>库实现超时机制.  一旦时间达到,就给子进程发送<code>kill</code>信号,强制中止它.</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang">	<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">ctx</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">waitDone</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">():</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">Process</span><span class="p">.</span><span class="nf">Kill</span><span class="p">()</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">c</span><span class="p">.</span><span class="nx">waitDone</span><span class="p">:</span>
+			<span class="p">}</span>
+		<span class="p">}()</span>
+	<span class="p">}</span>
+</code></pre></div><p>八. 假设调用一个脚本A, A有会调用B. 如果此时golang程序超时kill掉A, 那么B就变为pid为1的进程的子进程.<br>
+有时这并不是我们所希望的.因为真正导致长时间没返回结果的可能是B进程.所以更希望将A和B同时杀掉.  默认golang的<code>exec.CommandContext</code>无法实现.<br>
 具体需要在创建子进程时使用<code>setpgid</code>,将进程组ID设置为进程ID. 子子进程会继承这个进程组ID, 最后超时kill时指定进程组ID, 会将该进程组内的所有进程都kill掉.  对应golang的代码为:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">exec</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">(</span><span style="color:#e6db74">&#34;/root/sleep.sh&#34;</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">SysProcAttr</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SysProcAttr</span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Setpgid</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">start</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Now</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">AfterFunc</span><span style="">(</span><span style="color:#ae81ff">30</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Second</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">Kill</span><span style="">(</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">Process</span><span style="">.</span><span style="color:#a6e22e">Pid</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">syscall</span><span style="">.</span><span style="color:#a6e22e">SIGKILL</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">})</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">Run</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Printf</span><span style="">(</span><span style="color:#e6db74">&#34;pid=%d duration=%s err=%s\n&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">cmd</span><span style="">.</span><span style="color:#a6e22e">Process</span><span style="">.</span><span style="color:#a6e22e">Pid</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">.</span><span style="color:#a6e22e">Since</span><span style="">(</span><span style="color:#a6e22e">start</span><span style="">),</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>参考:<br />
-<a href="https://medium.com/@felixge/killing-a-child-process-and-all-of-its-children-in-go-54079af94773">https://medium.com/@felixge/killing-a-child-process-and-all-of-its-children-in-go-54079af94773</a></p></article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="s">&#34;/root/sleep.sh&#34;</span><span class="p">)</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nx">SysProcAttr</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">SysProcAttr</span><span class="p">{</span>
+		<span class="nx">Setpgid</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nf">AfterFunc</span><span class="p">(</span><span class="mi">30</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">syscall</span><span class="p">.</span><span class="nf">Kill</span><span class="p">(</span><span class="o">-</span><span class="nx">cmd</span><span class="p">.</span><span class="nx">Process</span><span class="p">.</span><span class="nx">Pid</span><span class="p">,</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">SIGKILL</span><span class="p">)</span>
+	<span class="p">})</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;pid=%d duration=%s err=%s\n&#34;</span><span class="p">,</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">Process</span><span class="p">.</span><span class="nx">Pid</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Since</span><span class="p">(</span><span class="nx">start</span><span class="p">),</span> <span class="nx">err</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div><p>参考:<br>
+<a href="https://medium.com/@felixge/killing-a-child-process-and-all-of-its-children-in-go-54079af94773">https://medium.com/@felixge/killing-a-child-process-and-all-of-its-children-in-go-54079af94773</a></p>
+
+        </section>
+    </article>
+
+        </main>
+
+        <footer class="gblog-footer">
+    <nav class="container">
+        <section class="flex flex-wrap align-center">
+            
+            
+            
+            
+        </section>
+        <section class="flex flex-wrap align-center">
+            <span class="gblog-footer__item">
+                Built with <a href="https://gohugo.io/" class="gblog-footer__link">Hugo</a> and
+                <svg class="icon heart"><use xlink:href="#heart"></use></svg>
+            </span>
+        </section>
         
-          <li><a href="https://xixiliguo.github.io/tags/os/exec"><span class="tag">Os/Exec</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
-      </p>
-    </footer>
-    
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2020 个人网站</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+    </nav>
 </footer>
 
+    </div>
 
-
-<script src="https://xixiliguo.github.io/js/bundle.js"></script>
-
-
+    
+<script defer src="/js/clipboard-f06c52bfdd.min.js"></script>
 <script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-107151468-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var clipboard = new ClipboardJS('.clip');
+    });
 </script>
 
 
-
-  </body>
+</body>
 </html>

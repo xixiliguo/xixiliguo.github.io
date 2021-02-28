@@ -1,319 +1,523 @@
 <!DOCTYPE html>
-<html lang="en">
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+
 <head>
-
-  <meta charset="utf-8" />
-
-  
-  <title>从Go标准库看字符串匹配算法</title>
-
-  
-  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 
 
-  
-  <meta name="author" content="Peter Wang" />
-  <meta name="description" content="Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现
 
-" />
 
-  
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="从Go标准库看字符串匹配算法" />
-    <meta name="twitter:description" content="Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现
-
-" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+    <meta name="description" content="Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现">
 
 
 
+    
+    
+        
+    
 
-<meta name="generator" content="Hugo 0.28" />
-
-
-<link rel="canonical" href="https://xixiliguo.github.io/post/strings-algorithm-golang/" />
-<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+    
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+    <title>从Go标准库看字符串匹配算法 | My personal Blog</title>
 
-<meta name="baidu-site-verification" content="xijFMBD2HS" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
 
+    
 
+    <meta property="og:title" content="从Go标准库看字符串匹配算法" />
+<meta property="og:description" content="Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xixiliguo.github.io/post/strings-algorithm-golang/" />
+<meta property="article:published_time" content="2017-10-02T09:48:04+08:00" />
+<meta property="article:modified_time" content="2017-10-02T09:48:04+08:00" />
 
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="个人网站" />
-<meta name="msapplication-tooltip" content="个人网站" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="从Go标准库看字符串匹配算法"/>
+<meta name="twitter:description" content="Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现"/>
 
 
+    <link rel="preload" as="font" href="/fonts/Metropolis.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Bold.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-BoldItalic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Italic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationMono.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/DroidSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/GeekblogIcons.woff2" type="font/woff2" crossorigin="anonymous">
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+<link rel="preload" href="/main-342b625c73.min.css" as="style">
+<link rel="stylesheet" href="/main-342b625c73.min.css" media="all">
 
-<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+<link rel="preload" href="/mobile-14fbbb71d2.min.css" as="style">
+<link rel="stylesheet" href="/mobile-14fbbb71d2.min.css" media="screen and (max-width: 45rem)">
 
+<link rel="preload" href="/print-86167e859a.min.css" as="style">
+<link rel="stylesheet" href="/print-86167e859a.min.css" media="print">
 
-  
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
-
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
+<link rel="preload" href="/custom.css" as="style">
+<link rel="stylesheet" href="/custom.css" media="all">
 
 
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+<!-- Made with Geekblog theme https://github.com/thegeeklab/hugo-geekblog -->
+
+    
 
 
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "articleSection": "post",
+    "name": "从Go标准库看字符串匹配算法",
+    "headline": "从Go标准库看字符串匹配算法",
+    "alternativeHeadline": "",
+    "description": "\x3cp\x3eGo的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现\x3c\/p\x3e",
+    "inLanguage": "en",
+    "isFamilyFriendly": "true",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https:\/\/xixiliguo.github.io\/post\/strings-algorithm-golang\/"
+    },
+    "author" : [
+    ],
+    "copyrightHolder" : "My personal Blog",
+    "copyrightYear" : "2017",
+    "dateCreated": "2017-10-02T09:48:04.00Z",
+    "datePublished": "2017-10-02T09:48:04.00Z",
+    "dateModified": "2017-10-02T09:48:04.00Z",
+    "publisher":{
+        "@type":"Organization",
+        "name": "My personal Blog",
+        "url": "https://xixiliguo.github.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/xixiliguo.github.io\/brand.svg",
+            "width":"32",
+            "height":"32"
+        }
+    },
+    "url" : "https:\/\/xixiliguo.github.io\/post\/strings-algorithm-golang\/",
+    "wordCount" : "974",
+    "genre" : [ "golang" , "KMP" , "BM" , "Hash" ]
+}
+</script>
 
 
 </head>
-  <body>
-    
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
-      
-        
-      
+
+<body>
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_back" xmlns="http://www.w3.org/2000/svg"><path d="M31.999 14.035v3.93H7.673l11.134 11.228L16 32 .001 16.001 16 .002l2.807 2.807L7.673 14.037h24.326z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M7.954 17.965v5.988L.001 16l7.953-7.953v5.988H32v3.93H7.954z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M24.046 14.035V8.047L31.999 16l-7.953 7.953v-5.988H0v-3.93h24.046z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="bitbucket" xmlns="http://www.w3.org/2000/svg"><path d="M15.905 13.355c.189 1.444-1.564 2.578-2.784 1.839-1.375-.602-1.375-2.784-.034-3.403 1.151-.705 2.818.223 2.818 1.564zm1.907-.361c-.309-2.44-3.076-4.056-5.328-3.042-1.426.636-2.389 2.148-2.32 3.747.086 2.097 2.08 3.815 4.176 3.626s3.729-2.234 3.472-4.331zm4.108-9.315c-.756-.997-2.045-1.169-3.179-1.358-3.214-.516-6.513-.533-9.727.034-1.066.172-2.269.361-2.939 1.323 1.1 1.031 2.664 1.186 4.073 1.358 2.544.327 5.156.344 7.699.017 1.426-.172 3.008-.309 4.073-1.375zm.979 17.788c-.481 1.684-.206 3.953-1.994 4.932-3.076 1.701-6.806 1.89-10.191 1.289-1.787-.327-3.884-.894-4.864-2.578-.43-1.65-.705-3.334-.98-5.018l.103-.275.309-.155c5.121 3.386 12.288 3.386 17.427 0 .808.241.206 1.22.189 1.805zM26.01 4.951c-.584 3.764-1.255 7.51-1.908 11.257-.189 1.1-1.255 1.719-2.148 2.183-3.214 1.615-6.96 1.89-10.483 1.512-2.389-.258-4.829-.894-6.771-2.389-.911-.705-.911-1.908-1.083-2.922-.602-3.523-1.289-7.046-1.719-10.604.206-1.547 1.942-2.217 3.231-2.698C6.848.654 8.686.362 10.508.19c3.884-.378 7.854-.241 11.618.859 1.341.395 2.784.945 3.695 2.097.412.533.275 1.203.189 1.805z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="bookmarks" xmlns="http://www.w3.org/2000/svg"><path d="M20.357 5.856q1.157 0 2.043.851t.885 2.008v23.284l-10.212-4.357-10.144 4.357V8.715q0-1.157.885-2.008t2.042-.851h14.502zm5.787 18.859V5.856q0-1.157-.851-2.042t-2.008-.885H8.715q0-1.157.885-2.042t2.043-.885h14.502q1.157 0 2.043.885t.885 2.042v23.216z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="clear" xmlns="http://www.w3.org/2000/svg"><path d="M32 3.222L19.222 16 32 28.778l-3.221 3.221-12.778-12.778L3.223 31.999.002 28.778 12.78 16 .002 3.222 3.223.001l12.778 12.778L28.779.001z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="code" xmlns="http://www.w3.org/2000/svg"><path d="M9.917 24.5a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm0-21a1.75 1.75 0 10-3.501.001A1.75 1.75 0 009.917 3.5zm11.666 2.333a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm1.75 0a3.502 3.502 0 01-1.75 3.026c-.055 6.581-4.721 8.039-7.82 9.023-2.898.911-3.846 1.349-3.846 3.117v.474a3.502 3.502 0 011.75 3.026c0 1.932-1.568 3.5-3.5 3.5s-3.5-1.568-3.5-3.5c0-1.294.711-2.424 1.75-3.026V6.526A3.502 3.502 0 014.667 3.5c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5a3.502 3.502 0 01-1.75 3.026v9.06c.93-.456 1.914-.766 2.807-1.039 3.391-1.075 5.323-1.878 5.359-5.687a3.502 3.502 0 01-1.75-3.026c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="contacts" xmlns="http://www.w3.org/2000/svg"><path d="M22.688 22.688v-2q0-1.5-2.281-2.438t-4.406-.938-4.406.938-2.281 2.438v2h13.375zM16 9q-1.25 0-2.125.875T13 12t.875 2.125T16 15t2.125-.875T19 12t-.875-2.125T16 9zm10.688-3.687q1.063 0 1.844.813t.781 1.875v16q0 1.063-.781 1.875t-1.844.813H5.313q-1.063 0-1.844-.813t-.781-1.875v-16q0-1.063.781-1.875t1.844-.813h21.375zM5.313 32v-2.688h21.375V32H5.313zM26.688 0v2.688H5.313V0h21.375z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="create" xmlns="http://www.w3.org/2000/svg"><path d="M31.499 7.167l-3.25 3.25-6.666-6.666 3.25-3.25q.5-.5 1.25-.5t1.25.5l4.166 4.166q.5.5.5 1.25t-.5 1.25zM.001 25.333L19.667 5.667l6.666 6.666L6.667 31.999H.001v-6.666z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="date" xmlns="http://www.w3.org/2000/svg"><path d="M27.192 28.844V11.192H4.808v17.652h22.384zm0-25.689q1.277 0 2.253.976t.976 2.253v22.459q0 1.277-.976 2.216t-2.253.939H4.808q-1.352 0-2.291-.901t-.939-2.253V6.385q0-1.277.939-2.253t2.291-.976h1.577V.001h3.23v3.155h12.769V.001h3.23v3.155h1.577zm-3.155 11.267v3.155h-3.23v-3.155h3.23zm-6.46 0v3.155h-3.155v-3.155h3.155zm-6.384 0v3.155h-3.23v-3.155h3.23z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="download" xmlns="http://www.w3.org/2000/svg"><path d="M2.866 28.209h26.269v3.79H2.866v-3.79zm26.268-16.925L16 24.418 2.866 11.284h7.493V.001h11.283v11.283h7.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="email" xmlns="http://www.w3.org/2000/svg"><path d="M28.845 9.615v-3.23L16 14.422 3.155 6.385v3.23L16 17.577zm0-6.46q1.277 0 2.216.977T32 6.385v19.23q0 1.277-.939 2.253t-2.216.977H3.155q-1.277 0-2.216-.977T0 25.615V6.385q0-1.277.939-2.253t2.216-.977h25.69z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="git" xmlns="http://www.w3.org/2000/svg"><path d="M27.472 12.753L15.247.529a1.803 1.803 0 00-2.55 0l-2.84 2.84 2.137 2.137a2.625 2.625 0 013.501 3.501l3.499 3.499a2.625 2.625 0 11-1.237 1.237l-3.499-3.499c-.083.04-.169.075-.257.106v7.3a2.626 2.626 0 11-1.75 0v-7.3a2.626 2.626 0 01-1.494-3.607L8.62 4.606l-8.09 8.09a1.805 1.805 0 000 2.551l12.225 12.224a1.803 1.803 0 002.55 0l12.168-12.168a1.805 1.805 0 000-2.551z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="github" xmlns="http://www.w3.org/2000/svg"><path d="M16 .394c8.833 0 15.999 7.166 15.999 15.999 0 7.062-4.583 13.062-10.937 15.187-.813.146-1.104-.354-1.104-.771 0-.521.021-2.25.021-4.396 0-1.5-.5-2.458-1.083-2.958 3.562-.396 7.312-1.75 7.312-7.896 0-1.75-.625-3.167-1.646-4.291.167-.417.708-2.042-.167-4.25-1.333-.417-4.396 1.646-4.396 1.646a15.032 15.032 0 00-8 0S8.937 6.602 7.603 7.018c-.875 2.208-.333 3.833-.167 4.25-1.021 1.125-1.646 2.542-1.646 4.291 0 6.125 3.729 7.5 7.291 7.896-.458.417-.875 1.125-1.021 2.146-.917.417-3.25 1.125-4.646-1.333-.875-1.521-2.458-1.646-2.458-1.646-1.562-.021-.104.979-.104.979 1.042.479 1.771 2.333 1.771 2.333.938 2.854 5.396 1.896 5.396 1.896 0 1.333.021 2.583.021 2.979 0 .417-.292.917-1.104.771C4.582 29.455-.001 23.455-.001 16.393-.001 7.56 7.165.394 15.998.394zM6.063 23.372c.042-.083-.021-.187-.146-.25-.125-.042-.229-.021-.271.042-.042.083.021.187.146.25.104.062.229.042.271-.042zm.646.709c.083-.062.062-.208-.042-.333-.104-.104-.25-.146-.333-.062-.083.062-.062.208.042.333.104.104.25.146.333.062zm.625.937c.104-.083.104-.25 0-.396-.083-.146-.25-.208-.354-.125-.104.062-.104.229 0 .375s.271.208.354.146zm.875.875c.083-.083.042-.271-.083-.396-.146-.146-.333-.167-.417-.062-.104.083-.062.271.083.396.146.146.333.167.417.062zm1.187.521c.042-.125-.083-.271-.271-.333-.167-.042-.354.021-.396.146s.083.271.271.312c.167.062.354 0 .396-.125zm1.313.104c0-.146-.167-.25-.354-.229-.187 0-.333.104-.333.229 0 .146.146.25.354.229.187 0 .333-.104.333-.229zm1.208-.208c-.021-.125-.187-.208-.375-.187-.187.042-.312.167-.292.312.021.125.187.208.375.167s.312-.167.292-.292z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="gitlab" xmlns="http://www.w3.org/2000/svg"><path d="M1.629 11.034L14 26.888.442 17.048a1.09 1.09 0 01-.39-1.203l1.578-4.811zm7.217 0h10.309l-5.154 15.854zM5.753 1.475l3.093 9.559H1.63l3.093-9.559a.548.548 0 011.031 0zm20.618 9.559l1.578 4.811c.141.437-.016.922-.39 1.203l-13.558 9.84 12.371-15.854zm0 0h-7.216l3.093-9.559a.548.548 0 011.031 0z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="heart" xmlns="http://www.w3.org/2000/svg"><path d="M16 29.714a1.11 1.11 0 01-.786-.321L4.072 18.643c-.143-.125-4.071-3.714-4.071-8 0-5.232 3.196-8.357 8.535-8.357 3.125 0 6.053 2.464 7.464 3.857 1.411-1.393 4.339-3.857 7.464-3.857 5.339 0 8.535 3.125 8.535 8.357 0 4.286-3.928 7.875-4.089 8.035L16.785 29.392c-.214.214-.5.321-.786.321z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M25.875 28.25L22.125 32 6.126 16.001 22.125.002l3.75 3.75-12.25 12.25z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M6.125 28.25L18.375 16 6.125 3.75 9.875 0l15.999 15.999L9.875 31.998z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="link" xmlns="http://www.w3.org/2000/svg"><path d="M24.037 7.963q3.305 0 5.634 2.366T32 16t-2.329 5.671-5.634 2.366h-6.46v-3.08h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.08h6.46zM9.615 17.578v-3.155h12.77v3.155H9.615zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.08h-6.46q-3.305 0-5.634-2.366T0 16.001t2.329-5.671 5.634-2.366h6.46v3.08h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="menu" xmlns="http://www.w3.org/2000/svg"><path d="M.001 5.334h31.998v3.583H.001V5.334zm0 12.416v-3.5h31.998v3.5H.001zm0 8.916v-3.583h31.998v3.583H.001z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="notifications" xmlns="http://www.w3.org/2000/svg"><path d="M25.846 22.154l3.308 3.308v1.615H2.847v-1.615l3.308-3.308V14q0-3.846 1.961-6.692t5.423-3.692V2.462q0-1 .692-1.731T16 0t1.769.731.692 1.731v1.154q3.461.846 5.423 3.692T25.846 14v8.154zM16 32q-1.385 0-2.346-.923t-.962-2.308h6.615q0 1.308-1 2.269T15.999 32z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="person" xmlns="http://www.w3.org/2000/svg"><path d="M16 20.023q5.052 0 10.526 2.199t5.473 5.754v4.023H0v-4.023q0-3.555 5.473-5.754t10.526-2.199zM16 16q-3.275 0-5.614-2.339T8.047 8.047t2.339-5.661T16 0t5.614 2.386 2.339 5.661-2.339 5.614T16 16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="pin" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 19.2h9.6v-1.6L22.4 16V3.2l4.8-1.6V0H4.8v1.6l4.8 1.6V16l-4.8 1.6v1.6h9.6v11.2L16 32l1.6-1.6V19.2z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="rss_feed" xmlns="http://www.w3.org/2000/svg"><path d="M-.481 12.048q8.482 0 14.457 5.976t5.976 14.457h-5.879q0-5.976-4.289-10.264T-.48 17.928v-5.879zm0-11.565q13.204 0 22.601 9.397t9.397 22.601h-5.783q0-10.891-7.662-18.553T-.481 6.266V.483zm0 27.468q0-1.831 1.301-3.132t3.229-1.301 3.181 1.253 1.253 3.181-1.301 3.229-3.132 1.301q-1.928 0-3.229-1.301T-.48 27.952z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="search" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zm10.981 0L32 29.255 29.255 32l-9.094-9.094v-1.458l-.515-.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432T.001 11.925t3.474-8.45 8.45-3.474 8.407 3.474 3.432 8.45q0 1.802-.858 4.075t-1.973 3.646l.515.515h1.458z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="security" xmlns="http://www.w3.org/2000/svg"><path d="M16 0l13.072 5.855v8.715q0 6.059-3.745 11.063T16 31.999q-5.583-1.362-9.327-6.366T2.928 14.57V5.855zm0 16v13.004q4.017-1.294 6.808-4.868T26.144 16H16zm0 0V3.2L5.856 7.693v8.306H16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="telescope" xmlns="http://www.w3.org/2000/svg"><path d="M25.026 3.335a.466.466 0 00-.646-.238L13.362 8.91a.463.463 0 00-.216.575l.227.593-6.36 3.488a.462.462 0 00-.205.583l.211.508-6.755 3.228a.463.463 0 00-.228.595l1.386 3.341a.463.463 0 00.583.259l7.056-2.5.211.508a.462.462 0 00.557.267l6.733-1.941.202.527a.46.46 0 00.566.277l12.03-3.702a.46.46 0 00.293-.613L25.026 3.335zM2.109 21.061l-1.049-2.53 6.314-3.018 1.332 3.211-6.596 2.337zm7.857-1.708l-.22-.531-1.706-4.113-.22-.53 5.863-3.216 2.197 5.676.347.908-6.261 1.806zm7.505-1.146l-.188-.491c-.003-.01-.001-.022-.006-.032l-.572-1.478-2.549-6.668 10.201-5.381 4.249 10.624-11.136 3.428zm8.943-16.723a.463.463 0 00-.86.344l5.552 13.881a.464.464 0 00.602.258.464.464 0 00.258-.602L26.413 1.484zM16.268 20.627h-2.776c-1.055 0-1.851.796-1.851 1.851v1.217l-5.44 6.347a.462.462 0 10.702.602l5.415-6.316h2.101v6.015a.463.463 0 00.926 0v-6.015h2.101l5.414 6.316a.462.462 0 10.703-.602l-5.44-6.347v-1.148c0-1.076-.813-1.92-1.851-1.92zm.925 2.777h-4.627v-.925c0-.545.38-.925.925-.925h2.776c.527 0 .925.428.925.995v.856z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="timer" xmlns="http://www.w3.org/2000/svg"><path d="M16 29q4.428 0 7.536-3.143t3.107-7.571-3.107-7.536T16 7.643 8.464 10.75t-3.107 7.536 3.107 7.571T16 29zM26.714 9.786q1.214 1.571 2.107 4.036t.893 4.464q0 5.643-4 9.678T16 32t-9.714-4.036-4-9.678 4-9.678T16 4.572q1.929 0 4.464.929t4.107 2.143l2.143-2.214q1.143.929 2.143 2.143zM14.5 19.857v-9.143h3v9.143h-3zM20.571.001v3.071h-9.143V.001h9.143z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="tree" xmlns="http://www.w3.org/2000/svg"><path d="M32 14.423H20.808V9.616h-3.23v12.77h3.23v-4.807H32v12.845H20.808v-4.807h-6.385v-16h-3.23v4.807H.001V1.579h11.192v4.807h9.615V1.579H32v12.845z"/></symbol></svg>
+
+    <div class="wrapper">
+        <header class="gblog-header">
+    <div class="container flex align-center justify-center">
+        <a class="gblog-header__link" rel="me" href="https://xixiliguo.github.io/">
+            <span class="gblog-brand flex align-center justify-center">
+                <img class="gblog-brand__img" src="/brand.svg" alt="" width=60 height=60>
+                My personal Blog
+            </span>
+            
+        </a>
     </div>
-    
-    
-  <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
-  
-  <h2 class="title">个人网站</h2>
-  
-  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
-      
-        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
 </header>
+<nav class="gblog-nav">
+    <input type="checkbox" id="menu-control" class="hidden">
+    <div class="gblog-nav__control">
+        <label for="menu-control"  class="flex align-center justify-center">
+            <svg class="icon menu"><use xlink:href="#menu"></use></svg>
+            <svg class="icon clear"><use xlink:href="#clear"></use></svg>
+            <span>Nav</span>
+        </label>
+    </div>
+    <ul class="gblog-nav__list container flex flex-wrap justify-center menu-content">
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/BM/">BM</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Bandersnatch/">Bandersnatch</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Hash/">Hash</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/KMP/">KMP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Lua/">Lua</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NTP/">NTP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NetWork/">NetWork</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/OpenStack/">OpenStack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Pypi/">Pypi</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Python/">Python</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/RSS/">RSS</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/atop/">atop</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/boot/">boot</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/c/">c</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/cloud-init/">cloud-init</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/command/">command</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/crypt/">crypt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/dns/">dns</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/docker/">docker</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/golang/">golang</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/httprouter/">httprouter</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/iptables/">iptables</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/libvirt/">libvirt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/linux/">linux</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/net-stack/">net stack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/os/exec/">os/exec</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/proc/">proc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/radix-tree/">radix-tree</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/runc/">runc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/shadow/">shadow</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/systemd/">systemd</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/tcp/">tcp</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/yum/">yum</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%BB%E6%92%AD/">任播</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97/">多网卡队列</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E7%89%87%E6%AE%B5/">片段</a>
+        </li>
+        
+        
+        
+    </ul>
+</nav>
 
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">从Go标准库看字符串匹配算法</h1>
-      <p class="post-meta">@Peter Wang · Oct 2, 2017 · 2 min read</p>
-    </header>
-    <article class="post-content"><p>Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现</p>
 
-<p></p>
+        <main class="gblog-page container">
+            
+    <article class="gblog-post">
+        <header class="gblog-post__header">
+            
+            
 
+            <h1>从Go标准库看字符串匹配算法</h1>
+            
+            <div class="gblog-post__meta">
+                <span class="no-wrap">
+                    <svg class="icon date"><use xlink:href="#date"></use></svg>
+                    <span class="gblog-post__tag">
+                        <time datetime="2017-10-02T09:48:04&#43;08:00">
+                            
+                            Oct 2, 2017
+                        </time>
+                    </span>
+                </span>
+
+                <span class="no-wrap">
+                    <svg class="icon timer"><use xlink:href="#timer"></use></svg>
+                    <span class="gblog-post__tag">5 min read</span>
+                </span>
+            </div>
+            
+        </header>
+
+        <section class="gblog-markdown">
+            <p>Go的标准库本身质量非常高，本文主要深入strings库，从源代码中探查字符串匹配常用算法的具体实现</p>
 <p>我们先看一个简单的例子开始。</p>
-
 <p>在目标字符串中检查是否有子串等于匹配文本,这是非常常见的操作. 最容易让人想到的算法就是从目标字符串第一位开始，逐个字符与待匹配文本比较.匹配成功则指针右移继续比较，要不然从目标文本的第二位开始和待匹配文本继续逐个比较。如果指针先到达待匹配文本末尾，则匹配成功，要不然匹配失败。该算法称之为朴素算法，非常容易理解,但效率也比较慢.具体实现如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style=""></span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span><span style=""></span><span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">search</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">pat</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">txt</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">M</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">strlen</span><span style="">(</span><span style="">pat</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">N</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">strlen</span><span style="">(</span><span style="">txt</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 只需要遍历目标文本 N-M 次， 因为从目标文本的 N-M 位开始的子串，长度永远小于 M， 所以不会匹配成功
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;=</span><span style=""> </span><span style="">N</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">M</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style="">  
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">j</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">j</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">j</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">M</span><span style="">;</span><span style=""> </span><span style="">j</span><span style="color:#f92672">++</span><span style="">)</span><span style="">
-</span><span style="">        </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">txt</span><span style="">[</span><span style="">i</span><span style="color:#f92672">+</span><span style="">j</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">pat</span><span style="">[</span><span style="">j</span><span style="">])</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">break</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">j</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">M</span><span style="">)</span><span style="">
-</span><span style="">        </span><span style="">{</span><span style="">
-</span><span style="">           </span><span style="">printf</span><span style="">(</span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;Pattern found at index %d </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="">,</span><span style=""> </span><span style="">i</span><span style="">);</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">   </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">txt</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;AABAACAADAABAAABAA&#34;</span><span style="">;</span><span style="">
-</span><span style="">   </span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">pat</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;AABA&#34;</span><span style="">;</span><span style="">
-</span><span style="">   </span><span style="">search</span><span style="">(</span><span style="">pat</span><span style="">,</span><span style=""> </span><span style="">txt</span><span style="">);</span><span style="">
-</span><span style="">   </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>Go 标准库中的<code>strings.Contains</code>函数使用了<a href="https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm">Rabin-Karp算法</a>, 主要思想如下:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span><span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">search</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">pat</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">txt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">M</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">pat</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">txt</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">// 只需要遍历目标文本 N-M 次， 因为从目标文本的 N-M 位开始的子串，长度永远小于 M， 所以不会匹配成功
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">N</span> <span class="o">-</span> <span class="n">M</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>  
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">j</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pat</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="n">M</span><span class="p">)</span>
+        <span class="p">{</span>
+           <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Pattern found at index %d </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-<p>假设匹配文本的长度为M,目标文本的长度为N<br />
-1. 计算匹配文本的hash值<br />
-2. 计算目标字符串中每个长度为M的子串的hash值（需要计算N-M+1次）<br />
-3. 比较hash值, 如果hash值不同，字符串必然不匹配，如果hash值相同，还需要使用朴素算法再次判断</p>
-
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+   <span class="kt">char</span> <span class="o">*</span><span class="n">txt</span> <span class="o">=</span> <span class="s">&#34;AABAACAADAABAAABAA&#34;</span><span class="p">;</span>
+   <span class="kt">char</span> <span class="o">*</span><span class="n">pat</span> <span class="o">=</span> <span class="s">&#34;AABA&#34;</span><span class="p">;</span>
+   <span class="n">search</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">txt</span><span class="p">);</span>
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>Go 标准库中的<code>strings.Contains</code>函数使用了<a class="gblog-post__link" href="https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm">Rabin-Karp算法</a>
+, 主要思想如下:</p>
+<p>假设匹配文本的长度为M,目标文本的长度为N</p>
+<ol>
+<li>计算匹配文本的hash值</li>
+<li>计算目标字符串中每个长度为M的子串的hash值（需要计算N-M+1次）</li>
+<li>比较hash值, 如果hash值不同，字符串必然不匹配，如果hash值相同，还需要使用朴素算法再次判断</li>
+</ol>
 <p>步骤2中每次都要重新计算hash, Rabin-Karp算法的优点在于设计了一个特别的hash算法,使其在计算下一个子串的hash时可以利用之前的hash结果, 以达到加速计算的效果。将每一个字节看作数字, 选择一个比较大的质数作为base. 字节的值是包含在基数之内的</p>
-
-<p>举例说明：<br />
-文本为&rdquo;abracadabra&rdquo;,base为101,那么 hash(&ldquo;abr&rdquo;) =  97 *  101的2次方 + 98 * 101的1次方 + 114 * 101的0次方= 999509<br />
-下一个子串 &ldquo;bra&rdquo;的hash值为 98 * 101的2次方 + 114 * 101的1次方 + 97 * 101的0次方. 我们可以利用之前&rdquo;abr&rdquo;的hash值, 写成:</p>
-
+<p>举例说明：<br>
+文本为&quot;abracadabra&rdquo;,base为101,那么 hash(&ldquo;abr&rdquo;) =  97 *  101的2次方 + 98 * 101的1次方 + 114 * 101的0次方= 999509<br>
+下一个子串 &ldquo;bra&quot;的hash值为 98 * 101的2次方 + 114 * 101的1次方 + 97 * 101的0次方. 我们可以利用之前&quot;abr&quot;的hash值, 写成:</p>
 <blockquote>
-<p>//　　　　　　　base　　old hash　　　　　　new &lsquo;a&rsquo;　　　　old &lsquo;a&rsquo;  * base<br />
+<p>//　　　　　　　base　　old hash　　　　　　new &lsquo;a&rsquo;　　　　old &lsquo;a&rsquo;  * base<br>
 hash(&ldquo;bra&rdquo;) = 1011 * hash(&ldquo;abr&rdquo;) + (97 × 101的0次方) - (97 × 101的3次方)</p>
 </blockquote>
-
 <p>可以看出hash算法里要点是确立一个非常大的数字作为base,同时根据子串长度得到乘数因子(上述的 101的3次方，其实就是base的len(待匹配文本)次方).</p>
-
 <p><code>src/strings/strings_amd64.go</code>相关代码注释</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// 选择非常大的一个质数16777619 作为 base 
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#a6e22e">primeRK</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#ae81ff">16777619</span><span style="">   
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">// hashStr 返回子串的hash值和乘数因子
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">hashStr</span><span style="">(</span><span style="color:#a6e22e">sep</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">uint32</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">uint32</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">hash</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">uint32</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">sep</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">hash</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">hash</span><span style="color:#f92672">*</span><span style="color:#a6e22e">primeRK</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">uint32</span><span style="">(</span><span style="color:#a6e22e">sep</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">])</span><span style="">  </span><span style="color:#75715e">//计算hash值
-</span><span style="color:#75715e"></span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 计算(最高位 + 1)位的乘数因子, 使用位移, 没有使用 i--, 可以有效减少循环次数. i &gt;&gt;=1 相当于遍历二进制的每一位
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">pow</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sq</span><span style=""> </span><span style="color:#66d9ef">uint32</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">primeRK</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">sep</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&gt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">&gt;&gt;=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">&amp;</span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">pow</span><span style=""> </span><span style="color:#f92672">*=</span><span style=""> </span><span style="color:#a6e22e">sq</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">sq</span><span style=""> </span><span style="color:#f92672">*=</span><span style=""> </span><span style="color:#a6e22e">sq</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">hash</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pow</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">// Index 返回sep在s里第一次匹配时的index, 无法匹配则返回-1.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">Index</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sep</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">sep</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 先分析一些常见情况, 起到进一步加速的效果
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="">{</span><span style="">   
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">:</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">:</span><span style="">  </span><span style="color:#75715e">//如果为一个字节,则调用IndixByte(汇编语言)
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">IndexByte</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sep</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">])</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">&lt;=</span><span style=""> </span><span style="color:#a6e22e">shortStringLen</span><span style="">:</span><span style="">  </span><span style="color:#75715e">//如果sep的长度小于31且大于1, 则使用汇编代码(也是一种优化). 
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">indexShortStr</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sep</span><span style="">)</span><span style="">  
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">):</span><span style="">  
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">sep</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">s</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">n</span><span style=""> </span><span style="">&gt;</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">):</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 使用Rabin-Karp算法匹配
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// 步骤1 初始计算待匹配的文本的hash值和乘数因子, 
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">hashsep</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pow</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">hashStr</span><span style="">(</span><span style="color:#a6e22e">sep</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">h</span><span style=""> </span><span style="color:#66d9ef">uint32</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="color:#a6e22e">n</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">h</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">h</span><span style="color:#f92672">*</span><span style="color:#a6e22e">primeRK</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">uint32</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">])</span><span style="">  </span><span style="color:#75715e">// 步骤2 计算长度跟sep一样的s子串的hash值
-</span><span style="color:#75715e"></span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">h</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">hashsep</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">s</span><span style="">[:</span><span style="color:#a6e22e">n</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">sep</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">n</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">);</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// 利用先前的hash值, 计算新的hash值 
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">h</span><span style=""> </span><span style="color:#f92672">*=</span><span style=""> </span><span style="color:#a6e22e">primeRK</span><span style="">  </span><span style="color:#75715e">// 乘以base
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">h</span><span style=""> </span><span style="color:#f92672">+=</span><span style=""> </span><span style="">uint32</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">])</span><span style=""> </span><span style="color:#75715e">// 加上下一个字符的 hash 值
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">h</span><span style=""> </span><span style="color:#f92672">-=</span><span style=""> </span><span style="color:#a6e22e">pow</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">uint32</span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="color:#f92672">-</span><span style="color:#a6e22e">n</span><span style="">])</span><span style=""> </span><span style="color:#75715e">// 减去先前子串的第一个字符的hash值
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// 如果hash相等则继续使用朴素算法比较, 如果hash不一致,则直接用下一个匹配
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">h</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">hashsep</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">s</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="color:#f92672">-</span><span style="color:#a6e22e">n</span><span style="">:</span><span style="color:#a6e22e">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">sep</span><span style=""> </span><span style="">{</span><span style="">   
-</span><span style="">			</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#a6e22e">n</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>strings库里还实现了BM算法， 在这之前，我们先来看另一个非常经典的KMP算法</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 选择非常大的一个质数16777619 作为 base 
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">primeRK</span> <span class="p">=</span> <span class="mi">16777619</span>   
 
+<span class="c1">// hashStr 返回子串的hash值和乘数因子
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">hashStr</span><span class="p">(</span><span class="nx">sep</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">uint32</span><span class="p">,</span> <span class="kt">uint32</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">hash</span> <span class="o">:=</span> <span class="nb">uint32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">sep</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">hash</span> <span class="p">=</span> <span class="nx">hash</span><span class="o">*</span><span class="nx">primeRK</span> <span class="o">+</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">sep</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>  <span class="c1">//计算hash值
+</span><span class="c1"></span>	<span class="p">}</span>
+    <span class="c1">// 计算(最高位 + 1)位的乘数因子, 使用位移, 没有使用 i--, 可以有效减少循环次数. i &gt;&gt;=1 相当于遍历二进制的每一位
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">pow</span><span class="p">,</span> <span class="nx">sq</span> <span class="kt">uint32</span> <span class="p">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">primeRK</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">sep</span><span class="p">);</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">i</span><span class="o">&amp;</span><span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+			<span class="nx">pow</span> <span class="o">*=</span> <span class="nx">sq</span>
+		<span class="p">}</span>
+		<span class="nx">sq</span> <span class="o">*=</span> <span class="nx">sq</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">pow</span>
+<span class="p">}</span>
+
+<span class="c1">// Index 返回sep在s里第一次匹配时的index, 无法匹配则返回-1.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Index</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">sep</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">sep</span><span class="p">)</span>
+    <span class="c1">// 先分析一些常见情况, 起到进一步加速的效果
+</span><span class="c1"></span>	<span class="k">switch</span> <span class="p">{</span>   
+	<span class="k">case</span> <span class="nx">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span> <span class="mi">0</span>
+	<span class="k">case</span> <span class="nx">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1">//如果为一个字节,则调用IndixByte(汇编语言)
+</span><span class="c1"></span>		<span class="k">return</span> <span class="nf">IndexByte</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">sep</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="k">case</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="nx">shortStringLen</span><span class="p">:</span>  <span class="c1">//如果sep的长度小于31且大于1, 则使用汇编代码(也是一种优化). 
+</span><span class="c1"></span>		<span class="k">return</span> <span class="nf">indexShortStr</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">sep</span><span class="p">)</span>  
+	<span class="k">case</span> <span class="nx">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">):</span>  
+		<span class="k">if</span> <span class="nx">sep</span> <span class="o">==</span> <span class="nx">s</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="mi">0</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="k">case</span> <span class="nx">n</span> <span class="p">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">):</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="p">}</span>
+	<span class="c1">// 使用Rabin-Karp算法匹配
+</span><span class="c1"></span>    <span class="c1">// 步骤1 初始计算待匹配的文本的hash值和乘数因子, 
+</span><span class="c1"></span>	<span class="nx">hashsep</span><span class="p">,</span> <span class="nx">pow</span> <span class="o">:=</span> <span class="nf">hashStr</span><span class="p">(</span><span class="nx">sep</span><span class="p">)</span>
+	<span class="kd">var</span> <span class="nx">h</span> <span class="kt">uint32</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">h</span> <span class="p">=</span> <span class="nx">h</span><span class="o">*</span><span class="nx">primeRK</span> <span class="o">+</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>  <span class="c1">// 步骤2 计算长度跟sep一样的s子串的hash值
+</span><span class="c1"></span>	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">h</span> <span class="o">==</span> <span class="nx">hashsep</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">[:</span><span class="nx">n</span><span class="p">]</span> <span class="o">==</span> <span class="nx">sep</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span> <span class="p">{</span>
+        <span class="c1">// 利用先前的hash值, 计算新的hash值 
+</span><span class="c1"></span>		<span class="nx">h</span> <span class="o">*=</span> <span class="nx">primeRK</span>  <span class="c1">// 乘以base
+</span><span class="c1"></span>		<span class="nx">h</span> <span class="o">+=</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="c1">// 加上下一个字符的 hash 值
+</span><span class="c1"></span>		<span class="nx">h</span> <span class="o">-=</span> <span class="nx">pow</span> <span class="o">*</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="o">-</span><span class="nx">n</span><span class="p">])</span> <span class="c1">// 减去先前子串的第一个字符的hash值
+</span><span class="c1"></span>		<span class="nx">i</span><span class="o">++</span>
+        <span class="c1">// 如果hash相等则继续使用朴素算法比较, 如果hash不一致,则直接用下一个匹配
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">h</span> <span class="o">==</span> <span class="nx">hashsep</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="o">-</span><span class="nx">n</span><span class="p">:</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">sep</span> <span class="p">{</span>   
+			<span class="k">return</span> <span class="nx">i</span> <span class="o">-</span> <span class="nx">n</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+<span class="p">}</span>
+</code></pre></div><p>strings库里还实现了BM算法， 在这之前，我们先来看另一个非常经典的KMP算法</p>
 <p>假设检查bacbababaabcbab是否包含abababca, 此时发现第6位不一样</p>
-
 <pre><code>bacbababaabcbab   
     abababca
          |
@@ -330,77 +534,73 @@ bacbababaabcbab
       abababca
       |
 直接移动两位后开始重新比较
-</code></pre>
-
-<p>如果按朴素算法则按上面所示需要搜索词移一位后重新从第一位开始匹配。仔细想想, 前5个字符ababa已经匹配成功,也就是我们已经知道双方的文本, 通过提前的计算，可以多移几位, 而不仅仅移一位. 这样可以加快搜索</p>
-
-<p>KMP算法的主要原理如下:<br />
-s为目标文本, 长度为m<br />
-p为搜索词,长度为n<br />
-假设p[i]与s[x]匹配失败,那么p[i-1]与s[x-1]是匹配成功的, 则试图找到一个索引 j, 使得p[0:j] = p[i-j-1:i-1]  (p[0:j] 包含p[j])<br />
-如果有则s[x]继续与p[j+1]进行比较, 相当于搜索词移动i-j-1位<br />
+</code></pre><p>如果按朴素算法则按上面所示需要搜索词移一位后重新从第一位开始匹配。仔细想想, 前5个字符ababa已经匹配成功,也就是我们已经知道双方的文本, 通过提前的计算，可以多移几位, 而不仅仅移一位. 这样可以加快搜索</p>
+<p>KMP算法的主要原理如下:<br>
+s为目标文本, 长度为m<br>
+p为搜索词,长度为n<br>
+假设p[i]与s[x]匹配失败,那么p[i-1]与s[x-1]是匹配成功的, 则试图找到一个索引 j, 使得p[0:j] = p[i-j-1:i-1]  (p[0:j] 包含p[j])<br>
+如果有则s[x]继续与p[j+1]进行比较, 相当于搜索词移动i-j-1位<br>
 无则s[x]与p[0]比较. (具体代码实现时无可以表示为-1, 这样+1 后正好为0) 相当于搜索词移动i位</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span><span style=""> </span><span style="color:#a6e22e">cal</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">p</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#f92672">*</span><span style="">next</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">k</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">/*第一次字符前面没有索引了, 算corner case, 直接赋值为-1*/</span><span style="">
-</span><span style="">    </span><span style="">next</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">/* 循环每一个索引, 并计算next值 */</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style=""> </span><span style="">p</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;\0&#39;</span><span style="">;</span><span style=""> </span><span style="">i</span><span style="color:#f92672">++</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">/* 获取前一个索引的next值 */</span><span style="">
-</span><span style="">        </span><span style="">k</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">next</span><span style="">[</span><span style="">i</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">];</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">/* 当p[i] != p[k + 1]时, 则令 k = next[k], 直到相等或者k == -1 退出*/</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">(</span><span style="">p</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="">p</span><span style="">[</span><span style="">k</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">])</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">k</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">                </span><span style="">k</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">2</span><span style="">;</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">break</span><span style="">;</span><span style="">
-</span><span style="">            </span><span style="">}</span><span style="">
-</span><span style="">            </span><span style="">k</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">next</span><span style="">[</span><span style="">k</span><span style="">];</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">/*  1. p[i] == p[k + 1] 则 i对应的next值为 ++k
-</span><span style="color:#75715e">            2. 无索引时, k= -2, 则++k正好为-1
-</span><span style="color:#75715e">        */</span><span style="">
-</span><span style="">        </span><span style="">next</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#f92672">++</span><span style="">k</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">kmp</span><span style="">(</span><span style="color:#66d9ef">char</span><span style=""> </span><span style="color:#f92672">*</span><span style="">p</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style="color:#f92672">*</span><span style="">t</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">/*next为数组, 存储搜索词里每一个索引对应的next值, 使得 p[0:next[i]] == p[i-j-1:i-1]*/</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">next</span><span style="">[</span><span style="">strlen</span><span style="">(</span><span style="">p</span><span style="">)];</span><span style="">
-</span><span style="">    </span><span style="">cal</span><span style="">(</span><span style="">p</span><span style="">,</span><span style=""> </span><span style="">next</span><span style="">);</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style="">,</span><span style=""> </span><span style="">j</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">j</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">while</span><span style=""> </span><span style="">(</span><span style="">p</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;\0&#39;</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">t</span><span style="">[</span><span style="">j</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;\0&#39;</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">p</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">t</span><span style="">[</span><span style="">j</span><span style="">])</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="color:#75715e">/* 值相等, 则指针 i, j 都递增 */</span><span style="">
-</span><span style="">            </span><span style="">i</span><span style="color:#f92672">++</span><span style="">;</span><span style="">
-</span><span style="">            </span><span style="">j</span><span style="color:#f92672">++</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">            </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">                </span><span style="">j</span><span style="color:#f92672">++</span><span style="">;</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">continue</span><span style="">;</span><span style="">
-</span><span style="">            </span><span style="">}</span><span style="">
-</span><span style="">            </span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">next</span><span style="">[</span><span style="">i</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">]</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style="">
-</span><span style="">        </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">p</span><span style="">[</span><span style="">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#39;\0&#39;</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">;</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div>
-<p>Go语言里在 strings/search.go 里使用了Boyer-Moore字符串搜索算法, 这个思想和KMP类似,都是根据Pattern自身计算出移动的步数. 有两个优化点:<br />
-1. BM算法是从后向前逐渐匹配.<br />
-2. kmp里的通过已匹配的文本增加移动步数的叫做好规则，那么BM里同时还增加了坏规则</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">cal</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">next</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">k</span><span class="p">;</span>
+    <span class="cm">/*第一次字符前面没有索引了, 算corner case, 直接赋值为-1*/</span>
+    <span class="n">next</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="cm">/* 循环每一个索引, 并计算next值 */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* 获取前一个索引的next值 */</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">next</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="cm">/* 当p[i] != p[k + 1]时, 则令 k = next[k], 直到相等或者k == -1 退出*/</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">next</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="cm">/*  1. p[i] == p[k + 1] 则 i对应的next值为 ++k
+</span><span class="cm">            2. 无索引时, k= -2, 则++k正好为-1
+</span><span class="cm">        */</span>
+        <span class="n">next</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">++</span><span class="n">k</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-<p>假定Text为&rdquo;HERE IS A SIMPLE EXAMPLE&rdquo;，Pattern为&rdquo;EXAMPLE&rdquo;。<br />
-当T[i] != P[j], P[j]右边都匹配时时, 具体的移动规则如下:<br />
+<span class="kt">int</span> <span class="nf">kmp</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/*next为数组, 存储搜索词里每一个索引对应的next值, 使得 p[0:next[i]] == p[i-j-1:i-1]*/</span>
+    <span class="kt">int</span> <span class="n">next</span><span class="p">[</span><span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">)];</span>
+    <span class="n">cal</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">t</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="p">{</span>
+            <span class="cm">/* 值相等, 则指针 i, j 都递增 */</span>
+            <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+            <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">next</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>Go语言里在 strings/search.go 里使用了Boyer-Moore字符串搜索算法, 这个思想和KMP类似,都是根据Pattern自身计算出移动的步数. 有两个优化点:</p>
+<ol>
+<li>BM算法是从后向前逐渐匹配.</li>
+<li>kmp里的通过已匹配的文本增加移动步数的叫做好规则，那么BM里同时还增加了坏规则</li>
+</ol>
+<p>假定Text为&quot;HERE IS A SIMPLE EXAMPLE&rdquo;，Pattern为&quot;EXAMPLE&rdquo;。<br>
+当T[i] != P[j], P[j]右边都匹配时时, 具体的移动规则如下:<br>
 坏字符规则: 此时T[i]定义为坏字符, 如果P[0..j-1]中包含T[i]这个字符,  则移动T使坏字符与相等的字符对齐, 如果不包含,则直接移动len(P)</p>
-
 <pre><code>HERE IS A SIMPLE EXAMPLE
              |
        EXAMPLE
@@ -422,16 +622,12 @@ ABCADADEEFXYZ
      | X   
  AYEDADE
 
-</code></pre>
-
-<p>好后缀规则: 当发生不匹配时,之前已经匹配成功的,称之为好字符. 如下I和A不匹配, 后面的MPLE就是好后缀. 首先检查P里是否好后缀只出现过一次:  比如此时的<code>MPLE</code>作为好后缀在整个字符串<code>EXAMPLE</code>中只出现过一次</p>
-
+</code></pre><p>好后缀规则: 当发生不匹配时,之前已经匹配成功的,称之为好字符. 如下I和A不匹配, 后面的MPLE就是好后缀. 首先检查P里是否好后缀只出现过一次:  比如此时的<code>MPLE</code>作为好后缀在整个字符串<code>EXAMPLE</code>中只出现过一次</p>
 <ul>
-<li>不是, 则移动P使T中的好后缀与P中长度相等的字符串对齐<br /></li>
-<li>是, 则继续检查好后缀的所有后缀（比如PLE,PL,E)是否和同等长度的P前缀相等, 如果相等则移动P使之对齐, 不相等则移动 len(P).<br />
-这里相当于要求后缀必须出现在P的首部, 如果非首部, 因前缀的前一个字符必然不相等,则整个字符串肯定无法匹配<br /></li>
+<li>不是, 则移动P使T中的好后缀与P中长度相等的字符串对齐</li>
+<li>是, 则继续检查好后缀的所有后缀（比如PLE,PL,E)是否和同等长度的P前缀相等, 如果相等则移动P使之对齐, 不相等则移动 len(P).<br>
+这里相当于要求后缀必须出现在P的首部, 如果非首部, 因前缀的前一个字符必然不相等,则整个字符串肯定无法匹配</li>
 </ul>
-
 <pre><code>HERE IS A SIMPLE EXAMPLE
             ||||
          EXAMPLE
@@ -440,140 +636,119 @@ HERE IS A SIMPLE EXAMPLE
                |     X
                EXAMPLE
             
-</code></pre>
+</code></pre><p>具体的代码注释如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">makeStringFinder</span><span class="p">(</span><span class="nx">pattern</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">stringFinder</span> <span class="p">{</span>
+	<span class="nx">f</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">stringFinder</span><span class="p">{</span>
+		<span class="nx">pattern</span><span class="p">:</span>        <span class="nx">pattern</span><span class="p">,</span>
+		<span class="nx">goodSuffixSkip</span><span class="p">:</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pattern</span><span class="p">)),</span>
+	<span class="p">}</span>
+	<span class="c1">// last 是pattern最后一个字符的索引
+</span><span class="c1"></span>	<span class="nx">last</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
-<p>具体的代码注释如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">makeStringFinder</span><span style="">(</span><span style="color:#a6e22e">pattern</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">)</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">stringFinder</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">f</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">stringFinder</span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">pattern</span><span style="">:</span><span style="">        </span><span style="color:#a6e22e">pattern</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">goodSuffixSkip</span><span style="">:</span><span style=""> </span><span style="">make</span><span style="">([]</span><span style="color:#66d9ef">int</span><span style="">,</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">pattern</span><span style="">)),</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// last 是pattern最后一个字符的索引
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">last</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">pattern</span><span style="">)</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 创建坏字符表，记录不匹配时T的i指针移动步数
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// 第一阶段，初始化256个字符全部移动 len(pattern) 步
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">badCharSkip</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">badCharSkip</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">]</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">pattern</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 第二阶段：从左到右遍历pattern，更新其索引与P末尾的距离，结果就是该字符到末尾的最小距离
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// 没有计算last byte的距离, 因为移动至少要一步。 没有0步。 
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="color:#a6e22e">last</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">badCharSkip</span><span style="">[</span><span style="color:#a6e22e">pattern</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">]]</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">last</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 创建好后缀表
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// 第一阶段: 此时pattern[i+1:]都是已经匹配的，且好后缀只出现了一次
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// 计算T中的指针要移动的步数
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">lastPrefix</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">last</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">last</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">&gt;=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">--</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">HasPrefix</span><span style="">(</span><span style="color:#a6e22e">pattern</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pattern</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span><span style="">:])</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">lastPrefix</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">		</span><span style="color:#75715e">// 好后缀时T的指针移动分两步，首先移动到与 pattern的末尾对齐，即 last - i
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#75715e">// lastPrefix 用来记录 pattern[i+1:]中所有后缀与同等长度的前缀相等时的最大索引
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#75715e">// 然后移动 lastPrefix步
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">goodSuffixSkip</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">]</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">lastPrefix</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#a6e22e">last</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// 第二阶段: 好后缀在pattern前面部分还出现过, 如下计算相应的移动步数
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// 会覆盖之前第一阶段的部分值。但好后缀出现过移动步数比没出现的小。所以最终值是正确的
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// 举例： &#34;mississi&#34; 中好后缀是issi, 在pattern[1]处出现过，所以移动步数为 last-i  +  lenSuffix
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="color:#a6e22e">last</span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">lenSuffix</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">longestCommonSuffix</span><span style="">(</span><span style="color:#a6e22e">pattern</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">pattern</span><span style="">[</span><span style="color:#ae81ff">1</span><span style="">:</span><span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span><span style="">])</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">pattern</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="color:#f92672">-</span><span style="color:#a6e22e">lenSuffix</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">pattern</span><span style="">[</span><span style="color:#a6e22e">last</span><span style="color:#f92672">-</span><span style="color:#a6e22e">lenSuffix</span><span style="">]</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#75715e">// (last-i) is the shift, and lenSuffix is len(suffix).
-</span><span style="color:#75715e"></span><span style="">			</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">goodSuffixSkip</span><span style="">[</span><span style="color:#a6e22e">last</span><span style="color:#f92672">-</span><span style="color:#a6e22e">lenSuffix</span><span style="">]</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">lenSuffix</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#a6e22e">last</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style=""></span><span style="color:#75715e">// longestCommonSuffix 仅仅比较两个字符串的共同后缀的长度, 没有则为0
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">longestCommonSuffix</span><span style="">(</span><span style="color:#a6e22e">a</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">b</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">a</span><span style="">)</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">b</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">i</span><span style="color:#f92672">++</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">a</span><span style="">[</span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">a</span><span style="">)</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#a6e22e">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">b</span><span style="">[</span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">b</span><span style="">)</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span><span style="color:#a6e22e">i</span><span style="">]</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">break</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">// next 主要返回p在text里第一次匹配时的索引, 不匹配则返回-1
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">f</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">stringFinder</span><span style="">)</span><span style=""> </span><span style="color:#a6e22e">next</span><span style="">(</span><span style="color:#a6e22e">text</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// i 是T(即变量text)中要检查的字符索引, j为P中要检查的字符索引
-</span><span style="color:#75715e"></span><span style="">
-</span><span style="">    </span><span style="color:#75715e">// 因从后向前比较, 所以i初始化为P的最后一位索引
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">pattern</span><span style="">)</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">text</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// 每次比较时都从p的最后一位开始比较
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">j</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="">len</span><span style="">(</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">pattern</span><span style="">)</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">j</span><span style=""> </span><span style="color:#f92672">&gt;=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="color:#a6e22e">text</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">pattern</span><span style="">[</span><span style="color:#a6e22e">j</span><span style="">]</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">i</span><span style="color:#f92672">--</span><span style="">
-</span><span style="">			</span><span style="color:#a6e22e">j</span><span style="color:#f92672">--</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// j为负数,说明匹配成功, 则直接返回 i+ 1 
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">j</span><span style=""> </span><span style="">&lt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">
-</span><span style="">		</span><span style="">}</span><span style="">
-</span><span style="">        </span><span style="color:#75715e">// j为非负, 表明text[i] != f.pattern[j], 则从坏字符表和好后缀表中获取分别获取i需要移动的步数, 取最大值并使移动到新位置
-</span><span style="color:#75715e"></span><span style="">		</span><span style="color:#a6e22e">i</span><span style=""> </span><span style="color:#f92672">+=</span><span style=""> </span><span style="color:#a6e22e">max</span><span style="">(</span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">badCharSkip</span><span style="">[</span><span style="color:#a6e22e">text</span><span style="">[</span><span style="color:#a6e22e">i</span><span style="">]],</span><span style=""> </span><span style="color:#a6e22e">f</span><span style="">.</span><span style="color:#a6e22e">goodSuffixSkip</span><span style="">[</span><span style="color:#a6e22e">j</span><span style="">])</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div></article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
+	<span class="c1">// 创建坏字符表，记录不匹配时T的i指针移动步数
+</span><span class="c1"></span>	<span class="c1">// 第一阶段，初始化256个字符全部移动 len(pattern) 步
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">f</span><span class="p">.</span><span class="nx">badCharSkip</span> <span class="p">{</span>
+		<span class="nx">f</span><span class="p">.</span><span class="nx">badCharSkip</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pattern</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 第二阶段：从左到右遍历pattern，更新其索引与P末尾的距离，结果就是该字符到末尾的最小距离
+</span><span class="c1"></span>	<span class="c1">// 没有计算last byte的距离, 因为移动至少要一步。 没有0步。 
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">last</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">f</span><span class="p">.</span><span class="nx">badCharSkip</span><span class="p">[</span><span class="nx">pattern</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="p">=</span> <span class="nx">last</span> <span class="o">-</span> <span class="nx">i</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 创建好后缀表
+</span><span class="c1"></span>	<span class="c1">// 第一阶段: 此时pattern[i+1:]都是已经匹配的，且好后缀只出现了一次
+</span><span class="c1"></span>	<span class="c1">// 计算T中的指针要移动的步数
+</span><span class="c1"></span>	<span class="nx">lastPrefix</span> <span class="o">:=</span> <span class="nx">last</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">last</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span> <span class="p">{</span>
+			<span class="nx">lastPrefix</span> <span class="p">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="p">}</span>
+		<span class="c1">// 好后缀时T的指针移动分两步，首先移动到与 pattern的末尾对齐，即 last - i
+</span><span class="c1"></span>		<span class="c1">// lastPrefix 用来记录 pattern[i+1:]中所有后缀与同等长度的前缀相等时的最大索引
+</span><span class="c1"></span>		<span class="c1">// 然后移动 lastPrefix步
+</span><span class="c1"></span>		<span class="nx">f</span><span class="p">.</span><span class="nx">goodSuffixSkip</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">lastPrefix</span> <span class="o">+</span> <span class="nx">last</span> <span class="o">-</span> <span class="nx">i</span>
+	<span class="p">}</span>
+	<span class="c1">// 第二阶段: 好后缀在pattern前面部分还出现过, 如下计算相应的移动步数
+</span><span class="c1"></span>	<span class="c1">// 会覆盖之前第一阶段的部分值。但好后缀出现过移动步数比没出现的小。所以最终值是正确的
+</span><span class="c1"></span>	<span class="c1">// 举例： &#34;mississi&#34; 中好后缀是issi, 在pattern[1]处出现过，所以移动步数为 last-i  +  lenSuffix
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">last</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">lenSuffix</span> <span class="o">:=</span> <span class="nf">longestCommonSuffix</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+		<span class="k">if</span> <span class="nx">pattern</span><span class="p">[</span><span class="nx">i</span><span class="o">-</span><span class="nx">lenSuffix</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">pattern</span><span class="p">[</span><span class="nx">last</span><span class="o">-</span><span class="nx">lenSuffix</span><span class="p">]</span> <span class="p">{</span>
+			<span class="c1">// (last-i) is the shift, and lenSuffix is len(suffix).
+</span><span class="c1"></span>			<span class="nx">f</span><span class="p">.</span><span class="nx">goodSuffixSkip</span><span class="p">[</span><span class="nx">last</span><span class="o">-</span><span class="nx">lenSuffix</span><span class="p">]</span> <span class="p">=</span> <span class="nx">lenSuffix</span> <span class="o">+</span> <span class="nx">last</span> <span class="o">-</span> <span class="nx">i</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">f</span>
+<span class="p">}</span>
+<span class="c1">// longestCommonSuffix 仅仅比较两个字符串的共同后缀的长度, 没有则为0
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">longestCommonSuffix</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">a</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">b</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="nx">i</span><span class="p">]</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// next 主要返回p在text里第一次匹配时的索引, 不匹配则返回-1
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">stringFinder</span><span class="p">)</span> <span class="nf">next</span><span class="p">(</span><span class="nx">text</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="c1">// i 是T(即变量text)中要检查的字符索引, j为P中要检查的字符索引
+</span><span class="c1"></span>
+    <span class="c1">// 因从后向前比较, 所以i初始化为P的最后一位索引
+</span><span class="c1"></span>	<span class="nx">i</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 每次比较时都从p的最后一位开始比较
+</span><span class="c1"></span>		<span class="nx">j</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+		<span class="k">for</span> <span class="nx">j</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">text</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">f</span><span class="p">.</span><span class="nx">pattern</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">{</span>
+			<span class="nx">i</span><span class="o">--</span>
+			<span class="nx">j</span><span class="o">--</span>
+		<span class="p">}</span>
+        <span class="c1">// j为负数,说明匹配成功, 则直接返回 i+ 1 
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="p">}</span>
+        <span class="c1">// j为非负, 表明text[i] != f.pattern[j], 则从坏字符表和好后缀表中获取分别获取i需要移动的步数, 取最大值并使移动到新位置
+</span><span class="c1"></span>		<span class="nx">i</span> <span class="o">+=</span> <span class="nf">max</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">badCharSkip</span><span class="p">[</span><span class="nx">text</span><span class="p">[</span><span class="nx">i</span><span class="p">]],</span> <span class="nx">f</span><span class="p">.</span><span class="nx">goodSuffixSkip</span><span class="p">[</span><span class="nx">j</span><span class="p">])</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+<span class="p">}</span>
+</code></pre></div>
+
+        </section>
+    </article>
+
+        </main>
+
+        <footer class="gblog-footer">
+    <nav class="container">
+        <section class="flex flex-wrap align-center">
+            
+            
+            
+            
+        </section>
+        <section class="flex flex-wrap align-center">
+            <span class="gblog-footer__item">
+                Built with <a href="https://gohugo.io/" class="gblog-footer__link">Hugo</a> and
+                <svg class="icon heart"><use xlink:href="#heart"></use></svg>
+            </span>
+        </section>
         
-          <li><a href="https://xixiliguo.github.io/tags/golang"><span class="tag">Golang</span></a></li>
-        
-          <li><a href="https://xixiliguo.github.io/tags/kmp"><span class="tag">KMP</span></a></li>
-        
-          <li><a href="https://xixiliguo.github.io/tags/bm"><span class="tag">BM</span></a></li>
-        
-          <li><a href="https://xixiliguo.github.io/tags/hash"><span class="tag">Hash</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>1098</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
-      </p>
-    </footer>
-    
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2020 个人网站</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+    </nav>
 </footer>
 
+    </div>
 
-
-<script src="https://xixiliguo.github.io/js/bundle.js"></script>
-
-
+    
+<script defer src="/js/clipboard-f06c52bfdd.min.js"></script>
 <script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-107151468-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var clipboard = new ClipboardJS('.clip');
+    });
 </script>
 
 
-
-  </body>
+</body>
 </html>

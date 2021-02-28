@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NetWork on My personal Blog</title>
+    <link>https://xixiliguo.github.io/tags/NetWork/</link>
+    <description>Recent content in NetWork on My personal Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 16 Aug 2018 22:41:37 +0800</lastBuildDate>
+    
+	<atom:link href="https://xixiliguo.github.io/tags/NetWork/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tcpdump与Wireshark点滴记录</title>
+      <link>https://xixiliguo.github.io/post/tcpdump-wireshark/</link>
+      <pubDate>Thu, 16 Aug 2018 22:41:37 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/post/tcpdump-wireshark/</guid>
+      <description>&lt;p&gt;记录Tcpdump相关知识和Wireshark技巧&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

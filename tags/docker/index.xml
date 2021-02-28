@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Docker on 个人网站</title>
+    <title>docker on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/docker/</link>
-    <description>Recent content in Docker on 个人网站</description>
+    <description>Recent content in docker on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Sun, 03 Nov 2019 10:31:44 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
@@ -18,9 +16,7 @@
       <pubDate>Sun, 03 Nov 2019 10:31:44 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/runc/</guid>
-      <description>&lt;p&gt;runc实现了CRI接口, 也就是容器运行时. 利用linux的cgroup, namespace使进程运行在一个虚拟的隔离环境, 本文记录了源码阅读后的心得.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;runc实现了CRI接口, 也就是容器运行时. 利用linux的cgroup, namespace使进程运行在一个虚拟的隔离环境, 本文记录了源码阅读后的心得.&lt;/p&gt;</description>
     </item>
     
   </channel>

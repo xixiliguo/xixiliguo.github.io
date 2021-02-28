@@ -1,55 +1,17 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on 个人网站</title>
+    <title>Tags on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/</link>
-    <description>Recent content in Tags on 个人网站</description>
+    <description>Recent content in Tags on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
-    <lastBuildDate>Sun, 05 Mar 2017 13:15:27 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 30 Sep 2020 21:17:14 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Atop</title>
-      <link>https://xixiliguo.github.io/tags/atop/</link>
-      <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/atop/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Bandersnatch</title>
-      <link>https://xixiliguo.github.io/tags/bandersnatch/</link>
-      <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/bandersnatch/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Bm</title>
-      <link>https://xixiliguo.github.io/tags/bm/</link>
-      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/bm/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Boot</title>
-      <link>https://xixiliguo.github.io/tags/boot/</link>
-      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/boot/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>C</title>
+      <title>c</title>
       <link>https://xixiliguo.github.io/tags/c/</link>
       <pubDate>Wed, 30 Sep 2020 21:17:14 +0800</pubDate>
       
@@ -58,254 +20,11 @@
     </item>
     
     <item>
-      <title>Cloud Init</title>
-      <link>https://xixiliguo.github.io/tags/cloud-init/</link>
-      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/cloud-init/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Command</title>
-      <link>https://xixiliguo.github.io/tags/command/</link>
-      <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/command/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Crypt</title>
-      <link>https://xixiliguo.github.io/tags/crypt/</link>
-      <pubDate>Wed, 11 Oct 2017 22:11:23 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/crypt/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Dns</title>
-      <link>https://xixiliguo.github.io/tags/dns/</link>
-      <pubDate>Sun, 24 Nov 2019 22:22:53 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/dns/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Docker</title>
-      <link>https://xixiliguo.github.io/tags/docker/</link>
-      <pubDate>Sun, 03 Nov 2019 10:31:44 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/docker/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Golang</title>
-      <link>https://xixiliguo.github.io/tags/golang/</link>
-      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Hash</title>
-      <link>https://xixiliguo.github.io/tags/hash/</link>
-      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/hash/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Httprouter</title>
-      <link>https://xixiliguo.github.io/tags/httprouter/</link>
-      <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/httprouter/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Iptables</title>
-      <link>https://xixiliguo.github.io/tags/iptables/</link>
-      <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/iptables/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Kmp</title>
-      <link>https://xixiliguo.github.io/tags/kmp/</link>
-      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/kmp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Libvirt</title>
-      <link>https://xixiliguo.github.io/tags/libvirt/</link>
-      <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/libvirt/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Linux</title>
-      <link>https://xixiliguo.github.io/tags/linux/</link>
-      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Lua</title>
-      <link>https://xixiliguo.github.io/tags/lua/</link>
+      <link>https://xixiliguo.github.io/tags/Lua/</link>
       <pubDate>Wed, 30 Sep 2020 21:17:14 +0800</pubDate>
       
-      <guid>https://xixiliguo.github.io/tags/lua/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Net Stack</title>
-      <link>https://xixiliguo.github.io/tags/net-stack/</link>
-      <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/net-stack/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Network</title>
-      <link>https://xixiliguo.github.io/tags/network/</link>
-      <pubDate>Thu, 16 Aug 2018 22:41:37 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/network/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Ntp</title>
-      <link>https://xixiliguo.github.io/tags/ntp/</link>
-      <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/ntp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Openstack</title>
-      <link>https://xixiliguo.github.io/tags/openstack/</link>
-      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/openstack/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Os/Exec</title>
-      <link>https://xixiliguo.github.io/tags/os/exec/</link>
-      <pubDate>Sun, 02 Jun 2019 23:22:44 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/os/exec/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Proc</title>
-      <link>https://xixiliguo.github.io/tags/proc/</link>
-      <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/proc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Pypi</title>
-      <link>https://xixiliguo.github.io/tags/pypi/</link>
-      <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/pypi/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Python</title>
-      <link>https://xixiliguo.github.io/tags/python/</link>
-      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/python/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Radix Tree</title>
-      <link>https://xixiliguo.github.io/tags/radix-tree/</link>
-      <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/radix-tree/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Rss</title>
-      <link>https://xixiliguo.github.io/tags/rss/</link>
-      <pubDate>Sun, 07 Apr 2019 10:05:29 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/rss/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Runc</title>
-      <link>https://xixiliguo.github.io/tags/runc/</link>
-      <pubDate>Sun, 03 Nov 2019 10:31:44 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/runc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Shadow</title>
-      <link>https://xixiliguo.github.io/tags/shadow/</link>
-      <pubDate>Wed, 11 Oct 2017 22:11:23 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/shadow/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Systemd</title>
-      <link>https://xixiliguo.github.io/tags/systemd/</link>
-      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/systemd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tcp</title>
-      <link>https://xixiliguo.github.io/tags/tcp/</link>
-      <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/tcp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Yum</title>
-      <link>https://xixiliguo.github.io/tags/yum/</link>
-      <pubDate>Wed, 12 Jun 2019 00:12:08 +0800</pubDate>
-      
-      <guid>https://xixiliguo.github.io/tags/yum/</guid>
+      <guid>https://xixiliguo.github.io/tags/Lua/</guid>
       <description></description>
     </item>
     
@@ -319,6 +38,51 @@
     </item>
     
     <item>
+      <title>片段</title>
+      <link>https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5/</link>
+      <pubDate>Wed, 30 Sep 2020 00:09:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>boot</title>
+      <link>https://xixiliguo.github.io/tags/boot/</link>
+      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/boot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://xixiliguo.github.io/tags/linux/</link>
+      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>systemd</title>
+      <link>https://xixiliguo.github.io/tags/systemd/</link>
+      <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/systemd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dns</title>
+      <link>https://xixiliguo.github.io/tags/dns/</link>
+      <pubDate>Sun, 24 Nov 2019 22:22:53 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/dns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>任播</title>
       <link>https://xixiliguo.github.io/tags/%E4%BB%BB%E6%92%AD/</link>
       <pubDate>Sun, 24 Nov 2019 22:22:53 +0800</pubDate>
@@ -328,11 +92,56 @@
     </item>
     
     <item>
-      <title>协议</title>
-      <link>https://xixiliguo.github.io/tags/%E5%8D%8F%E8%AE%AE/</link>
-      <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
+      <title>docker</title>
+      <link>https://xixiliguo.github.io/tags/docker/</link>
+      <pubDate>Sun, 03 Nov 2019 10:31:44 +0800</pubDate>
       
-      <guid>https://xixiliguo.github.io/tags/%E5%8D%8F%E8%AE%AE/</guid>
+      <guid>https://xixiliguo.github.io/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>runc</title>
+      <link>https://xixiliguo.github.io/tags/runc/</link>
+      <pubDate>Sun, 03 Nov 2019 10:31:44 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/runc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>iptables</title>
+      <link>https://xixiliguo.github.io/tags/iptables/</link>
+      <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/iptables/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>libvirt</title>
+      <link>https://xixiliguo.github.io/tags/libvirt/</link>
+      <pubDate>Sun, 16 Jun 2019 21:00:55 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/libvirt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>yum</title>
+      <link>https://xixiliguo.github.io/tags/yum/</link>
+      <pubDate>Wed, 12 Jun 2019 00:12:08 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/yum/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>RSS</title>
+      <link>https://xixiliguo.github.io/tags/RSS/</link>
+      <pubDate>Sun, 07 Apr 2019 10:05:29 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/RSS/</guid>
       <description></description>
     </item>
     
@@ -346,11 +155,200 @@
     </item>
     
     <item>
-      <title>片段</title>
-      <link>https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5/</link>
-      <pubDate>Wed, 30 Sep 2020 00:09:04 +0800</pubDate>
+      <title>net stack</title>
+      <link>https://xixiliguo.github.io/tags/net-stack/</link>
+      <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>
       
-      <guid>https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5/</guid>
+      <guid>https://xixiliguo.github.io/tags/net-stack/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tcp</title>
+      <link>https://xixiliguo.github.io/tags/tcp/</link>
+      <pubDate>Sun, 24 Mar 2019 14:31:29 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/tcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>httprouter</title>
+      <link>https://xixiliguo.github.io/tags/httprouter/</link>
+      <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/httprouter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>radix-tree</title>
+      <link>https://xixiliguo.github.io/tags/radix-tree/</link>
+      <pubDate>Sat, 23 Mar 2019 17:52:44 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/radix-tree/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>NetWork</title>
+      <link>https://xixiliguo.github.io/tags/NetWork/</link>
+      <pubDate>Thu, 16 Aug 2018 22:41:37 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/NetWork/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>NTP</title>
+      <link>https://xixiliguo.github.io/tags/NTP/</link>
+      <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/NTP/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>协议</title>
+      <link>https://xixiliguo.github.io/tags/%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Sun, 28 Jan 2018 15:02:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/%E5%8D%8F%E8%AE%AE/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>command</title>
+      <link>https://xixiliguo.github.io/tags/command/</link>
+      <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/command/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Bandersnatch</title>
+      <link>https://xixiliguo.github.io/tags/Bandersnatch/</link>
+      <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/Bandersnatch/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Pypi</title>
+      <link>https://xixiliguo.github.io/tags/Pypi/</link>
+      <pubDate>Tue, 02 Jan 2018 22:14:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/Pypi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cloud-init</title>
+      <link>https://xixiliguo.github.io/tags/cloud-init/</link>
+      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/cloud-init/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>OpenStack</title>
+      <link>https://xixiliguo.github.io/tags/OpenStack/</link>
+      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/OpenStack/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>https://xixiliguo.github.io/tags/Python/</link>
+      <pubDate>Sun, 10 Dec 2017 15:47:09 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/Python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>crypt</title>
+      <link>https://xixiliguo.github.io/tags/crypt/</link>
+      <pubDate>Wed, 11 Oct 2017 22:11:23 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/crypt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shadow</title>
+      <link>https://xixiliguo.github.io/tags/shadow/</link>
+      <pubDate>Wed, 11 Oct 2017 22:11:23 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/shadow/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>BM</title>
+      <link>https://xixiliguo.github.io/tags/BM/</link>
+      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/BM/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://xixiliguo.github.io/tags/golang/</link>
+      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hash</title>
+      <link>https://xixiliguo.github.io/tags/Hash/</link>
+      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/Hash/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>KMP</title>
+      <link>https://xixiliguo.github.io/tags/KMP/</link>
+      <pubDate>Mon, 02 Oct 2017 09:48:04 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/KMP/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>atop</title>
+      <link>https://xixiliguo.github.io/tags/atop/</link>
+      <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/atop/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>proc</title>
+      <link>https://xixiliguo.github.io/tags/proc/</link>
+      <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/proc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>os/exec</title>
+      <link>https://xixiliguo.github.io/tags/os/exec/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://xixiliguo.github.io/tags/os/exec/</guid>
       <description></description>
     </item>
     

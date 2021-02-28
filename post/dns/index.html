@@ -1,342 +1,661 @@
 <!DOCTYPE html>
-<html lang="en">
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+
 <head>
-
-  <meta charset="utf-8" />
-
-  
-  <title>DNS学习总结</title>
-
-  
-  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 
 
-  
-  <meta name="author" content="Peter Wangbo" />
-  <meta name="description" content="这里记录了自己学习DNS协议中总结和对一些e问题的思考
 
-" />
 
-  
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="DNS学习总结" />
-    <meta name="twitter:description" content="这里记录了自己学习DNS协议中总结和对一些e问题的思考
-
-" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+    <meta name="description" content="这里记录了自己学习DNS协议中总结和对一些问题的思考">
 
 
 
+    
+    
+        
+    
 
-<meta name="generator" content="Hugo 0.28" />
-
-
-<link rel="canonical" href="https://xixiliguo.github.io/post/dns/" />
-<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+    
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+    <title>DNS学习总结 | My personal Blog</title>
 
-<meta name="baidu-site-verification" content="xijFMBD2HS" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
 
+    
 
+    <meta property="og:title" content="DNS学习总结" />
+<meta property="og:description" content="这里记录了自己学习DNS协议中总结和对一些问题的思考" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xixiliguo.github.io/post/dns/" />
+<meta property="article:published_time" content="2019-11-24T22:22:53+08:00" />
+<meta property="article:modified_time" content="2019-11-24T22:22:53+08:00" />
 
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="个人网站" />
-<meta name="msapplication-tooltip" content="个人网站" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="DNS学习总结"/>
+<meta name="twitter:description" content="这里记录了自己学习DNS协议中总结和对一些问题的思考"/>
 
 
+    <link rel="preload" as="font" href="/fonts/Metropolis.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Bold.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-BoldItalic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Italic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationMono.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/DroidSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/GeekblogIcons.woff2" type="font/woff2" crossorigin="anonymous">
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+<link rel="preload" href="/main-342b625c73.min.css" as="style">
+<link rel="stylesheet" href="/main-342b625c73.min.css" media="all">
 
-<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+<link rel="preload" href="/mobile-14fbbb71d2.min.css" as="style">
+<link rel="stylesheet" href="/mobile-14fbbb71d2.min.css" media="screen and (max-width: 45rem)">
 
+<link rel="preload" href="/print-86167e859a.min.css" as="style">
+<link rel="stylesheet" href="/print-86167e859a.min.css" media="print">
 
-  
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
-
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
+<link rel="preload" href="/custom.css" as="style">
+<link rel="stylesheet" href="/custom.css" media="all">
 
 
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+<!-- Made with Geekblog theme https://github.com/thegeeklab/hugo-geekblog -->
+
+    
 
 
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "articleSection": "post",
+    "name": "DNS学习总结",
+    "headline": "DNS学习总结",
+    "alternativeHeadline": "",
+    "description": "\x3cp\x3e这里记录了自己学习DNS协议中总结和对一些问题的思考\x3c\/p\x3e",
+    "inLanguage": "en",
+    "isFamilyFriendly": "true",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https:\/\/xixiliguo.github.io\/post\/dns\/"
+    },
+    "author" : [
+    ],
+    "copyrightHolder" : "My personal Blog",
+    "copyrightYear" : "2019",
+    "dateCreated": "2019-11-24T22:22:53.00Z",
+    "datePublished": "2019-11-24T22:22:53.00Z",
+    "dateModified": "2019-11-24T22:22:53.00Z",
+    "publisher":{
+        "@type":"Organization",
+        "name": "My personal Blog",
+        "url": "https://xixiliguo.github.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/xixiliguo.github.io\/brand.svg",
+            "width":"32",
+            "height":"32"
+        }
+    },
+    "url" : "https:\/\/xixiliguo.github.io\/post\/dns\/",
+    "wordCount" : "983",
+    "genre" : [ "dns" , "任播" ]
+}
+</script>
 
 
 </head>
-  <body>
-    
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
-      
-        
-      
+
+<body>
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_back" xmlns="http://www.w3.org/2000/svg"><path d="M31.999 14.035v3.93H7.673l11.134 11.228L16 32 .001 16.001 16 .002l2.807 2.807L7.673 14.037h24.326z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M7.954 17.965v5.988L.001 16l7.953-7.953v5.988H32v3.93H7.954z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M24.046 14.035V8.047L31.999 16l-7.953 7.953v-5.988H0v-3.93h24.046z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="bitbucket" xmlns="http://www.w3.org/2000/svg"><path d="M15.905 13.355c.189 1.444-1.564 2.578-2.784 1.839-1.375-.602-1.375-2.784-.034-3.403 1.151-.705 2.818.223 2.818 1.564zm1.907-.361c-.309-2.44-3.076-4.056-5.328-3.042-1.426.636-2.389 2.148-2.32 3.747.086 2.097 2.08 3.815 4.176 3.626s3.729-2.234 3.472-4.331zm4.108-9.315c-.756-.997-2.045-1.169-3.179-1.358-3.214-.516-6.513-.533-9.727.034-1.066.172-2.269.361-2.939 1.323 1.1 1.031 2.664 1.186 4.073 1.358 2.544.327 5.156.344 7.699.017 1.426-.172 3.008-.309 4.073-1.375zm.979 17.788c-.481 1.684-.206 3.953-1.994 4.932-3.076 1.701-6.806 1.89-10.191 1.289-1.787-.327-3.884-.894-4.864-2.578-.43-1.65-.705-3.334-.98-5.018l.103-.275.309-.155c5.121 3.386 12.288 3.386 17.427 0 .808.241.206 1.22.189 1.805zM26.01 4.951c-.584 3.764-1.255 7.51-1.908 11.257-.189 1.1-1.255 1.719-2.148 2.183-3.214 1.615-6.96 1.89-10.483 1.512-2.389-.258-4.829-.894-6.771-2.389-.911-.705-.911-1.908-1.083-2.922-.602-3.523-1.289-7.046-1.719-10.604.206-1.547 1.942-2.217 3.231-2.698C6.848.654 8.686.362 10.508.19c3.884-.378 7.854-.241 11.618.859 1.341.395 2.784.945 3.695 2.097.412.533.275 1.203.189 1.805z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="bookmarks" xmlns="http://www.w3.org/2000/svg"><path d="M20.357 5.856q1.157 0 2.043.851t.885 2.008v23.284l-10.212-4.357-10.144 4.357V8.715q0-1.157.885-2.008t2.042-.851h14.502zm5.787 18.859V5.856q0-1.157-.851-2.042t-2.008-.885H8.715q0-1.157.885-2.042t2.043-.885h14.502q1.157 0 2.043.885t.885 2.042v23.216z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="clear" xmlns="http://www.w3.org/2000/svg"><path d="M32 3.222L19.222 16 32 28.778l-3.221 3.221-12.778-12.778L3.223 31.999.002 28.778 12.78 16 .002 3.222 3.223.001l12.778 12.778L28.779.001z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="code" xmlns="http://www.w3.org/2000/svg"><path d="M9.917 24.5a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm0-21a1.75 1.75 0 10-3.501.001A1.75 1.75 0 009.917 3.5zm11.666 2.333a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm1.75 0a3.502 3.502 0 01-1.75 3.026c-.055 6.581-4.721 8.039-7.82 9.023-2.898.911-3.846 1.349-3.846 3.117v.474a3.502 3.502 0 011.75 3.026c0 1.932-1.568 3.5-3.5 3.5s-3.5-1.568-3.5-3.5c0-1.294.711-2.424 1.75-3.026V6.526A3.502 3.502 0 014.667 3.5c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5a3.502 3.502 0 01-1.75 3.026v9.06c.93-.456 1.914-.766 2.807-1.039 3.391-1.075 5.323-1.878 5.359-5.687a3.502 3.502 0 01-1.75-3.026c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="contacts" xmlns="http://www.w3.org/2000/svg"><path d="M22.688 22.688v-2q0-1.5-2.281-2.438t-4.406-.938-4.406.938-2.281 2.438v2h13.375zM16 9q-1.25 0-2.125.875T13 12t.875 2.125T16 15t2.125-.875T19 12t-.875-2.125T16 9zm10.688-3.687q1.063 0 1.844.813t.781 1.875v16q0 1.063-.781 1.875t-1.844.813H5.313q-1.063 0-1.844-.813t-.781-1.875v-16q0-1.063.781-1.875t1.844-.813h21.375zM5.313 32v-2.688h21.375V32H5.313zM26.688 0v2.688H5.313V0h21.375z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="create" xmlns="http://www.w3.org/2000/svg"><path d="M31.499 7.167l-3.25 3.25-6.666-6.666 3.25-3.25q.5-.5 1.25-.5t1.25.5l4.166 4.166q.5.5.5 1.25t-.5 1.25zM.001 25.333L19.667 5.667l6.666 6.666L6.667 31.999H.001v-6.666z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="date" xmlns="http://www.w3.org/2000/svg"><path d="M27.192 28.844V11.192H4.808v17.652h22.384zm0-25.689q1.277 0 2.253.976t.976 2.253v22.459q0 1.277-.976 2.216t-2.253.939H4.808q-1.352 0-2.291-.901t-.939-2.253V6.385q0-1.277.939-2.253t2.291-.976h1.577V.001h3.23v3.155h12.769V.001h3.23v3.155h1.577zm-3.155 11.267v3.155h-3.23v-3.155h3.23zm-6.46 0v3.155h-3.155v-3.155h3.155zm-6.384 0v3.155h-3.23v-3.155h3.23z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="download" xmlns="http://www.w3.org/2000/svg"><path d="M2.866 28.209h26.269v3.79H2.866v-3.79zm26.268-16.925L16 24.418 2.866 11.284h7.493V.001h11.283v11.283h7.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="email" xmlns="http://www.w3.org/2000/svg"><path d="M28.845 9.615v-3.23L16 14.422 3.155 6.385v3.23L16 17.577zm0-6.46q1.277 0 2.216.977T32 6.385v19.23q0 1.277-.939 2.253t-2.216.977H3.155q-1.277 0-2.216-.977T0 25.615V6.385q0-1.277.939-2.253t2.216-.977h25.69z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="git" xmlns="http://www.w3.org/2000/svg"><path d="M27.472 12.753L15.247.529a1.803 1.803 0 00-2.55 0l-2.84 2.84 2.137 2.137a2.625 2.625 0 013.501 3.501l3.499 3.499a2.625 2.625 0 11-1.237 1.237l-3.499-3.499c-.083.04-.169.075-.257.106v7.3a2.626 2.626 0 11-1.75 0v-7.3a2.626 2.626 0 01-1.494-3.607L8.62 4.606l-8.09 8.09a1.805 1.805 0 000 2.551l12.225 12.224a1.803 1.803 0 002.55 0l12.168-12.168a1.805 1.805 0 000-2.551z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="github" xmlns="http://www.w3.org/2000/svg"><path d="M16 .394c8.833 0 15.999 7.166 15.999 15.999 0 7.062-4.583 13.062-10.937 15.187-.813.146-1.104-.354-1.104-.771 0-.521.021-2.25.021-4.396 0-1.5-.5-2.458-1.083-2.958 3.562-.396 7.312-1.75 7.312-7.896 0-1.75-.625-3.167-1.646-4.291.167-.417.708-2.042-.167-4.25-1.333-.417-4.396 1.646-4.396 1.646a15.032 15.032 0 00-8 0S8.937 6.602 7.603 7.018c-.875 2.208-.333 3.833-.167 4.25-1.021 1.125-1.646 2.542-1.646 4.291 0 6.125 3.729 7.5 7.291 7.896-.458.417-.875 1.125-1.021 2.146-.917.417-3.25 1.125-4.646-1.333-.875-1.521-2.458-1.646-2.458-1.646-1.562-.021-.104.979-.104.979 1.042.479 1.771 2.333 1.771 2.333.938 2.854 5.396 1.896 5.396 1.896 0 1.333.021 2.583.021 2.979 0 .417-.292.917-1.104.771C4.582 29.455-.001 23.455-.001 16.393-.001 7.56 7.165.394 15.998.394zM6.063 23.372c.042-.083-.021-.187-.146-.25-.125-.042-.229-.021-.271.042-.042.083.021.187.146.25.104.062.229.042.271-.042zm.646.709c.083-.062.062-.208-.042-.333-.104-.104-.25-.146-.333-.062-.083.062-.062.208.042.333.104.104.25.146.333.062zm.625.937c.104-.083.104-.25 0-.396-.083-.146-.25-.208-.354-.125-.104.062-.104.229 0 .375s.271.208.354.146zm.875.875c.083-.083.042-.271-.083-.396-.146-.146-.333-.167-.417-.062-.104.083-.062.271.083.396.146.146.333.167.417.062zm1.187.521c.042-.125-.083-.271-.271-.333-.167-.042-.354.021-.396.146s.083.271.271.312c.167.062.354 0 .396-.125zm1.313.104c0-.146-.167-.25-.354-.229-.187 0-.333.104-.333.229 0 .146.146.25.354.229.187 0 .333-.104.333-.229zm1.208-.208c-.021-.125-.187-.208-.375-.187-.187.042-.312.167-.292.312.021.125.187.208.375.167s.312-.167.292-.292z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="gitlab" xmlns="http://www.w3.org/2000/svg"><path d="M1.629 11.034L14 26.888.442 17.048a1.09 1.09 0 01-.39-1.203l1.578-4.811zm7.217 0h10.309l-5.154 15.854zM5.753 1.475l3.093 9.559H1.63l3.093-9.559a.548.548 0 011.031 0zm20.618 9.559l1.578 4.811c.141.437-.016.922-.39 1.203l-13.558 9.84 12.371-15.854zm0 0h-7.216l3.093-9.559a.548.548 0 011.031 0z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="heart" xmlns="http://www.w3.org/2000/svg"><path d="M16 29.714a1.11 1.11 0 01-.786-.321L4.072 18.643c-.143-.125-4.071-3.714-4.071-8 0-5.232 3.196-8.357 8.535-8.357 3.125 0 6.053 2.464 7.464 3.857 1.411-1.393 4.339-3.857 7.464-3.857 5.339 0 8.535 3.125 8.535 8.357 0 4.286-3.928 7.875-4.089 8.035L16.785 29.392c-.214.214-.5.321-.786.321z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M25.875 28.25L22.125 32 6.126 16.001 22.125.002l3.75 3.75-12.25 12.25z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M6.125 28.25L18.375 16 6.125 3.75 9.875 0l15.999 15.999L9.875 31.998z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="link" xmlns="http://www.w3.org/2000/svg"><path d="M24.037 7.963q3.305 0 5.634 2.366T32 16t-2.329 5.671-5.634 2.366h-6.46v-3.08h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.08h6.46zM9.615 17.578v-3.155h12.77v3.155H9.615zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.08h-6.46q-3.305 0-5.634-2.366T0 16.001t2.329-5.671 5.634-2.366h6.46v3.08h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="menu" xmlns="http://www.w3.org/2000/svg"><path d="M.001 5.334h31.998v3.583H.001V5.334zm0 12.416v-3.5h31.998v3.5H.001zm0 8.916v-3.583h31.998v3.583H.001z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="notifications" xmlns="http://www.w3.org/2000/svg"><path d="M25.846 22.154l3.308 3.308v1.615H2.847v-1.615l3.308-3.308V14q0-3.846 1.961-6.692t5.423-3.692V2.462q0-1 .692-1.731T16 0t1.769.731.692 1.731v1.154q3.461.846 5.423 3.692T25.846 14v8.154zM16 32q-1.385 0-2.346-.923t-.962-2.308h6.615q0 1.308-1 2.269T15.999 32z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="person" xmlns="http://www.w3.org/2000/svg"><path d="M16 20.023q5.052 0 10.526 2.199t5.473 5.754v4.023H0v-4.023q0-3.555 5.473-5.754t10.526-2.199zM16 16q-3.275 0-5.614-2.339T8.047 8.047t2.339-5.661T16 0t5.614 2.386 2.339 5.661-2.339 5.614T16 16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="pin" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 19.2h9.6v-1.6L22.4 16V3.2l4.8-1.6V0H4.8v1.6l4.8 1.6V16l-4.8 1.6v1.6h9.6v11.2L16 32l1.6-1.6V19.2z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="rss_feed" xmlns="http://www.w3.org/2000/svg"><path d="M-.481 12.048q8.482 0 14.457 5.976t5.976 14.457h-5.879q0-5.976-4.289-10.264T-.48 17.928v-5.879zm0-11.565q13.204 0 22.601 9.397t9.397 22.601h-5.783q0-10.891-7.662-18.553T-.481 6.266V.483zm0 27.468q0-1.831 1.301-3.132t3.229-1.301 3.181 1.253 1.253 3.181-1.301 3.229-3.132 1.301q-1.928 0-3.229-1.301T-.48 27.952z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="search" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zm10.981 0L32 29.255 29.255 32l-9.094-9.094v-1.458l-.515-.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432T.001 11.925t3.474-8.45 8.45-3.474 8.407 3.474 3.432 8.45q0 1.802-.858 4.075t-1.973 3.646l.515.515h1.458z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="security" xmlns="http://www.w3.org/2000/svg"><path d="M16 0l13.072 5.855v8.715q0 6.059-3.745 11.063T16 31.999q-5.583-1.362-9.327-6.366T2.928 14.57V5.855zm0 16v13.004q4.017-1.294 6.808-4.868T26.144 16H16zm0 0V3.2L5.856 7.693v8.306H16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="telescope" xmlns="http://www.w3.org/2000/svg"><path d="M25.026 3.335a.466.466 0 00-.646-.238L13.362 8.91a.463.463 0 00-.216.575l.227.593-6.36 3.488a.462.462 0 00-.205.583l.211.508-6.755 3.228a.463.463 0 00-.228.595l1.386 3.341a.463.463 0 00.583.259l7.056-2.5.211.508a.462.462 0 00.557.267l6.733-1.941.202.527a.46.46 0 00.566.277l12.03-3.702a.46.46 0 00.293-.613L25.026 3.335zM2.109 21.061l-1.049-2.53 6.314-3.018 1.332 3.211-6.596 2.337zm7.857-1.708l-.22-.531-1.706-4.113-.22-.53 5.863-3.216 2.197 5.676.347.908-6.261 1.806zm7.505-1.146l-.188-.491c-.003-.01-.001-.022-.006-.032l-.572-1.478-2.549-6.668 10.201-5.381 4.249 10.624-11.136 3.428zm8.943-16.723a.463.463 0 00-.86.344l5.552 13.881a.464.464 0 00.602.258.464.464 0 00.258-.602L26.413 1.484zM16.268 20.627h-2.776c-1.055 0-1.851.796-1.851 1.851v1.217l-5.44 6.347a.462.462 0 10.702.602l5.415-6.316h2.101v6.015a.463.463 0 00.926 0v-6.015h2.101l5.414 6.316a.462.462 0 10.703-.602l-5.44-6.347v-1.148c0-1.076-.813-1.92-1.851-1.92zm.925 2.777h-4.627v-.925c0-.545.38-.925.925-.925h2.776c.527 0 .925.428.925.995v.856z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="timer" xmlns="http://www.w3.org/2000/svg"><path d="M16 29q4.428 0 7.536-3.143t3.107-7.571-3.107-7.536T16 7.643 8.464 10.75t-3.107 7.536 3.107 7.571T16 29zM26.714 9.786q1.214 1.571 2.107 4.036t.893 4.464q0 5.643-4 9.678T16 32t-9.714-4.036-4-9.678 4-9.678T16 4.572q1.929 0 4.464.929t4.107 2.143l2.143-2.214q1.143.929 2.143 2.143zM14.5 19.857v-9.143h3v9.143h-3zM20.571.001v3.071h-9.143V.001h9.143z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="tree" xmlns="http://www.w3.org/2000/svg"><path d="M32 14.423H20.808V9.616h-3.23v12.77h3.23v-4.807H32v12.845H20.808v-4.807h-6.385v-16h-3.23v4.807H.001V1.579h11.192v4.807h9.615V1.579H32v12.845z"/></symbol></svg>
+
+    <div class="wrapper">
+        <header class="gblog-header">
+    <div class="container flex align-center justify-center">
+        <a class="gblog-header__link" rel="me" href="https://xixiliguo.github.io/">
+            <span class="gblog-brand flex align-center justify-center">
+                <img class="gblog-brand__img" src="/brand.svg" alt="" width=60 height=60>
+                My personal Blog
+            </span>
+            
+        </a>
     </div>
-    
-    
-  <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
-  
-  <h2 class="title">个人网站</h2>
-  
-  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
-      
-        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
 </header>
+<nav class="gblog-nav">
+    <input type="checkbox" id="menu-control" class="hidden">
+    <div class="gblog-nav__control">
+        <label for="menu-control"  class="flex align-center justify-center">
+            <svg class="icon menu"><use xlink:href="#menu"></use></svg>
+            <svg class="icon clear"><use xlink:href="#clear"></use></svg>
+            <span>Nav</span>
+        </label>
+    </div>
+    <ul class="gblog-nav__list container flex flex-wrap justify-center menu-content">
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/BM/">BM</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Bandersnatch/">Bandersnatch</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Hash/">Hash</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/KMP/">KMP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Lua/">Lua</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NTP/">NTP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NetWork/">NetWork</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/OpenStack/">OpenStack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Pypi/">Pypi</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Python/">Python</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/RSS/">RSS</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/atop/">atop</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/boot/">boot</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/c/">c</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/cloud-init/">cloud-init</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/command/">command</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/crypt/">crypt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/dns/">dns</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/docker/">docker</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/golang/">golang</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/httprouter/">httprouter</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/iptables/">iptables</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/libvirt/">libvirt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/linux/">linux</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/net-stack/">net stack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/os/exec/">os/exec</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/proc/">proc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/radix-tree/">radix-tree</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/runc/">runc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/shadow/">shadow</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/systemd/">systemd</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/tcp/">tcp</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/yum/">yum</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%BB%E6%92%AD/">任播</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97/">多网卡队列</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E7%89%87%E6%AE%B5/">片段</a>
+        </li>
+        
+        
+        
+    </ul>
+</nav>
 
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">DNS学习总结</h1>
-      <p class="post-meta">@Peter Wangbo · Nov 24, 2019 · 3 min read</p>
-    </header>
-    <article class="post-content"><p>这里记录了自己学习DNS协议中总结和对一些e问题的思考</p>
 
-<p></p>
+        <main class="gblog-page container">
+            
+    <article class="gblog-post">
+        <header class="gblog-post__header">
+            
+            
 
+            <h1>DNS学习总结</h1>
+            
+            <div class="gblog-post__meta">
+                <span class="no-wrap">
+                    <svg class="icon date"><use xlink:href="#date"></use></svg>
+                    <span class="gblog-post__tag">
+                        <time datetime="2019-11-24T22:22:53&#43;08:00">
+                            
+                            Nov 24, 2019
+                        </time>
+                    </span>
+                </span>
+
+                <span class="no-wrap">
+                    <svg class="icon timer"><use xlink:href="#timer"></use></svg>
+                    <span class="gblog-post__tag">5 min read</span>
+                </span>
+            </div>
+            
+        </header>
+
+        <section class="gblog-markdown">
+            <p>这里记录了自己学习DNS协议中总结和对一些问题的思考</p>
 <h1 id="dns协议">DNS协议</h1>
-
-<p>DNS默认使用UDP协议,发消息到服务器的53端口. UDP不需要TCP那样三个握手建立连接. 效率更高. 简单地请求,然后收到回复.<br />
-根域名有13台, 这是因为早期协议涉及时, 规定dns数据包最大512个字节(不含IP层和MAC层). 最多就只能容纳13个信息. 具体见下面文章所诉<br />
-<a href="https://www.apnic.net/get-ip/faqs/rootservers/">https://www.apnic.net/get-ip/faqs/rootservers/</a><br />
-<a href="https://miek.nl/2013/november/10/why-13-dns-root-servers/">https://miek.nl/2013/november/10/why-13-dns-root-servers/</a><br />
-确实根域名有13个IP, 但后面每个IP并不指向一个服务器. 这里采用了BGP的任播机制, 访问IP, 路由器会路由到距离你最近的一台服务器. 指根DNS服务器的负载均衡技术<br />
+<p>DNS默认使用UDP协议,发消息到服务器的53端口. UDP不需要TCP那样三个握手建立连接. 效率更高. 简单地请求,然后收到回复.<br>
+根域名有13台, 这是因为早期协议涉及时, 规定dns数据包最大512个字节(不含IP层和MAC层). 最多就只能容纳13个信息. 具体见下面文章所诉<br>
+<a href="https://www.apnic.net/get-ip/faqs/rootservers/">https://www.apnic.net/get-ip/faqs/rootservers/</a><br>
+<a href="https://miek.nl/2013/november/10/why-13-dns-root-servers/">https://miek.nl/2013/november/10/why-13-dns-root-servers/</a><br>
+确实根域名有13个IP, 但后面每个IP并不指向一个服务器. 这里采用了BGP的任播机制, 访问IP, 路由器会路由到距离你最近的一台服务器. 这是根DNS服务器的负载均衡技术<br>
 单播,多播,广播和任播技术介绍参见: <a href="https://www.hi-linux.com/posts/26571.html">https://www.hi-linux.com/posts/26571.html</a></p>
-
-<h1 id="resolv-conf文件解析">resolv.conf文件解析</h1>
-
-<p><code>/etc/resolv.conf</code>详细配置解析参见<code>man 5 resolv.conf</code>, 它属于glibc的一部分. 如果程序发消息到DNS服务器请求域名解析,则该文件的所有配置文件不生效. 比如<code>dig</code>直接和DNS服务器交互. <code>ping,curl,wget</code>则使用<code>glibc</code>库<br />
-默认timeout为5, attempts为2, 意思是在放弃该连接,尝试下一个DNS服务器前等待超时时间为5s,  尝试2遍后放弃. 其中一遍表示轮询完一遍所有的DNS服务器失败<br />
+<h1 id="resolvconf文件解析">resolv.conf文件解析</h1>
+<p><code>/etc/resolv.conf</code>详细配置解析参见<code>man 5 resolv.conf</code>, 它属于glibc的一部分. 如果程序发消息到DNS服务器请求域名解析,则该文件的所有配置文件不生效. 比如<code>dig</code>直接和DNS服务器交互. <code>ping,curl,wget</code>则使用<code>glibc</code>库<br>
+默认timeout为5, attempts为2, 意思是在放弃该连接,尝试下一个DNS服务器前等待超时时间为5s,  尝试2遍后放弃. 其中一遍表示轮询完一遍所有的DNS服务器失败<br>
 假设配置文件如下</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># cat /etc/resolv.conf
-</span><span style="color:#75715e"></span><span style="">options single-request-reopen
-</span><span style=""></span><span style="">;</span><span style=""> generated by /usr/sbin/dhclient-script
-</span><span style="">search localdomain
-</span><span style="">nameserver </span><span style="color:#ae81ff">114</span><span style="">.114.114.117
-</span><span style="">nameserver </span><span style="color:#ae81ff">114</span><span style="">.114.114.113</span></code></pre>
-</div>
-<p>下面是<code>ping www.baid1xe21.com1</code>的报文交互. 可以看到放弃两个NS后,还根据search的配置尝试使用<code>www.baid1xe21.com1.localdomain</code>获取解析</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># tcpdump -i eth0 -eennvv udp
-</span><span style="color:#75715e"></span><span style="">tcpdump: listening on eth0, link-type EN10MB </span><span style="color:#f92672">(</span><span style="">Ethernet</span><span style="color:#f92672">)</span><span style="">, capture size </span><span style="color:#ae81ff">262144</span><span style=""> bytes
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:12.576101 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">46506</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.52434 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270e -&gt; 0x20fb!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:17.581591 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">37849</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.55684 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270a -&gt; 0x144d!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:22.588076 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">52914</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.52434 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270e -&gt; 0x20fb!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:27.593191 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">78</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">47412</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">64</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.55684 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x270a -&gt; 0x144d!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">20589</span><span style="">+ A? www.baid1xe21.com1. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">36</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:32.598796 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">60578</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.53255 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x271a -&gt; 0x09f4!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:37.605004 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">52533</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.50522 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x2716 -&gt; 0x14a5!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:42.609907 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">3384</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.53255 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.117.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x271a -&gt; 0x09f4!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">15</span><span style="">:39:47.616265 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:03:fd:99 &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:18, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">90</span><span style="">: </span><span style="color:#f92672">(</span><span style="">tos 0x0, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">52752</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto UDP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">17</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">76</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.22.50522 &gt; </span><span style="color:#ae81ff">114</span><span style="">.114.114.113.53: </span><span style="color:#f92672">[</span><span style="">bad udp cksum 0x2716 -&gt; 0x14a5!</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#ae81ff">59663</span><span style="">+ A? www.baid1xe21.com1.localdomain. </span><span style="color:#f92672">(</span><span style="color:#ae81ff">48</span><span style="color:#f92672">)</span></code></pre>
-</div>
-<p>通过<code>strace</code>观测到的系统调用如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ae81ff">17</span><span style="">:38:46 close</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="color:#f92672">)</span><span style="">                       </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000263&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 socket</span><span style="color:#f92672">(</span><span style="">AF_INET, SOCK_DGRAM</span><span style="">|</span><span style="">SOCK_CLOEXEC</span><span style="">|</span><span style="">SOCK_NONBLOCK, IPPROTO_IP</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000222&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 connect</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="color:#f92672">{</span><span style="">sa_family</span><span style=""></span><span style="color:#f92672">=</span><span style="">AF_INET, </span><span style="">sin_port</span><span style=""></span><span style="color:#f92672">=</span><span style="">htons</span><span style="color:#f92672">(</span><span style="color:#ae81ff">53</span><span style="color:#f92672">)</span><span style="">, </span><span style="">sin_addr</span><span style=""></span><span style="color:#f92672">=</span><span style="">inet_addr</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;10.211.54.2&#34;</span><span style="color:#f92672">)}</span><span style="">, </span><span style="color:#ae81ff">16</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000280&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000173&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000147&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:46 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.006352&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 socket</span><span style="color:#f92672">(</span><span style="">AF_INET, SOCK_DGRAM</span><span style="">|</span><span style="">SOCK_CLOEXEC</span><span style="">|</span><span style="">SOCK_NONBLOCK, IPPROTO_IP</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">5</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000306&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 connect</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="color:#f92672">{</span><span style="">sa_family</span><span style=""></span><span style="color:#f92672">=</span><span style="">AF_INET, </span><span style="">sin_port</span><span style=""></span><span style="color:#f92672">=</span><span style="">htons</span><span style="color:#f92672">(</span><span style="color:#ae81ff">53</span><span style="color:#f92672">)</span><span style="">, </span><span style="">sin_addr</span><span style=""></span><span style="color:#f92672">=</span><span style="">inet_addr</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;10.211.54.3&#34;</span><span style="color:#f92672">)}</span><span style="">, </span><span style="color:#ae81ff">16</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000243&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000109&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000290&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:51 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.006234&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:56 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000221&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:56 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000371&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:38:56 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.006071&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:01 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">revents</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLOUT</span><span style="color:#f92672">}])</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000119&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:01 sendto</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="color:#e6db74">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span><span style="">..., </span><span style="color:#ae81ff">41</span><span style="">, MSG_NOSIGNAL, NULL, </span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">41</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000617&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:01 poll</span><span style="color:#f92672">([{</span><span style="">fd</span><span style=""></span><span style="color:#f92672">=</span><span style="color:#ae81ff">5</span><span style="">, </span><span style="">events</span><span style=""></span><span style="color:#f92672">=</span><span style="">POLLIN</span><span style="color:#f92672">}]</span><span style="">, </span><span style="color:#ae81ff">1</span><span style="">, </span><span style="color:#ae81ff">5000</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> </span><span style="color:#f92672">(</span><span style="">Timeout</span><span style="color:#f92672">)</span><span style=""> &lt;</span><span style="color:#ae81ff">5</span><span style="">.005939&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:06 close</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="color:#f92672">)</span><span style="">                       </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000189&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:06 close</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="color:#f92672">)</span><span style="">                       </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000146&gt;
-</span><span style=""></span><span style="color:#ae81ff">17</span><span style="">:39:06 open</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/usr/share/locale/locale.alias&#34;</span><span style="">, O_RDONLY</span><span style="">|</span><span style="">O_CLOEXEC</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style=""> &lt;</span><span style="color:#ae81ff">0</span><span style="">.000120&gt;</span></code></pre>
-</div>
-<p>DHCP自动获取IP场景,经常会覆盖用户自己配置的参数, 可以使用类似如下的命令将配置持久化. dhcp只会更新DNS服务器,不会删除用户配置.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">echo</span><span style=""> </span><span style="color:#e6db74">&#39;RES_OPTIONS=&#34;timeout:2 attempts:3 rotate single-request-reopen&#34;&#39;</span><span style=""> &gt;&gt;/etc/sysconfig/network</span></code></pre>
-</div>
-<p>在容器场景下,经常遇到域名解析5s超时的问题,主要是因为<code>glibc</code>下会同时并行发出请求A级记录和AAA记录的报文, 底层有时处理不了这种竞争条件,导致超时.  可通通过<code>single-request-reopen</code>来解决, 详细见如下文章:<br />
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># cat /etc/resolv.conf</span>
+options single-request-reopen
+<span class="p">;</span> generated by /usr/sbin/dhclient-script
+search localdomain
+nameserver 114.114.114.117
+nameserver 114.114.114.113
+</code></pre></div><p>下面是<code>ping www.baid1xe21.com1</code>的报文交互. 可以看到放弃两个NS后,还根据search的配置尝试使用<code>www.baid1xe21.com1.localdomain</code>获取解析</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># tcpdump -i eth0 -eennvv udp</span>
+tcpdump: listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, capture size <span class="m">262144</span> bytes
+15:39:12.576101 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 78: <span class="o">(</span>tos 0x0, ttl 64, id 46506, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 64<span class="o">)</span>
+    10.211.55.22.52434 &gt; 114.114.114.117.53: <span class="o">[</span>bad udp cksum 0x270e -&gt; 0x20fb!<span class="o">]</span> 20589+ A? www.baid1xe21.com1. <span class="o">(</span>36<span class="o">)</span>
+15:39:17.581591 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 78: <span class="o">(</span>tos 0x0, ttl 64, id 37849, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 64<span class="o">)</span>
+    10.211.55.22.55684 &gt; 114.114.114.113.53: <span class="o">[</span>bad udp cksum 0x270a -&gt; 0x144d!<span class="o">]</span> 20589+ A? www.baid1xe21.com1. <span class="o">(</span>36<span class="o">)</span>
+15:39:22.588076 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 78: <span class="o">(</span>tos 0x0, ttl 64, id 52914, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 64<span class="o">)</span>
+    10.211.55.22.52434 &gt; 114.114.114.117.53: <span class="o">[</span>bad udp cksum 0x270e -&gt; 0x20fb!<span class="o">]</span> 20589+ A? www.baid1xe21.com1. <span class="o">(</span>36<span class="o">)</span>
+15:39:27.593191 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 78: <span class="o">(</span>tos 0x0, ttl 64, id 47412, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 64<span class="o">)</span>
+    10.211.55.22.55684 &gt; 114.114.114.113.53: <span class="o">[</span>bad udp cksum 0x270a -&gt; 0x144d!<span class="o">]</span> 20589+ A? www.baid1xe21.com1. <span class="o">(</span>36<span class="o">)</span>
+15:39:32.598796 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 90: <span class="o">(</span>tos 0x0, ttl 64, id 60578, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 76<span class="o">)</span>
+    10.211.55.22.53255 &gt; 114.114.114.117.53: <span class="o">[</span>bad udp cksum 0x271a -&gt; 0x09f4!<span class="o">]</span> 59663+ A? www.baid1xe21.com1.localdomain. <span class="o">(</span>48<span class="o">)</span>
+15:39:37.605004 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 90: <span class="o">(</span>tos 0x0, ttl 64, id 52533, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 76<span class="o">)</span>
+    10.211.55.22.50522 &gt; 114.114.114.113.53: <span class="o">[</span>bad udp cksum 0x2716 -&gt; 0x14a5!<span class="o">]</span> 59663+ A? www.baid1xe21.com1.localdomain. <span class="o">(</span>48<span class="o">)</span>
+15:39:42.609907 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 90: <span class="o">(</span>tos 0x0, ttl 64, id 3384, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 76<span class="o">)</span>
+    10.211.55.22.53255 &gt; 114.114.114.117.53: <span class="o">[</span>bad udp cksum 0x271a -&gt; 0x09f4!<span class="o">]</span> 59663+ A? www.baid1xe21.com1.localdomain. <span class="o">(</span>48<span class="o">)</span>
+15:39:47.616265 00:1c:42:03:fd:99 &gt; 00:1c:42:00:00:18, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 90: <span class="o">(</span>tos 0x0, ttl 64, id 52752, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto UDP <span class="o">(</span>17<span class="o">)</span>, length 76<span class="o">)</span>
+    10.211.55.22.50522 &gt; 114.114.114.113.53: <span class="o">[</span>bad udp cksum 0x2716 -&gt; 0x14a5!<span class="o">]</span> 59663+ A? www.baid1xe21.com1.localdomain. <span class="o">(</span>48<span class="o">)</span>
+</code></pre></div><p>通过<code>strace</code>观测到的系统调用如下:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">17:38:46 close<span class="o">(</span>5<span class="o">)</span>                       <span class="o">=</span> <span class="m">0</span> &lt;0.000263&gt;
+17:38:46 socket<span class="o">(</span>AF_INET, SOCK_DGRAM<span class="p">|</span>SOCK_CLOEXEC<span class="p">|</span>SOCK_NONBLOCK, IPPROTO_IP<span class="o">)</span> <span class="o">=</span> <span class="m">4</span> &lt;0.000222&gt;
+17:38:46 connect<span class="o">(</span>4, <span class="o">{</span><span class="nv">sa_family</span><span class="o">=</span>AF_INET, <span class="nv">sin_port</span><span class="o">=</span>htons<span class="o">(</span>53<span class="o">)</span>, <span class="nv">sin_addr</span><span class="o">=</span>inet_addr<span class="o">(</span><span class="s2">&#34;10.211.54.2&#34;</span><span class="o">)}</span>, 16<span class="o">)</span> <span class="o">=</span> <span class="m">0</span> &lt;0.000280&gt;
+17:38:46 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>4, <span class="nv">events</span><span class="o">=</span>POLLOUT<span class="o">}]</span>, 1, 0<span class="o">)</span> <span class="o">=</span> <span class="m">1</span> <span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>4, <span class="nv">revents</span><span class="o">=</span>POLLOUT<span class="o">}])</span> &lt;0.000173&gt;
+17:38:46 sendto<span class="o">(</span>4, <span class="s2">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span>..., 41, MSG_NOSIGNAL, NULL, 0<span class="o">)</span> <span class="o">=</span> <span class="m">41</span> &lt;0.000147&gt;
+17:38:46 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>4, <span class="nv">events</span><span class="o">=</span>POLLIN<span class="o">}]</span>, 1, 5000<span class="o">)</span> <span class="o">=</span> <span class="m">0</span> <span class="o">(</span>Timeout<span class="o">)</span> &lt;5.006352&gt;
+17:38:51 socket<span class="o">(</span>AF_INET, SOCK_DGRAM<span class="p">|</span>SOCK_CLOEXEC<span class="p">|</span>SOCK_NONBLOCK, IPPROTO_IP<span class="o">)</span> <span class="o">=</span> <span class="m">5</span> &lt;0.000306&gt;
+17:38:51 connect<span class="o">(</span>5, <span class="o">{</span><span class="nv">sa_family</span><span class="o">=</span>AF_INET, <span class="nv">sin_port</span><span class="o">=</span>htons<span class="o">(</span>53<span class="o">)</span>, <span class="nv">sin_addr</span><span class="o">=</span>inet_addr<span class="o">(</span><span class="s2">&#34;10.211.54.3&#34;</span><span class="o">)}</span>, 16<span class="o">)</span> <span class="o">=</span> <span class="m">0</span> &lt;0.000243&gt;
+17:38:51 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>5, <span class="nv">events</span><span class="o">=</span>POLLOUT<span class="o">}]</span>, 1, 0<span class="o">)</span> <span class="o">=</span> <span class="m">1</span> <span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>5, <span class="nv">revents</span><span class="o">=</span>POLLOUT<span class="o">}])</span> &lt;0.000109&gt;
+17:38:51 sendto<span class="o">(</span>5, <span class="s2">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span>..., 41, MSG_NOSIGNAL, NULL, 0<span class="o">)</span> <span class="o">=</span> <span class="m">41</span> &lt;0.000290&gt;
+17:38:51 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>5, <span class="nv">events</span><span class="o">=</span>POLLIN<span class="o">}]</span>, 1, 5000<span class="o">)</span> <span class="o">=</span> <span class="m">0</span> <span class="o">(</span>Timeout<span class="o">)</span> &lt;5.006234&gt;
+17:38:56 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>4, <span class="nv">events</span><span class="o">=</span>POLLOUT<span class="o">}]</span>, 1, 0<span class="o">)</span> <span class="o">=</span> <span class="m">1</span> <span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>4, <span class="nv">revents</span><span class="o">=</span>POLLOUT<span class="o">}])</span> &lt;0.000221&gt;
+17:38:56 sendto<span class="o">(</span>4, <span class="s2">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span>..., 41, MSG_NOSIGNAL, NULL, 0<span class="o">)</span> <span class="o">=</span> <span class="m">41</span> &lt;0.000371&gt;
+17:38:56 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>4, <span class="nv">events</span><span class="o">=</span>POLLIN<span class="o">}]</span>, 1, 5000<span class="o">)</span> <span class="o">=</span> <span class="m">0</span> <span class="o">(</span>Timeout<span class="o">)</span> &lt;5.006071&gt;
+17:39:01 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>5, <span class="nv">events</span><span class="o">=</span>POLLOUT<span class="o">}]</span>, 1, 0<span class="o">)</span> <span class="o">=</span> <span class="m">1</span> <span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>5, <span class="nv">revents</span><span class="o">=</span>POLLOUT<span class="o">}])</span> &lt;0.000119&gt;
+17:39:01 sendto<span class="o">(</span>5, <span class="s2">&#34;w\221\1\0\0\1\0\0\0\0\0\0\3www\003163\3com\vlocaldo&#34;</span>..., 41, MSG_NOSIGNAL, NULL, 0<span class="o">)</span> <span class="o">=</span> <span class="m">41</span> &lt;0.000617&gt;
+17:39:01 poll<span class="o">([{</span><span class="nv">fd</span><span class="o">=</span>5, <span class="nv">events</span><span class="o">=</span>POLLIN<span class="o">}]</span>, 1, 5000<span class="o">)</span> <span class="o">=</span> <span class="m">0</span> <span class="o">(</span>Timeout<span class="o">)</span> &lt;5.005939&gt;
+17:39:06 close<span class="o">(</span>4<span class="o">)</span>                       <span class="o">=</span> <span class="m">0</span> &lt;0.000189&gt;
+17:39:06 close<span class="o">(</span>5<span class="o">)</span>                       <span class="o">=</span> <span class="m">0</span> &lt;0.000146&gt;
+17:39:06 open<span class="o">(</span><span class="s2">&#34;/usr/share/locale/locale.alias&#34;</span>, O_RDONLY<span class="p">|</span>O_CLOEXEC<span class="o">)</span> <span class="o">=</span> <span class="m">4</span> &lt;0.000120&gt;
+</code></pre></div><p>DHCP自动获取IP场景,经常会覆盖用户自己配置的参数, 可以使用类似如下的命令将配置持久化. dhcp只会更新DNS服务器,不会删除用户配置.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="s1">&#39;RES_OPTIONS=&#34;timeout:2 attempts:3 rotate single-request-reopen&#34;&#39;</span> &gt;&gt;/etc/sysconfig/network
+</code></pre></div><p>在容器场景下,经常遇到域名解析5s超时的问题,主要是因为<code>glibc</code>下会同时并行发出请求A级记录和AAA记录的报文, 底层有时处理不了这种竞争条件,导致超时.  可通通过<code>single-request-reopen</code>来解决, 详细见如下文章:<br>
 <a href="https://tencentcloudcontainerteam.github.io/2018/10/26/DNS-5-seconds-delay/">https://tencentcloudcontainerteam.github.io/2018/10/26/DNS-5-seconds-delay/</a></p>
-
 <p>在查询域名时，如果域名里面<code>.</code>的个数小于 ndots 指定的数，则会根据 search 中配置的列表依次在对应域中查询，如果没有返回，则最后直接查询域名本身。
 ndots 默认是1</p>
-
 <p>如果大于ndtos, 先直接查询, 查询不到再在serach里的域里继续查询
 假设配置如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">nameserver </span><span style="color:#ae81ff">10</span><span style="">.232.0.3
-</span><span style="">search default.svc.cluster.local svc.cluster.local cluster.local
-</span><span style="">options ndots:5</span></code></pre>
-</div>
-<p>想解析的<code>kubernetes.default.svc</code>中的 . 只有2，小于5，这时会依次拼接上 search 中的地址之后再进行查询，如果都查询不到，则再查询本身。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># host -v kubernetes.default.svc
-</span><span style="color:#75715e"></span><span style="">Trying </span><span style="color:#e6db74">&#34;kubernetes.default.svc.default.svc.cluster.local&#34;</span><span style="">
-</span><span style="">Trying </span><span style="color:#e6db74">&#34;kubernetes.default.svc.svc.cluster.local&#34;</span><span style="">
-</span><span style="">Trying </span><span style="color:#e6db74">&#34;kubernetes.default.svc.cluster.local&#34;</span><span style="">
-</span><span style="">...</span></code></pre>
-</div>
-<h1 id="dig命令使用">dig命令使用</h1>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">nameserver 10.232.0.3
+search default.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5
+</code></pre></div><p>想解析的<code>kubernetes.default.svc</code>中的 . 只有2，小于5，这时会依次拼接上 search 中的地址之后再进行查询，如果都查询不到，则再查询本身。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># host -v kubernetes.default.svc</span>
+Trying <span class="s2">&#34;kubernetes.default.svc.default.svc.cluster.local&#34;</span>
+Trying <span class="s2">&#34;kubernetes.default.svc.svc.cluster.local&#34;</span>
+Trying <span class="s2">&#34;kubernetes.default.svc.cluster.local&#34;</span>
+...
+</code></pre></div><h1 id="dig命令使用">dig命令使用</h1>
 <p>查询<code>www.163.com</code>解析信息</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig www.163.com</span></code></pre>
-</div>
-<p>迭代查询</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig +trace www.163.com</span></code></pre>
-</div>
-<p>指定从DNS服务器<code>8.8.8.8</code>获取解析结果</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ dig @8.8.8.8 www.163.com</span></code></pre>
-</div></article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dig www.163.com
+</code></pre></div><p>迭代查询</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dig +trace www.163.com
+</code></pre></div><p>指定从DNS服务器<code>8.8.8.8</code>获取解析结果</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dig @8.8.8.8 www.163.com
+</code></pre></div><p>反向解析一个ip</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dig -x 114.114.114.114
+
+<span class="p">;</span> &lt;&lt;&gt;&gt; DiG 9.9.4-RedHat-9.9.4-74.el7_6.1 &lt;&lt;&gt;&gt; -x 114.114.114.114
+<span class="p">;;</span> global options: +cmd
+<span class="p">;;</span> Got answer:
+<span class="p">;;</span> -&gt;&gt;HEADER<span class="s">&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span class="m">58603</span>
+<span class="p">;;</span> flags: qr rd ra<span class="p">;</span> QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: <span class="m">1</span>
+
+<span class="p">;;</span> OPT PSEUDOSECTION:
+<span class="p">;</span> EDNS: version: 0, flags:<span class="p">;</span> udp: <span class="m">512</span>
+<span class="p">;;</span> QUESTION SECTION:
+<span class="p">;</span>114.114.114.114.in-addr.arpa.	IN	PTR
+
+<span class="p">;;</span> ANSWER SECTION:
+114.114.114.114.in-addr.arpa. <span class="m">119</span> IN	PTR	public1.114dns.com.
+
+<span class="p">;;</span> Query time: <span class="m">33</span> msec
+<span class="p">;;</span> SERVER: 10.211.55.1#53<span class="o">(</span>10.211.55.1<span class="o">)</span>
+<span class="p">;;</span> WHEN: Sun Oct <span class="m">04</span> 20:20:09 HKT <span class="m">2020</span>
+<span class="p">;;</span> MSG SIZE  rcvd: <span class="m">89</span>
+</code></pre></div><h1 id="getaddrinfo返回的多个a记录负载均衡失效">getaddrinfo返回的多个A记录，负载均衡失效</h1>
+<p>域名经常会对应多个地址, 如下面所示, 解析www.baidu.com返回 14.215.177.39 和 14.215.177.38,  程序默认是取第一个作为最终结果. 所以DNS服务器会随机调整返回的IP列表顺序, 这样可以实现负载均衡, 叫做 round-robin-dns</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dig www.baidu.com
+
+<span class="p">;</span> &lt;&lt;&gt;&gt; DiG 9.11.20-RedHat-9.11.20-5.el8 &lt;&lt;&gt;&gt; www.baidu.com
+<span class="p">;;</span> global options: +cmd
+<span class="p">;;</span> Got answer:
+<span class="p">;;</span> -&gt;&gt;HEADER<span class="s">&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span class="m">6006</span>
+<span class="p">;;</span> flags: qr rd ra<span class="p">;</span> QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: <span class="m">0</span>
+
+<span class="p">;;</span> QUESTION SECTION:
+<span class="p">;</span>www.baidu.com.                 IN      A
+
+<span class="p">;;</span> ANSWER SECTION:
+www.baidu.com.          <span class="m">831</span>     IN      CNAME   www.a.shifen.com.
+www.a.shifen.com.       <span class="m">122</span>     IN      A       14.215.177.39
+www.a.shifen.com.       <span class="m">122</span>     IN      A       14.215.177.38
+
+<span class="p">;;</span> Query time: <span class="m">11</span> msec
+<span class="p">;;</span> SERVER: 192.168.3.1#53<span class="o">(</span>192.168.3.1<span class="o">)</span>
+<span class="p">;;</span> WHEN: Sun Feb <span class="m">21</span> 21:35:18 CST <span class="m">2021</span>
+<span class="p">;;</span> MSG SIZE  rcvd: <span class="m">90</span>
+</code></pre></div><p>但在一些特殊场景下, getaddrinfo的返回的IPv4列表顺序永远是固定的,即使DNS服务器返回是随机的. 这是因为getaddrinfo遵从rfc3484对返回的IP列表进行排序. 具体影响是当返回的IP与客户端的IP处于同一子网, 拥有最长前缀的排在前面. 用于比较的前缀指的是ip地址的bit值</p>
+<p>192.168.3.20  == 11000000.10101000.00000011.00010100</p>
+<table>
+<thead>
+<tr>
+<th align="left">本机IP</th>
+<th align="left">DNS服务返回</th>
+<th align="left">getaddrinfo返回</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">192.168.3.20 /24</td>
+<td align="left">11000000.10101000.00001101.00011101 192.168.13.29<br> 11000000.10101000.00001101.00011011 192.168.13.27<br> 11000000.10101000.00000011.01000101 192.168.3.69</td>
+<td align="left">192.168.3.69<br> 192.168.13.29<br> 192.168.13.27</td>
+<td align="left">只有192.168.3.69和本机IP同网段,所以它靠前,非同一子网的保持原顺序不变</td>
+</tr>
+<tr>
+<td align="left">192.168.3.20 /24</td>
+<td align="left">11000000.10101000.00001101.00011101 192.168.13.29<br> 11000000.10101000.00000011.01000101 192.168.3.69 <br> 11000000.10101000.00000011.00011011 192.168.3.27</td>
+<td align="left">192.168.3.27<br> 192.168.3.69<br> 192.168.13.29<br></td>
+<td align="left">同网段有3.27 和 3.69 ,  commonprefixlen(27, 20) 大于 commonprefixlen(69, 20), 所以27靠前. 69靠后. 非同一子网的保持原顺序不变</td>
+</tr>
+<tr>
+<td align="left">192.168.3.20 /24</td>
+<td align="left">11000000.10101000.00000011.00011101 192.168.3.29<br> 11000000.10101000.00000011.00011010 192.168.3.26 <br> 11000000.10101000.00000011.00011011 192.168.3.27</td>
+<td align="left">192.168.3.29<br> 192.168.3.26<br> 192.168.3.27<br></td>
+<td align="left">三个的commonprefixlen都一样, 不需要排序.按原顺序返回</td>
+</tr>
+<tr>
+<td align="left">192.168.3.20 /24</td>
+<td align="left">11000000.10101000.00000011.00011101 192.168.3.29<br> 11000000.10101000.00000011.00010111 192.168.3.23 <br> 11000000.10101000.00000011.00011011 192.168.3.27</td>
+<td align="left">192.168.3.23<br> 192.168.3.29<br> 192.168.3.27<br></td>
+<td align="left">23的commonprefixlen大, 所以23靠前,其他两个的最长前缀相等,顺序不变</td>
+</tr>
+</tbody>
+</table>
+<p>如下是一个简单的测试结果</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ go run a.go
+use pure go, keep order from dns server  <span class="o">[</span>192.168.3.29 192.168.3.23 192.168.3.27<span class="o">]</span>
+use cgo, invoke getaddrinfo              <span class="o">[</span>192.168.3.23 192.168.3.29 192.168.3.27<span class="o">]</span>
+</code></pre></div><p>测试代码:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;io/ioutil&#34;</span>
+	<span class="s">&#34;net&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">data</span> <span class="o">:=</span> <span class="s">`
+</span><span class="s">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+</span><span class="s">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+</span><span class="s">192.168.3.29  www.abc.com
+</span><span class="s">192.168.3.23  www.abc.com
+</span><span class="s">192.168.3.27  www.abc.com
+</span><span class="s">`</span>
+
+	<span class="nx">ioutil</span><span class="p">.</span><span class="nf">WriteFile</span><span class="p">(</span><span class="s">&#34;/etc/hosts&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="mo">0644</span><span class="p">)</span>
+
+	<span class="nx">testCases</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">name</span>     <span class="kt">string</span>
+		<span class="nx">preferGo</span> <span class="kt">bool</span>
+	<span class="p">}{</span>
+		<span class="p">{</span><span class="s">&#34;use pure go, keep order from dns server&#34;</span><span class="p">,</span> <span class="kc">true</span><span class="p">},</span>
+		<span class="p">{</span><span class="s">&#34;use cgo, invoke getaddrinfo&#34;</span><span class="p">,</span> <span class="kc">false</span><span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">tc</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">testCases</span> <span class="p">{</span>
+		<span class="nx">net</span><span class="p">.</span><span class="nx">DefaultResolver</span><span class="p">.</span><span class="nx">PreferGo</span> <span class="p">=</span> <span class="nx">tc</span><span class="p">.</span><span class="nx">preferGo</span>
+		<span class="nx">ips</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">LookupHost</span><span class="p">(</span><span class="s">&#34;www.abc.com&#34;</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%-40s %v\n&#34;</span><span class="p">,</span> <span class="nx">tc</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">ips</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">data</span> <span class="p">=</span> <span class="s">`
+</span><span class="s">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+</span><span class="s">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+</span><span class="s">`</span>
+
+	<span class="nx">ioutil</span><span class="p">.</span><span class="nf">WriteFile</span><span class="p">(</span><span class="s">&#34;/etc/hosts&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="mo">0644</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div><p>要想避免这种特定场景返回的ip是固定的, 可以关闭ipv6.  该问题的相关参考信息:<br>
+<a href="https://access.redhat.com/solutions/22132">https://access.redhat.com/solutions/22132</a><br>
+<a href="https://access.redhat.com/solutions/8709">https://access.redhat.com/solutions/8709</a><br>
+<a href="https://gist.github.com/SpComb/c509bd064bc75151e6b41e8bc949d13f">https://gist.github.com/SpComb/c509bd064bc75151e6b41e8bc949d13f</a><br>
+<a href="https://github.com/hashicorp/consul/issues/1481">https://github.com/hashicorp/consul/issues/1481</a><br>
+<a href="https://github.com/weaveworks/weave/issues/1245">https://github.com/weaveworks/weave/issues/1245</a><br>
+<a href="https://tools.ietf.org/rfc/rfc3484.txt">https://tools.ietf.org/rfc/rfc3484.txt</a><br>
+<a href="https://www.api.rackspace.com/blog/glibc-linux-dns-round-robin-explanation/">https://www.api.rackspace.com/blog/glibc-linux-dns-round-robin-explanation/</a><br>
+<a href="https://github.com/golang/go/issues/18518">https://github.com/golang/go/issues/18518</a></p>
+
+        </section>
+    </article>
+
+        </main>
+
+        <footer class="gblog-footer">
+    <nav class="container">
+        <section class="flex flex-wrap align-center">
+            
+            
+            
+            
+        </section>
+        <section class="flex flex-wrap align-center">
+            <span class="gblog-footer__item">
+                Built with <a href="https://gohugo.io/" class="gblog-footer__link">Hugo</a> and
+                <svg class="icon heart"><use xlink:href="#heart"></use></svg>
+            </span>
+        </section>
         
-          <li><a href="https://xixiliguo.github.io/tags/dns"><span class="tag">Dns</span></a></li>
-        
-          <li><a href="https://xixiliguo.github.io/tags/%E4%BB%BB%E6%92%AD"><span class="tag">任播</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License
-      </p>
-    </footer>
-    
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2020 个人网站</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+    </nav>
 </footer>
 
+    </div>
 
-
-<script src="https://xixiliguo.github.io/js/bundle.js"></script>
-
-
+    
+<script defer src="/js/clipboard-f06c52bfdd.min.js"></script>
 <script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-107151468-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var clipboard = new ClipboardJS('.clip');
+    });
 </script>
 
 
-
-  </body>
+</body>
 </html>

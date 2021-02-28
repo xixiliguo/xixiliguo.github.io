@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Proc on 个人网站</title>
+    <title>proc on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/proc/</link>
-    <description>Recent content in Proc on 个人网站</description>
+    <description>Recent content in proc on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Sun, 05 Mar 2017 13:15:27 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/proc/index.xml" rel="self" type="application/rss+xml" />
@@ -18,8 +16,7 @@
       <pubDate>Sun, 05 Mar 2017 13:15:27 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/atop/</guid>
-      <description>&lt;p&gt;ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 &lt;code&gt;CPU，Memory，Disk，Network&lt;/code&gt; 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。
-&lt;/p&gt;</description>
+      <description>&lt;p&gt;ATOP是一款用于观察Linux性能的ASCII全屏交互式工具。类似于top,每隔一段时间报告 &lt;code&gt;CPU，Memory，Disk，Network&lt;/code&gt; 等硬件的性能信息，对于严重过载的资源会高亮显示。 除此之外，还包括进程级的相关统计信息。比如进程的CPU、内存、磁盘利用率，用户名，进程状态，启动时间，进程ID等。对于在上一个周期内退出的进程还会显示退出状态码。所有进程信息默认按CPU占用率降序排列。&lt;/p&gt;</description>
     </item>
     
   </channel>

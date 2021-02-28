@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Linux on 个人网站</title>
+    <title>linux on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/linux/</link>
-    <description>Recent content in Linux on 个人网站</description>
+    <description>Recent content in linux on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Sun, 19 Apr 2020 15:17:50 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
@@ -18,9 +16,7 @@
       <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/linux-boot/</guid>
-      <description>&lt;p&gt;记录linux启动过程的总结&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录linux启动过程的总结&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -29,9 +25,7 @@
       <pubDate>Sun, 07 Jan 2018 18:10:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/linux-common-commands/</guid>
-      <description>&lt;p&gt;收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.&lt;/p&gt;</description>
     </item>
     
     <item>

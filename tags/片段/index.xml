@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>片段 on 个人网站</title>
+    <title>片段 on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5/</link>
-    <description>Recent content in 片段 on 个人网站</description>
+    <description>Recent content in 片段 on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Wed, 30 Sep 2020 00:09:04 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/%E7%89%87%E6%AE%B5/index.xml" rel="self" type="application/rss+xml" />
@@ -18,8 +16,7 @@
       <pubDate>Wed, 30 Sep 2020 00:09:04 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/code_segment/</guid>
-      <description>&lt;p&gt;记录自己日常写的一些代码片段
-&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录自己日常写的一些代码片段&lt;/p&gt;</description>
     </item>
     
   </channel>

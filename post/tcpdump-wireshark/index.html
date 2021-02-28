@@ -1,510 +1,675 @@
 <!DOCTYPE html>
-<html lang="en">
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+
 <head>
-
-  <meta charset="utf-8" />
-
-  
-  <title>Tcpdump与Wireshark点滴记录</title>
-
-  
-  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 
 
-  
-  <meta name="author" content="Peter Wang" />
-  <meta name="description" content="记录Tcpdump相关知识和Wireshark技巧
 
-" />
 
-  
-  
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@gohugoio" />
-    <meta name="twitter:title" content="Tcpdump与Wireshark点滴记录" />
-    <meta name="twitter:description" content="记录Tcpdump相关知识和Wireshark技巧
-
-" />
-    <meta name="twitter:image" content="https://xixiliguo.github.io/img/avatar.jpg" />
-  
+    <meta name="description" content="记录Tcpdump相关知识和Wireshark技巧">
 
 
 
+    
+    
+        
+    
 
-<meta name="generator" content="Hugo 0.28" />
-
-
-<link rel="canonical" href="https://xixiliguo.github.io/post/tcpdump-wireshark/" />
-<link rel="alternative" href="https://xixiliguo.github.io/index.xml" title="个人网站" type="application/atom+xml" />
-
-
-<meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="format-detection" content="telephone=no,email=no,adress=no" />
-<meta http-equiv="Cache-Control" content="no-transform" />
+    
 
 
-<meta name="robots" content="index,follow" />
-<meta name="referrer" content="origin-when-cross-origin" />
-<meta name="google-site-verification" content="F6s4eXNTgPU68OVYmzw4tnWtVaUx-TgvSJ1AurJ0LUA" />
+    <title>Tcpdump与Wireshark点滴记录 | My personal Blog</title>
 
-<meta name="baidu-site-verification" content="xijFMBD2HS" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
 
+    
 
+    <meta property="og:title" content="Tcpdump与Wireshark点滴记录" />
+<meta property="og:description" content="记录Tcpdump相关知识和Wireshark技巧" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xixiliguo.github.io/post/tcpdump-wireshark/" />
+<meta property="article:published_time" content="2018-08-16T22:41:37+08:00" />
+<meta property="article:modified_time" content="2018-08-16T22:41:37+08:00" />
 
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="个人网站" />
-<meta name="msapplication-tooltip" content="个人网站" />
-<meta name='msapplication-navbutton-color' content="#5fbf5e" />
-<meta name="msapplication-TileColor" content="#5fbf5e" />
-<meta name="msapplication-TileImage" content="/img/tile-image-windows.png" />
-<link rel="icon" href="https://xixiliguo.github.io/img/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="https://xixiliguo.github.io/img/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="https://xixiliguo.github.io/img/favicon-32x32.png" />
-<link rel="icon" sizes="192x192" href="https://xixiliguo.github.io/img/touch-icon-android.png" />
-<link rel="apple-touch-icon" href="https://xixiliguo.github.io/img/touch-icon-apple.png" />
-<link rel="mask-icon" href="https://xixiliguo.github.io/img/safari-pinned-tab.svg" color="#5fbf5e" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Tcpdump与Wireshark点滴记录"/>
+<meta name="twitter:description" content="记录Tcpdump相关知识和Wireshark技巧"/>
 
 
+    <link rel="preload" as="font" href="/fonts/Metropolis.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Bold.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-BoldItalic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationSans-Italic.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/LiberationMono.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/DroidSans.woff2" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" as="font" href="/fonts/GeekblogIcons.woff2" type="font/woff2" crossorigin="anonymous">
 
-<link rel="stylesheet" href="//cdn.bootcss.com/video.js/6.2.8/alt/video-js-cdn.min.css" />
+<link rel="preload" href="/main-342b625c73.min.css" as="style">
+<link rel="stylesheet" href="/main-342b625c73.min.css" media="all">
 
-<link rel="stylesheet" href="https://xixiliguo.github.io/css/bundle.css" />
+<link rel="preload" href="/mobile-14fbbb71d2.min.css" as="style">
+<link rel="stylesheet" href="/mobile-14fbbb71d2.min.css" media="screen and (max-width: 45rem)">
 
+<link rel="preload" href="/print-86167e859a.min.css" as="style">
+<link rel="stylesheet" href="/print-86167e859a.min.css" media="print">
 
-  
-  <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <script src="//cdn.bootcss.com/video.js/6.2.8/ie8/videojs-ie8.min.js"></script>
-  <![endif]-->
-
-<!--[if lte IE 11]>
-    <script src="//cdn.bootcss.com/classlist/1.1.20170427/classList.min.js"></script>
-  <![endif]-->
+<link rel="preload" href="/custom.css" as="style">
+<link rel="stylesheet" href="/custom.css" media="all">
 
 
-<script src="//cdn.bootcss.com/object-fit-images/3.2.3/ofi.min.js"></script>
+
+<!-- Made with Geekblog theme https://github.com/thegeeklab/hugo-geekblog -->
+
+    
 
 
-<script src="//cdn.bootcss.com/smooth-scroll/12.1.4/js/smooth-scroll.polyfills.min.js"></script>
+
+
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "articleSection": "post",
+    "name": "Tcpdump与Wireshark点滴记录",
+    "headline": "Tcpdump与Wireshark点滴记录",
+    "alternativeHeadline": "",
+    "description": "\x3cp\x3e记录Tcpdump相关知识和Wireshark技巧\x3c\/p\x3e",
+    "inLanguage": "en",
+    "isFamilyFriendly": "true",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https:\/\/xixiliguo.github.io\/post\/tcpdump-wireshark\/"
+    },
+    "author" : [
+    ],
+    "copyrightHolder" : "My personal Blog",
+    "copyrightYear" : "2018",
+    "dateCreated": "2018-08-16T22:41:37.00Z",
+    "datePublished": "2018-08-16T22:41:37.00Z",
+    "dateModified": "2018-08-16T22:41:37.00Z",
+    "publisher":{
+        "@type":"Organization",
+        "name": "My personal Blog",
+        "url": "https://xixiliguo.github.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https:\/\/xixiliguo.github.io\/brand.svg",
+            "width":"32",
+            "height":"32"
+        }
+    },
+    "url" : "https:\/\/xixiliguo.github.io\/post\/tcpdump-wireshark\/",
+    "wordCount" : "628",
+    "genre" : [ "NetWork" ]
+}
+</script>
 
 
 </head>
-  <body>
-    
-    <div class="suspension">
-      <a title="Go to top" class="to-top is-hide"><span class="icon icon-up"></span></a>
-      
-        
-      
+
+<body>
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_back" xmlns="http://www.w3.org/2000/svg"><path d="M31.999 14.035v3.93H7.673l11.134 11.228L16 32 .001 16.001 16 .002l2.807 2.807L7.673 14.037h24.326z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M7.954 17.965v5.988L.001 16l7.953-7.953v5.988H32v3.93H7.954z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M24.046 14.035V8.047L31.999 16l-7.953 7.953v-5.988H0v-3.93h24.046z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="bitbucket" xmlns="http://www.w3.org/2000/svg"><path d="M15.905 13.355c.189 1.444-1.564 2.578-2.784 1.839-1.375-.602-1.375-2.784-.034-3.403 1.151-.705 2.818.223 2.818 1.564zm1.907-.361c-.309-2.44-3.076-4.056-5.328-3.042-1.426.636-2.389 2.148-2.32 3.747.086 2.097 2.08 3.815 4.176 3.626s3.729-2.234 3.472-4.331zm4.108-9.315c-.756-.997-2.045-1.169-3.179-1.358-3.214-.516-6.513-.533-9.727.034-1.066.172-2.269.361-2.939 1.323 1.1 1.031 2.664 1.186 4.073 1.358 2.544.327 5.156.344 7.699.017 1.426-.172 3.008-.309 4.073-1.375zm.979 17.788c-.481 1.684-.206 3.953-1.994 4.932-3.076 1.701-6.806 1.89-10.191 1.289-1.787-.327-3.884-.894-4.864-2.578-.43-1.65-.705-3.334-.98-5.018l.103-.275.309-.155c5.121 3.386 12.288 3.386 17.427 0 .808.241.206 1.22.189 1.805zM26.01 4.951c-.584 3.764-1.255 7.51-1.908 11.257-.189 1.1-1.255 1.719-2.148 2.183-3.214 1.615-6.96 1.89-10.483 1.512-2.389-.258-4.829-.894-6.771-2.389-.911-.705-.911-1.908-1.083-2.922-.602-3.523-1.289-7.046-1.719-10.604.206-1.547 1.942-2.217 3.231-2.698C6.848.654 8.686.362 10.508.19c3.884-.378 7.854-.241 11.618.859 1.341.395 2.784.945 3.695 2.097.412.533.275 1.203.189 1.805z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="bookmarks" xmlns="http://www.w3.org/2000/svg"><path d="M20.357 5.856q1.157 0 2.043.851t.885 2.008v23.284l-10.212-4.357-10.144 4.357V8.715q0-1.157.885-2.008t2.042-.851h14.502zm5.787 18.859V5.856q0-1.157-.851-2.042t-2.008-.885H8.715q0-1.157.885-2.042t2.043-.885h14.502q1.157 0 2.043.885t.885 2.042v23.216z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="clear" xmlns="http://www.w3.org/2000/svg"><path d="M32 3.222L19.222 16 32 28.778l-3.221 3.221-12.778-12.778L3.223 31.999.002 28.778 12.78 16 .002 3.222 3.223.001l12.778 12.778L28.779.001z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="code" xmlns="http://www.w3.org/2000/svg"><path d="M9.917 24.5a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm0-21a1.75 1.75 0 10-3.501.001A1.75 1.75 0 009.917 3.5zm11.666 2.333a1.75 1.75 0 10-3.501.001 1.75 1.75 0 003.501-.001zm1.75 0a3.502 3.502 0 01-1.75 3.026c-.055 6.581-4.721 8.039-7.82 9.023-2.898.911-3.846 1.349-3.846 3.117v.474a3.502 3.502 0 011.75 3.026c0 1.932-1.568 3.5-3.5 3.5s-3.5-1.568-3.5-3.5c0-1.294.711-2.424 1.75-3.026V6.526A3.502 3.502 0 014.667 3.5c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5a3.502 3.502 0 01-1.75 3.026v9.06c.93-.456 1.914-.766 2.807-1.039 3.391-1.075 5.323-1.878 5.359-5.687a3.502 3.502 0 01-1.75-3.026c0-1.932 1.568-3.5 3.5-3.5s3.5 1.568 3.5 3.5z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="contacts" xmlns="http://www.w3.org/2000/svg"><path d="M22.688 22.688v-2q0-1.5-2.281-2.438t-4.406-.938-4.406.938-2.281 2.438v2h13.375zM16 9q-1.25 0-2.125.875T13 12t.875 2.125T16 15t2.125-.875T19 12t-.875-2.125T16 9zm10.688-3.687q1.063 0 1.844.813t.781 1.875v16q0 1.063-.781 1.875t-1.844.813H5.313q-1.063 0-1.844-.813t-.781-1.875v-16q0-1.063.781-1.875t1.844-.813h21.375zM5.313 32v-2.688h21.375V32H5.313zM26.688 0v2.688H5.313V0h21.375z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="create" xmlns="http://www.w3.org/2000/svg"><path d="M31.499 7.167l-3.25 3.25-6.666-6.666 3.25-3.25q.5-.5 1.25-.5t1.25.5l4.166 4.166q.5.5.5 1.25t-.5 1.25zM.001 25.333L19.667 5.667l6.666 6.666L6.667 31.999H.001v-6.666z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="date" xmlns="http://www.w3.org/2000/svg"><path d="M27.192 28.844V11.192H4.808v17.652h22.384zm0-25.689q1.277 0 2.253.976t.976 2.253v22.459q0 1.277-.976 2.216t-2.253.939H4.808q-1.352 0-2.291-.901t-.939-2.253V6.385q0-1.277.939-2.253t2.291-.976h1.577V.001h3.23v3.155h12.769V.001h3.23v3.155h1.577zm-3.155 11.267v3.155h-3.23v-3.155h3.23zm-6.46 0v3.155h-3.155v-3.155h3.155zm-6.384 0v3.155h-3.23v-3.155h3.23z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="download" xmlns="http://www.w3.org/2000/svg"><path d="M2.866 28.209h26.269v3.79H2.866v-3.79zm26.268-16.925L16 24.418 2.866 11.284h7.493V.001h11.283v11.283h7.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="email" xmlns="http://www.w3.org/2000/svg"><path d="M28.845 9.615v-3.23L16 14.422 3.155 6.385v3.23L16 17.577zm0-6.46q1.277 0 2.216.977T32 6.385v19.23q0 1.277-.939 2.253t-2.216.977H3.155q-1.277 0-2.216-.977T0 25.615V6.385q0-1.277.939-2.253t2.216-.977h25.69z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="git" xmlns="http://www.w3.org/2000/svg"><path d="M27.472 12.753L15.247.529a1.803 1.803 0 00-2.55 0l-2.84 2.84 2.137 2.137a2.625 2.625 0 013.501 3.501l3.499 3.499a2.625 2.625 0 11-1.237 1.237l-3.499-3.499c-.083.04-.169.075-.257.106v7.3a2.626 2.626 0 11-1.75 0v-7.3a2.626 2.626 0 01-1.494-3.607L8.62 4.606l-8.09 8.09a1.805 1.805 0 000 2.551l12.225 12.224a1.803 1.803 0 002.55 0l12.168-12.168a1.805 1.805 0 000-2.551z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="github" xmlns="http://www.w3.org/2000/svg"><path d="M16 .394c8.833 0 15.999 7.166 15.999 15.999 0 7.062-4.583 13.062-10.937 15.187-.813.146-1.104-.354-1.104-.771 0-.521.021-2.25.021-4.396 0-1.5-.5-2.458-1.083-2.958 3.562-.396 7.312-1.75 7.312-7.896 0-1.75-.625-3.167-1.646-4.291.167-.417.708-2.042-.167-4.25-1.333-.417-4.396 1.646-4.396 1.646a15.032 15.032 0 00-8 0S8.937 6.602 7.603 7.018c-.875 2.208-.333 3.833-.167 4.25-1.021 1.125-1.646 2.542-1.646 4.291 0 6.125 3.729 7.5 7.291 7.896-.458.417-.875 1.125-1.021 2.146-.917.417-3.25 1.125-4.646-1.333-.875-1.521-2.458-1.646-2.458-1.646-1.562-.021-.104.979-.104.979 1.042.479 1.771 2.333 1.771 2.333.938 2.854 5.396 1.896 5.396 1.896 0 1.333.021 2.583.021 2.979 0 .417-.292.917-1.104.771C4.582 29.455-.001 23.455-.001 16.393-.001 7.56 7.165.394 15.998.394zM6.063 23.372c.042-.083-.021-.187-.146-.25-.125-.042-.229-.021-.271.042-.042.083.021.187.146.25.104.062.229.042.271-.042zm.646.709c.083-.062.062-.208-.042-.333-.104-.104-.25-.146-.333-.062-.083.062-.062.208.042.333.104.104.25.146.333.062zm.625.937c.104-.083.104-.25 0-.396-.083-.146-.25-.208-.354-.125-.104.062-.104.229 0 .375s.271.208.354.146zm.875.875c.083-.083.042-.271-.083-.396-.146-.146-.333-.167-.417-.062-.104.083-.062.271.083.396.146.146.333.167.417.062zm1.187.521c.042-.125-.083-.271-.271-.333-.167-.042-.354.021-.396.146s.083.271.271.312c.167.062.354 0 .396-.125zm1.313.104c0-.146-.167-.25-.354-.229-.187 0-.333.104-.333.229 0 .146.146.25.354.229.187 0 .333-.104.333-.229zm1.208-.208c-.021-.125-.187-.208-.375-.187-.187.042-.312.167-.292.312.021.125.187.208.375.167s.312-.167.292-.292z"/></symbol><symbol viewBox="-7.27 -7.27 42.55 42.55" id="gitlab" xmlns="http://www.w3.org/2000/svg"><path d="M1.629 11.034L14 26.888.442 17.048a1.09 1.09 0 01-.39-1.203l1.578-4.811zm7.217 0h10.309l-5.154 15.854zM5.753 1.475l3.093 9.559H1.63l3.093-9.559a.548.548 0 011.031 0zm20.618 9.559l1.578 4.811c.141.437-.016.922-.39 1.203l-13.558 9.84 12.371-15.854zm0 0h-7.216l3.093-9.559a.548.548 0 011.031 0z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="heart" xmlns="http://www.w3.org/2000/svg"><path d="M16 29.714a1.11 1.11 0 01-.786-.321L4.072 18.643c-.143-.125-4.071-3.714-4.071-8 0-5.232 3.196-8.357 8.535-8.357 3.125 0 6.053 2.464 7.464 3.857 1.411-1.393 4.339-3.857 7.464-3.857 5.339 0 8.535 3.125 8.535 8.357 0 4.286-3.928 7.875-4.089 8.035L16.785 29.392c-.214.214-.5.321-.786.321z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_left" xmlns="http://www.w3.org/2000/svg"><path d="M25.875 28.25L22.125 32 6.126 16.001 22.125.002l3.75 3.75-12.25 12.25z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="keyborad_arrow_right" xmlns="http://www.w3.org/2000/svg"><path d="M6.125 28.25L18.375 16 6.125 3.75 9.875 0l15.999 15.999L9.875 31.998z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="link" xmlns="http://www.w3.org/2000/svg"><path d="M24.037 7.963q3.305 0 5.634 2.366T32 16t-2.329 5.671-5.634 2.366h-6.46v-3.08h6.46q2.028 0 3.493-1.465t1.465-3.493-1.465-3.493-3.493-1.465h-6.46v-3.08h6.46zM9.615 17.578v-3.155h12.77v3.155H9.615zM3.005 16q0 2.028 1.465 3.493t3.493 1.465h6.46v3.08h-6.46q-3.305 0-5.634-2.366T0 16.001t2.329-5.671 5.634-2.366h6.46v3.08h-6.46q-2.028 0-3.493 1.465t-1.465 3.493z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="menu" xmlns="http://www.w3.org/2000/svg"><path d="M.001 5.334h31.998v3.583H.001V5.334zm0 12.416v-3.5h31.998v3.5H.001zm0 8.916v-3.583h31.998v3.583H.001z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="notifications" xmlns="http://www.w3.org/2000/svg"><path d="M25.846 22.154l3.308 3.308v1.615H2.847v-1.615l3.308-3.308V14q0-3.846 1.961-6.692t5.423-3.692V2.462q0-1 .692-1.731T16 0t1.769.731.692 1.731v1.154q3.461.846 5.423 3.692T25.846 14v8.154zM16 32q-1.385 0-2.346-.923t-.962-2.308h6.615q0 1.308-1 2.269T15.999 32z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="person" xmlns="http://www.w3.org/2000/svg"><path d="M16 20.023q5.052 0 10.526 2.199t5.473 5.754v4.023H0v-4.023q0-3.555 5.473-5.754t10.526-2.199zM16 16q-3.275 0-5.614-2.339T8.047 8.047t2.339-5.661T16 0t5.614 2.386 2.339 5.661-2.339 5.614T16 16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="pin" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 19.2h9.6v-1.6L22.4 16V3.2l4.8-1.6V0H4.8v1.6l4.8 1.6V16l-4.8 1.6v1.6h9.6v11.2L16 32l1.6-1.6V19.2z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="rss_feed" xmlns="http://www.w3.org/2000/svg"><path d="M-.481 12.048q8.482 0 14.457 5.976t5.976 14.457h-5.879q0-5.976-4.289-10.264T-.48 17.928v-5.879zm0-11.565q13.204 0 22.601 9.397t9.397 22.601h-5.783q0-10.891-7.662-18.553T-.481 6.266V.483zm0 27.468q0-1.831 1.301-3.132t3.229-1.301 3.181 1.253 1.253 3.181-1.301 3.229-3.132 1.301q-1.928 0-3.229-1.301T-.48 27.952z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="search" xmlns="http://www.w3.org/2000/svg"><path d="M11.925 20.161q3.432 0 5.834-2.402t2.402-5.834-2.402-5.834-5.834-2.402-5.834 2.402-2.402 5.834 2.402 5.834 5.834 2.402zm10.981 0L32 29.255 29.255 32l-9.094-9.094v-1.458l-.515-.515q-3.26 2.831-7.721 2.831-4.976 0-8.45-3.432T.001 11.925t3.474-8.45 8.45-3.474 8.407 3.474 3.432 8.45q0 1.802-.858 4.075t-1.973 3.646l.515.515h1.458z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="security" xmlns="http://www.w3.org/2000/svg"><path d="M16 0l13.072 5.855v8.715q0 6.059-3.745 11.063T16 31.999q-5.583-1.362-9.327-6.366T2.928 14.57V5.855zm0 16v13.004q4.017-1.294 6.808-4.868T26.144 16H16zm0 0V3.2L5.856 7.693v8.306H16z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="telescope" xmlns="http://www.w3.org/2000/svg"><path d="M25.026 3.335a.466.466 0 00-.646-.238L13.362 8.91a.463.463 0 00-.216.575l.227.593-6.36 3.488a.462.462 0 00-.205.583l.211.508-6.755 3.228a.463.463 0 00-.228.595l1.386 3.341a.463.463 0 00.583.259l7.056-2.5.211.508a.462.462 0 00.557.267l6.733-1.941.202.527a.46.46 0 00.566.277l12.03-3.702a.46.46 0 00.293-.613L25.026 3.335zM2.109 21.061l-1.049-2.53 6.314-3.018 1.332 3.211-6.596 2.337zm7.857-1.708l-.22-.531-1.706-4.113-.22-.53 5.863-3.216 2.197 5.676.347.908-6.261 1.806zm7.505-1.146l-.188-.491c-.003-.01-.001-.022-.006-.032l-.572-1.478-2.549-6.668 10.201-5.381 4.249 10.624-11.136 3.428zm8.943-16.723a.463.463 0 00-.86.344l5.552 13.881a.464.464 0 00.602.258.464.464 0 00.258-.602L26.413 1.484zM16.268 20.627h-2.776c-1.055 0-1.851.796-1.851 1.851v1.217l-5.44 6.347a.462.462 0 10.702.602l5.415-6.316h2.101v6.015a.463.463 0 00.926 0v-6.015h2.101l5.414 6.316a.462.462 0 10.703-.602l-5.44-6.347v-1.148c0-1.076-.813-1.92-1.851-1.92zm.925 2.777h-4.627v-.925c0-.545.38-.925.925-.925h2.776c.527 0 .925.428.925.995v.856z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="timer" xmlns="http://www.w3.org/2000/svg"><path d="M16 29q4.428 0 7.536-3.143t3.107-7.571-3.107-7.536T16 7.643 8.464 10.75t-3.107 7.536 3.107 7.571T16 29zM26.714 9.786q1.214 1.571 2.107 4.036t.893 4.464q0 5.643-4 9.678T16 32t-9.714-4.036-4-9.678 4-9.678T16 4.572q1.929 0 4.464.929t4.107 2.143l2.143-2.214q1.143.929 2.143 2.143zM14.5 19.857v-9.143h3v9.143h-3zM20.571.001v3.071h-9.143V.001h9.143z"/></symbol><symbol viewBox="-7.27 -7.27 46.55 46.55" id="tree" xmlns="http://www.w3.org/2000/svg"><path d="M32 14.423H20.808V9.616h-3.23v12.77h3.23v-4.807H32v12.845H20.808v-4.807h-6.385v-16h-3.23v4.807H.001V1.579h11.192v4.807h9.615V1.579H32v12.845z"/></symbol></svg>
+
+    <div class="wrapper">
+        <header class="gblog-header">
+    <div class="container flex align-center justify-center">
+        <a class="gblog-header__link" rel="me" href="https://xixiliguo.github.io/">
+            <span class="gblog-brand flex align-center justify-center">
+                <img class="gblog-brand__img" src="/brand.svg" alt="" width=60 height=60>
+                My personal Blog
+            </span>
+            
+        </a>
     </div>
-    
-    
-  <header class="site-header">
-  <img class="avatar" src="https://xixiliguo.github.io/img/coast.jpg" alt="Avatar">
-  
-  <h2 class="title">个人网站</h2>
-  
-  <p class="subtitle">Stay Hungry. Stay Foolish.</p>
-  <button class="menu-toggle" type="button">
-    <span class="icon icon-menu"></span>
-  </button>
-  <nav class="site-menu collapsed">
-    <h2 class="offscreen">Main Menu</h2>
-    <ul class="menu-list">
-      
-      
-      
-      
-        <li class="menu-item  is-active"><a href="https://xixiliguo.github.io/">Home</a></li>
-      
-        <li class="menu-item "><a href="https://github.com/xixiliguo">Works</a></li>
-      
-        <li class="menu-item "><a href="https://xixiliguo.github.io/about/">About</a></li>
-      
-    </ul>
-  </nav>
-  <nav class="social-menu collapsed">
-    <h2 class="offscreen">Social Networks</h2>
-    <ul class="social-list">
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      <li class="social-item">
-        <a href="https://xixiliguo.github.io/index.xml"><span class="icon icon-rss" title="RSS"></span></a>
-      </li>
-
-    </ul>
-  </nav>
 </header>
+<nav class="gblog-nav">
+    <input type="checkbox" id="menu-control" class="hidden">
+    <div class="gblog-nav__control">
+        <label for="menu-control"  class="flex align-center justify-center">
+            <svg class="icon menu"><use xlink:href="#menu"></use></svg>
+            <svg class="icon clear"><use xlink:href="#clear"></use></svg>
+            <span>Nav</span>
+        </label>
+    </div>
+    <ul class="gblog-nav__list container flex flex-wrap justify-center menu-content">
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/BM/">BM</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Bandersnatch/">Bandersnatch</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Hash/">Hash</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/KMP/">KMP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Lua/">Lua</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NTP/">NTP</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/NetWork/">NetWork</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/OpenStack/">OpenStack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Pypi/">Pypi</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/Python/">Python</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/RSS/">RSS</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/atop/">atop</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/boot/">boot</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/c/">c</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/cloud-init/">cloud-init</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/command/">command</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/crypt/">crypt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/dns/">dns</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/docker/">docker</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/golang/">golang</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/httprouter/">httprouter</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/iptables/">iptables</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/libvirt/">libvirt</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/linux/">linux</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/net-stack/">net stack</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/os/exec/">os/exec</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/proc/">proc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/radix-tree/">radix-tree</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/runc/">runc</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/shadow/">shadow</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/systemd/">systemd</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/tcp/">tcp</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/yum/">yum</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%A3%E7%A0%81/">代码</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E4%BB%BB%E6%92%AD/">任播</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E5%A4%9A%E7%BD%91%E5%8D%A1%E9%98%9F%E5%88%97/">多网卡队列</a>
+        </li>
+        
+        
+        
+        <li>
+            <a class="gblog-nav__entry " href="/tags/%E7%89%87%E6%AE%B5/">片段</a>
+        </li>
+        
+        
+        
+    </ul>
+</nav>
 
-  <section class="main post-detail">
-    <header class="post-header">
-      <h1 class="post-title">Tcpdump与Wireshark点滴记录</h1>
-      <p class="post-meta">@Peter Wang · Aug 16, 2018 · 3 min read</p>
-    </header>
-    <article class="post-content"><p>记录Tcpdump相关知识和Wireshark技巧</p>
 
-<p></p>
+        <main class="gblog-page container">
+            
+    <article class="gblog-post">
+        <header class="gblog-post__header">
+            
+            
 
+            <h1>Tcpdump与Wireshark点滴记录</h1>
+            
+            <div class="gblog-post__meta">
+                <span class="no-wrap">
+                    <svg class="icon date"><use xlink:href="#date"></use></svg>
+                    <span class="gblog-post__tag">
+                        <time datetime="2018-08-16T22:41:37&#43;08:00">
+                            
+                            Aug 16, 2018
+                        </time>
+                    </span>
+                </span>
+
+                <span class="no-wrap">
+                    <svg class="icon timer"><use xlink:href="#timer"></use></svg>
+                    <span class="gblog-post__tag">3 min read</span>
+                </span>
+            </div>
+            
+        </header>
+
+        <section class="gblog-markdown">
+            <p>记录Tcpdump相关知识和Wireshark技巧</p>
 <h2 id="tcpdump-基本介绍">tcpdump 基本介绍</h2>
-
 <h3 id="常用语法">常用语法</h3>
-
 <ul>
-<li>指定网卡(eth0), 如果要抓取所有网卡的包, 使用<code>any</code><br /></li>
+<li>指定网卡(eth0), 如果要抓取所有网卡的包, 使用<code>any</code></li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0
-</span><span style="">tcpdump -i any</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0
+tcpdump -i any
+</code></pre></div><ul>
 <li>使用<code>-nnv</code>, 不解析协议和端口,同时多打印写详细信息(IP头)</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 -nnv
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376: Flags </span><span style="color:#f92672">[</span><span style="">P.</span><span style="color:#f92672">]</span><span style="">, cksum 0x84ff </span><span style="color:#f92672">(</span><span style="">incorrect -&gt; 0x0ec3</span><span style="color:#f92672">)</span><span style="">, seq </span><span style="color:#ae81ff">935672</span><span style="">:935968, ack </span><span style="color:#ae81ff">761</span><span style="">, win </span><span style="color:#ae81ff">385</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">102595534</span><span style=""> ecr </span><span style="color:#ae81ff">1564236582</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">296</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:53:54.006694 IP </span><span style="color:#f92672">(</span><span style="">tos 0x10, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">59224</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto TCP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">6</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">52</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22: Flags </span><span style="color:#f92672">[</span><span style="">.</span><span style="color:#f92672">]</span><span style="">, cksum 0x8bf2 </span><span style="color:#f92672">(</span><span style="">correct</span><span style="color:#f92672">)</span><span style="">, ack </span><span style="color:#ae81ff">935672</span><span style="">, win </span><span style="color:#ae81ff">8139</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">1564236582</span><span style=""> ecr </span><span style="color:#ae81ff">102595534</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:53:54.006746 IP </span><span style="color:#f92672">(</span><span style="">tos 0x10, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">25202</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto TCP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">6</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">52</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22: Flags </span><span style="color:#f92672">[</span><span style="">.</span><span style="color:#f92672">]</span><span style="">, cksum 0x8adc </span><span style="color:#f92672">(</span><span style="">correct</span><span style="color:#f92672">)</span><span style="">, ack </span><span style="color:#ae81ff">935968</span><span style="">, win </span><span style="color:#ae81ff">8121</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">1564236582</span><span style=""> ecr </span><span style="color:#ae81ff">102595534</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">0</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:53:54.006895 IP </span><span style="color:#f92672">(</span><span style="">tos 0x10, ttl </span><span style="color:#ae81ff">64</span><span style="">, id </span><span style="color:#ae81ff">57471</span><span style="">, offset </span><span style="color:#ae81ff">0</span><span style="">, flags </span><span style="color:#f92672">[</span><span style="">DF</span><span style="color:#f92672">]</span><span style="">, proto TCP </span><span style="color:#f92672">(</span><span style="color:#ae81ff">6</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">924</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#ae81ff">10</span><span style="">.211.55.9.22 &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376: Flags </span><span style="color:#f92672">[</span><span style="">P.</span><span style="color:#f92672">]</span><span style="">, cksum 0x873f </span><span style="color:#f92672">(</span><span style="">incorrect -&gt; 0x2d02</span><span style="color:#f92672">)</span><span style="">, seq </span><span style="color:#ae81ff">935968</span><span style="">:936840, ack </span><span style="color:#ae81ff">761</span><span style="">, win </span><span style="color:#ae81ff">385</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">102595534</span><span style=""> ecr </span><span style="color:#ae81ff">1564236582</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">872</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0 -nnv
+    10.211.55.9.22 &gt; 10.211.55.2.63376: Flags <span class="o">[</span>P.<span class="o">]</span>, cksum 0x84ff <span class="o">(</span>incorrect -&gt; 0x0ec3<span class="o">)</span>, seq 935672:935968, ack 761, win 385, options <span class="o">[</span>nop,nop,TS val <span class="m">102595534</span> ecr 1564236582<span class="o">]</span>, length <span class="m">296</span>
+22:53:54.006694 IP <span class="o">(</span>tos 0x10, ttl 64, id 59224, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto TCP <span class="o">(</span>6<span class="o">)</span>, length 52<span class="o">)</span>
+    10.211.55.2.63376 &gt; 10.211.55.9.22: Flags <span class="o">[</span>.<span class="o">]</span>, cksum 0x8bf2 <span class="o">(</span>correct<span class="o">)</span>, ack 935672, win 8139, options <span class="o">[</span>nop,nop,TS val <span class="m">1564236582</span> ecr 102595534<span class="o">]</span>, length <span class="m">0</span>
+22:53:54.006746 IP <span class="o">(</span>tos 0x10, ttl 64, id 25202, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto TCP <span class="o">(</span>6<span class="o">)</span>, length 52<span class="o">)</span>
+    10.211.55.2.63376 &gt; 10.211.55.9.22: Flags <span class="o">[</span>.<span class="o">]</span>, cksum 0x8adc <span class="o">(</span>correct<span class="o">)</span>, ack 935968, win 8121, options <span class="o">[</span>nop,nop,TS val <span class="m">1564236582</span> ecr 102595534<span class="o">]</span>, length <span class="m">0</span>
+22:53:54.006895 IP <span class="o">(</span>tos 0x10, ttl 64, id 57471, offset 0, flags <span class="o">[</span>DF<span class="o">]</span>, proto TCP <span class="o">(</span>6<span class="o">)</span>, length 924<span class="o">)</span>
+    10.211.55.9.22 &gt; 10.211.55.2.63376: Flags <span class="o">[</span>P.<span class="o">]</span>, cksum 0x873f <span class="o">(</span>incorrect -&gt; 0x2d02<span class="o">)</span>, seq 935968:936840, ack 761, win 385, options <span class="o">[</span>nop,nop,TS val <span class="m">102595534</span> ecr 1564236582<span class="o">]</span>, length <span class="m">872</span>
+</code></pre></div><ul>
 <li>使用<code>-e</code>可以打印MAC地址</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 -e
-</span><span style="">tcpdump: verbose output suppressed, use -v or -vv </span><span style="color:#66d9ef">for</span><span style=""> full protocol decode
-</span><span style="">listening on eth0, link-type EN10MB </span><span style="color:#f92672">(</span><span style="">Ethernet</span><span style="color:#f92672">)</span><span style="">, capture size </span><span style="color:#ae81ff">262144</span><span style=""> bytes
-</span><span style=""></span><span style="color:#ae81ff">22</span><span style="">:56:22.708510 </span><span style="color:#ae81ff">00</span><span style="">:1c:42:13:d0:f5 </span><span style="color:#f92672">(</span><span style="">oui Unknown</span><span style="color:#f92672">)</span><span style=""> &gt; </span><span style="color:#ae81ff">00</span><span style="">:1c:42:00:00:08 </span><span style="color:#f92672">(</span><span style="">oui Unknown</span><span style="color:#f92672">)</span><span style="">, ethertype IPv4 </span><span style="color:#f92672">(</span><span style="">0x0800</span><span style="color:#f92672">)</span><span style="">, length </span><span style="color:#ae81ff">266</span><span style="">: linux.ssh &gt; </span><span style="color:#ae81ff">10</span><span style="">.211.55.2.63376: Flags </span><span style="color:#f92672">[</span><span style="">P.</span><span style="color:#f92672">]</span><span style="">, seq </span><span style="color:#ae81ff">3187876880</span><span style="">:3187877080, ack </span><span style="color:#ae81ff">2645742059</span><span style="">, win </span><span style="color:#ae81ff">385</span><span style="">, options </span><span style="color:#f92672">[</span><span style="">nop,nop,TS val </span><span style="color:#ae81ff">102744236</span><span style=""> ecr </span><span style="color:#ae81ff">1564384779</span><span style="color:#f92672">]</span><span style="">, length </span><span style="color:#ae81ff">200</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0 -e
+tcpdump: verbose output suppressed, use -v or -vv <span class="k">for</span> full protocol decode
+listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, capture size <span class="m">262144</span> bytes
+22:56:22.708510 00:1c:42:13:d0:f5 <span class="o">(</span>oui Unknown<span class="o">)</span> &gt; 00:1c:42:00:00:08 <span class="o">(</span>oui Unknown<span class="o">)</span>, ethertype IPv4 <span class="o">(</span>0x0800<span class="o">)</span>, length 266: linux.ssh &gt; 10.211.55.2.63376: Flags <span class="o">[</span>P.<span class="o">]</span>, seq 3187876880:3187877080, ack 2645742059, win 385, options <span class="o">[</span>nop,nop,TS val <span class="m">102744236</span> ecr 1564384779<span class="o">]</span>, length <span class="m">200</span>
+</code></pre></div><ul>
 <li>使用<code>-w</code>将信息保存到文件, 下列命令将包信息保存到<code>abc.cap</code>. <code>-C</code> 配合<code>-w</code>使用, 进一步指定文件的最大size, 一旦超过, 会新建文件继续写入</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 -w abc.cap</span></code></pre>
-</div>
-<h3 id="常用过滤语法">常用过滤语法</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0 -w abc.cap
+</code></pre></div><h3 id="常用过滤语法">常用过滤语法</h3>
 <p>不带过滤器, 则默认抓取指定网卡所有的包(接受和发送)</p>
-
 <ul>
 <li>抓取所有经过eth1，目的或源地址是192.168.1.1的网络数据</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 host </span><span style="color:#ae81ff">192</span><span style="">.168.1.1</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0 host 192.168.1.1
+</code></pre></div><ul>
 <li>抓取所有经过eth1，目的或源网络为192.168.XXX.XXX的网络数据</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 net </span><span style="color:#ae81ff">192</span><span style="">.168</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0 net 192.168
+</code></pre></div><ul>
 <li>指定源地址或者目的地址</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth1 src host </span><span style="color:#ae81ff">192</span><span style="">.168.1.1
-</span><span style="">tcpdump -i eth1 dst host </span><span style="color:#ae81ff">192</span><span style="">.168.1.1</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth1 src host 192.168.1.1
+tcpdump -i eth1 dst host 192.168.1.1
+</code></pre></div><ul>
 <li>抓取所有经过eth1，目的或源端口是25的网络数据, 如果要指定过滤源端口, 可使用 <code>src port 25</code>. 目的端口类似</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth0 port </span><span style="color:#ae81ff">25</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth0 port <span class="m">25</span>
+</code></pre></div><ul>
 <li>抓取所有经过eth1的所有icmp包, tcp, arp包语法类似</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth1 arp
-</span><span style="">tcpdump -i eth1 ip
-</span><span style="">tcpdump -i eth1 tcp
-</span><span style="">tcpdump -i eth1 udp
-</span><span style="">tcpdump -i eth1 icmp</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth1 arp
+tcpdump -i eth1 ip
+tcpdump -i eth1 tcp
+tcpdump -i eth1 udp
+tcpdump -i eth1 icmp
+</code></pre></div><ul>
 <li>逻辑表达式</li>
 </ul>
-
 <pre><code>非 : ! or &quot;not&quot; (去掉双引号)  
 且 : &amp;&amp; or &quot;and&quot;  
 或 : || or &quot;or&quot;
 
 多个表达式整体用单引号或者双引号引用起来, 单个最好用括号这样更清晰 
-</code></pre>
-
-<ul>
+</code></pre><ul>
 <li>抓取所有经过eth1，目的网络是192.168，但目的主机不是192.168.1.200的TCP数据</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcpdump -i eth1 </span><span style="color:#e6db74">&#39;((tcp) and ((dst net 192.168) and (not dst host 192.168.1.200)))&#39;</span></code></pre>
-</div>
-<blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcpdump -i eth1 <span class="s1">&#39;((tcp) and ((dst net 192.168) and (not dst host 192.168.1.200)))&#39;</span>
+</code></pre></div><blockquote>
 <p>详细的过滤指导请参考: <a href="https://wiki.wireshark.org/CaptureFilters">https://wiki.wireshark.org/CaptureFilters</a></p>
 </blockquote>
-
 <h2 id="wireshark-介绍">wireshark 介绍</h2>
-
 <h3 id="显示过滤器">显示过滤器</h3>
-
 <p>默认wireshark打开文件后,显示所有的包. 可以指定相应的显示过滤器, 显示特定部分</p>
-
 <ul>
-<li><p>比如想显示所有经过端口80的数据包, 使用 <code>tcp.port == 80</code></p></li>
-
-<li><p>显示所有经过 192.168这个网段的包,使用 <code>ip.addr == 192.168.0.0/16</code></p></li>
-
-<li><p>仍然可以组合多个过滤条件</p></li>
+<li>
+<p>比如想显示所有经过端口80的数据包, 使用 <code>tcp.port == 80</code></p>
+</li>
+<li>
+<p>显示所有经过 192.168这个网段的包,使用 <code>ip.addr == 192.168.0.0/16</code></p>
+</li>
+<li>
+<p>仍然可以组合多个过滤条件</p>
+</li>
 </ul>
-
 <blockquote>
-<p>and, &amp;&amp;   逻辑与<br />
-or,  ||   逻辑或<br />
+<p>and, &amp;&amp;   逻辑与<br>
+or,  ||   逻辑或<br>
 not, !    逻辑否</p>
 </blockquote>
-
 <p>下面是具体的例子:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">tcp.port </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">80</span><span style=""> and ip.src </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">192</span><span style="">.168.2.1
-</span><span style="">not llc
-</span><span style="">http and frame</span><span style="color:#f92672">[</span><span style="color:#ae81ff">100</span><span style="">-199</span><span style="color:#f92672">]</span><span style=""> contains </span><span style="color:#e6db74">&#34;wireshark&#34;</span><span style="">
-</span><span style=""></span><span style="color:#f92672">(</span><span style="">ipx.src.net </span><span style="color:#f92672">==</span><span style=""> 0xbad </span><span style="color:#f92672">&amp;&amp;</span><span style=""> ipx.src.node </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">.0.0.0.0.1</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">||</span><span style=""> ip</span></code></pre>
-</div>
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tcp.port <span class="o">==</span> <span class="m">80</span> and ip.src <span class="o">==</span> 192.168.2.1
+not llc
+http and frame<span class="o">[</span>100-199<span class="o">]</span> contains <span class="s2">&#34;wireshark&#34;</span>
+<span class="o">(</span>ipx.src.net <span class="o">==</span> 0xbad <span class="o">&amp;&amp;</span> ipx.src.node <span class="o">==</span> 0.0.0.0.0.1<span class="o">)</span> <span class="o">||</span> ip
+
+</code></pre></div><ul>
 <li>两个特殊的过滤操作<code>contains</code> 和 <code>match</code></li>
 </ul>
-
-<p><code>ip.addr contains &quot;192.168&quot;</code>是指过滤所有ip地址里包含&rdquo;192.168&rdquo;这几个字符的数据包<br />
-<code>http contains &quot;www.163.com&quot;</code> 过滤所有http消息里包含&rdquo;www.163.com&rdquo;字符串的数据包<br />
+<p><code>ip.addr contains &quot;192.168&quot;</code>是指过滤所有ip地址里包含&quot;192.168&quot;这几个字符的数据包<br>
+<code>http contains &quot;www.163.com&quot;</code> 过滤所有http消息里包含&quot;www.163.com&quot;字符串的数据包<br>
 <code>match</code> 用法类似, 不过它支持perl的正则表达式, 而且是大小写不敏感</p>
-
-<p><code>contains</code> 后面可以是带双引号的字符串, 字节数组, 单字节(类c语言风格). 其他的如&rdquo;tcp.port&rdquo; 也可以跟这些 下面的表达式都是正确的:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#e6db74">&#34;www.163.com&#34;</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">56</span><span style="">:98:47    </span><span style="color:#f92672">(</span><span style="">十六进制</span><span style="color:#f92672">)</span><span style="">
-</span><span style=""></span><span style="color:#ae81ff">68</span></code></pre>
-</div>
-<p>如下的过滤都是等价的:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;\x47ET&#34;</span><span style="">
-</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;GET&#34;</span><span style="">
-</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">47</span><span style="">.45.54
-</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">47</span><span style="">:45:54
-</span><span style="">http.request.method </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#ae81ff">47</span><span style="">-45-54</span></code></pre>
-</div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">frame.pkt_len &gt; </span><span style="color:#ae81ff">10</span><span style="">
-</span><span style="">frame.pkt_len &gt; </span><span style="color:#ae81ff">012</span><span style="">
-</span><span style="">frame.pkt_len &gt; 0xa
-</span><span style="">frame.pkt_len &gt; </span><span style="color:#e6db74">&#39;\n&#39;</span><span style="">
-</span><span style="">frame.pkt_len &gt; </span><span style="color:#e6db74">&#39;\xa&#39;</span><span style="">
-</span><span style="">frame.pkt_len &gt; </span><span style="color:#e6db74">&#39;\012&#39;</span></code></pre>
-</div>
-<ul>
+<p><code>contains</code> 后面可以是带双引号的字符串, 字节数组, 单字节(类c语言风格). 其他的如&quot;tcp.port&rdquo; 也可以跟这些 下面的表达式都是正确的:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="s2">&#34;www.163.com&#34;</span>
+56:98:47    <span class="o">(</span>十六进制<span class="o">)</span>
+<span class="m">68</span>
+</code></pre></div><p>如下的过滤都是等价的:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">http.request.method <span class="o">==</span> <span class="s2">&#34;\x47ET&#34;</span>
+http.request.method <span class="o">==</span> <span class="s2">&#34;GET&#34;</span>
+http.request.method <span class="o">==</span> 47.45.54
+http.request.method <span class="o">==</span> 47:45:54
+http.request.method <span class="o">==</span> 47-45-54
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">frame.pkt_len &gt; <span class="m">10</span>
+frame.pkt_len &gt; <span class="m">012</span>
+frame.pkt_len &gt; 0xa
+frame.pkt_len &gt; <span class="s1">&#39;\n&#39;</span>
+frame.pkt_len &gt; <span class="s1">&#39;\xa&#39;</span>
+frame.pkt_len &gt; <span class="s1">&#39;\012&#39;</span>
+</code></pre></div><ul>
 <li>还有很多切片,字节操作等高级操作, 可以进一步查看如下两个文档</li>
 </ul>
-
 <blockquote>
-<p><a href="https://wiki.wireshark.org/DisplayFilters">https://wiki.wireshark.org/DisplayFilters</a><br />
+<p><a href="https://wiki.wireshark.org/DisplayFilters">https://wiki.wireshark.org/DisplayFilters</a><br>
 <a href="https://www.wireshark.org/docs/man-pages/wireshark-filter.html">https://www.wireshark.org/docs/man-pages/wireshark-filter.html</a></p>
 </blockquote>
-
 <h3 id="三板斧">三板斧</h3>
-
-<p>处理linux主机性能问题, 我们通常有三个方面是必查的. CPU, 内存 和 IO 使用率<br />
+<p>处理linux主机性能问题, 我们通常有三个方面是必查的. CPU, 内存 和 IO 使用率<br>
 通过wireshark分析网络问题, 也有类似的3个必查项</p>
-
 <ul>
 <li>统计 &ndash;&gt; 对话</li>
 </ul>
-
 <p>已<code>TCP</code>为例, 每一行代表一个TCP连接.他统计了流量和速率(每个方向和两个方向交互的总和)
 <code>rel start</code> 是该连接上第一条TCP包与该cap文件的第一条数据的时间相对值, 勾选绝对开始时间, 可显示包发送的绝对时间. 例如<code>23:17:95</code></p>
-
-<p><img src="https://xixiliguo.github.io/img/wireshark_info.png" alt="统计--&gt;对话框" /></p>
-
+<p><img src="/img/wireshark_info.png" alt="统计&amp;ndash;&amp;gt;对话框"  /></p>
 <ul>
 <li>分析 &ndash;&gt; 专家信息</li>
 </ul>
-
-<p>Wireshark会自动分析整个文件, 然后分严重等级罗列出每一项分析结果和对应出现的次数<br />
+<p>Wireshark会自动分析整个文件, 然后分严重等级罗列出每一项分析结果和对应出现的次数<br>
 一定要多关注错误和警告级别的, 根据出现的次数和文件总的<code>packet</code>数计算其出现的比例. 比如重传大于10%对性能影响就非常严重了</p>
-
-<p><img src="https://xixiliguo.github.io/img/wireshark_expertinfo.png" alt="分析 --&gt; 专家信息" /></p>
-
+<p><img src="/img/wireshark_expertinfo.png" alt="分析 &amp;ndash;&amp;gt; 专家信息"  /></p>
 <ul>
 <li>统计 &ndash;&gt; TCP流图形 &ndash;&gt; 时间序列(Steven)</li>
 </ul>
-
 <p>该图可以显示一个TCP连接上某个方向序列号的变化, 以此查看发送性能</p>
-
-<p><img src="https://xixiliguo.github.io/img/wireshark_tcpseq.png" alt="统计 --&gt; TCP流图形 --&gt; 时间序列" /></p>
-
+<p><img src="/img/wireshark_tcpseq.png" alt="统计 &amp;ndash;&amp;gt; TCP流图形 &amp;ndash;&amp;gt; 时间序列"  /></p>
 <h3 id="wireshark提示消息解释">Wireshark提示消息解释</h3>
-
 <ul>
-<li>[Packet size limited during capture]<br />
+<li>[Packet size limited during capture]<br>
 表示该包没有抓全, 比如包是大小是1024, 结果tcpdump抓时只了1000. 通常这是抓包是<code>-s</code>值太小造成的</li>
-<li>[TCP Previous segment not captured]<br />
+<li>[TCP Previous segment not captured]<br>
 TCP连接上后一包的seq大于前一个包的seq+eln, 说明中间缺失数据. 给出这个提示</li>
-<li>[TCP ACKed unseen segment]<br />
-该报文里的ACK确认的seq在整个抓包里没有找到<br /></li>
-<li>[TCP Out-of-Order]<br />
+<li>[TCP ACKed unseen segment]<br>
+该报文里的ACK确认的seq在整个抓包里没有找到</li>
+<li>[TCP Out-of-Order]<br>
 后一个包的seq小于前一个包的seq+len, 认为乱序</li>
-<li>[TCP Dup ACK]<br />
-后一个包的ack和前一个包里的ack指一样.<br /></li>
-<li>[TCP Fast Retransmission]<br />
+<li>[TCP Dup ACK]<br>
+后一个包的ack和前一个包里的ack指一样.</li>
+<li>[TCP Fast Retransmission]<br>
 当Dup ACK发生3次, 发送端启动快速重传</li>
-<li>[TCP Retransmission]<br />
+<li>[TCP Retransmission]<br>
 包丢且也没有触发Dup ACK, 则RTO超时过后启动重传</li>
-<li>[TCP zerowindow]<br />
+<li>[TCP zerowindow]<br>
 win为0, 表示接受方暂时无法接受新包</li>
-<li>[TCP window Full]<br />
+<li>[TCP window Full]<br>
 表示发送方已经将接受串口占满, 可对比接受方发的窗口和发送方的<code>byte in flight</code></li>
 </ul>
-
 <blockquote>
-<p>可进一步查看官方文档: <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html">https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html</a><br />
+<p>可进一步查看官方文档: <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html">https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html</a><br>
 有兴趣的话, 可以进一步查看源码: <a href="https://github.com/boundary/wireshark/blob/master/epan/dissectors/packet-tcp.c">https://github.com/boundary/wireshark/blob/master/epan/dissectors/packet-tcp.c</a></p>
 </blockquote>
-
 <h3 id="其他技巧">其他技巧</h3>
-
 <ul>
-<li><p>如果包在英国的某台服务器上生成, 在中国打开时, 会发现并不是英国当地的发生时间. 需要做timeshift<br />
-在<code>编辑 --&gt; 时间平移</code> 将时间通过<code>08:00:00</code>或者<code>-08:00:00</code>这样的格式进行调整</p></li>
-
-<li><p>推荐两个讲解Wireshark的书:<br />
-&lt;&lt; Wireshark网络分析就这么简单&gt;&gt; 和 &lt;&lt; Wireshark网络分析的艺术 &gt;&gt;</p></li>
-
-<li><p>iRTT 与 RTT<br />
-<a href="https://osqa-ask.wireshark.org/questions/21813/how-is-rtt-calculated">https://osqa-ask.wireshark.org/questions/21813/how-is-rtt-calculated</a></p></li>
+<li>
+<p>如果包在英国的某台服务器上生成, 在中国打开时, 会发现并不是英国当地的发生时间. 需要做timeshift<br>
+在<code>编辑 --&gt; 时间平移</code> 将时间通过<code>08:00:00</code>或者<code>-08:00:00</code>这样的格式进行调整</p>
+</li>
+<li>
+<p>推荐两个讲解Wireshark的书:<br>
+&laquo; Wireshark网络分析就这么简单&raquo; 和 &laquo; Wireshark网络分析的艺术 &raquo;</p>
+</li>
+<li>
+<p>iRTT 与 RTT<br>
+<a href="https://osqa-ask.wireshark.org/questions/21813/how-is-rtt-calculated">https://osqa-ask.wireshark.org/questions/21813/how-is-rtt-calculated</a></p>
+</li>
+</ul>
+<h2 id="tcp协议">TCP协议</h2>
+<h3 id="知识学习">知识学习</h3>
+<p>这块非常复杂, 推荐如下书籍或文章:
+TCP/IP详解卷1<br>
+TCP 的那些事儿:<br>
+<a href="https://coolshell.cn/articles/11564.html">https://coolshell.cn/articles/11564.html</a><br>
+<a href="https://coolshell.cn/articles/11609.html">https://coolshell.cn/articles/11609.html</a><br>
+TCP/IP Guide:<br>
+<a href="http://www.tcpipguide.com/free/index.htm">http://www.tcpipguide.com/free/index.htm</a> 免费电子书</p>
+<h3 id="问题记录">问题记录</h3>
+<ul>
+<li>
+<p>网卡eth1收到包, 根据路由要从网卡eth0发出去, 但从抓包上却没有看到回包<br>
+通过设置参数<code>net.ipv4.conf.all.rp_filter</code>为0 可解决
+默认为1, 是严格模式, 不允许回程路由和先前的不一样, 同时<code>nstat | grep IPReversePathFilter</code>可观察到包被丢弃后,计数器增加
+具体解释看:<br>
+<a href="https://access.redhat.com/solutions/53031">https://access.redhat.com/solutions/53031</a><br>
+<a href="https://www.slashroot.in/linux-kernel-rpfilter-settings-reverse-path-filtering">https://www.slashroot.in/linux-kernel-rpfilter-settings-reverse-path-filtering</a><br>
+<a href="https://access.redhat.com/solutions/53031">https://access.redhat.com/solutions/53031</a><br>
+同时可以打开内核参数<code>net.ipv4.conf.all.log_martians</code>,将OS认为的martians报文打印到系统日志里<br>
+具体解释:<br>
+<a href="https://serverfault.com/questions/570980/what-is-the-usefulness-of-logging-of-martians-packet-e-g-net-ipv4-conf-all-lo">https://serverfault.com/questions/570980/what-is-the-usefulness-of-logging-of-martians-packet-e-g-net-ipv4-conf-all-lo</a></p>
+</li>
+<li>
+<p>NAT场景下内网机器配置所有消息转发到一台nat服务器上, 但有时通过<code>ip route get xxx</code> 会显示路由指向默认网关. 并且有<code>cache redirect</code>字样<br>
+路由分为静态路由和动态的.  动态是通过智能学的, 例如<code>icmp</code>的重定向会影响的动态路由. NAT场景下要关闭ICMP的重定向功能</p>
+</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">net.ipv4.conf.all.accept_redirects<span class="o">=</span><span class="m">0</span>
+net.ipv4.conf.all.secure_redirects<span class="o">=</span><span class="m">0</span>
+net.ipv4.conf.all.send_redirects<span class="o">=</span><span class="m">0</span>
+</code></pre></div><ul>
+<li>多网卡一般配置不同的网段, 但有时会将同一网段的IP配置在两个网卡上, 这样回复消息只会从一个网卡出去. 需要通过策略路由解决:<br>
+为每一个网卡配置单独的路由表<br>
+默认任意一个网卡会对自己所有的 ip 地址在 ARP 请求上作出响应, 所有对端学到的这两个IP的mac地址可能是一样的, 解决方案如下:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">net.ipv4.conf.all.arp_announce <span class="o">=</span> <span class="m">2</span>
+net.ipv4.conf.all.arp_ignore <span class="o">=</span> <span class="m">1</span>
+</code></pre></div><ul>
+<li>
+<p>经常处理tcp各种超时问题, 如下文章总结了大部分tcp下的超时情况和对应的参数控制<br>
+<a href="http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/">http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/</a></p>
+</li>
+<li>
+<p>服务端收到包, 在tcp层会校验checksum, 如果错误, 则直接丢弃该包.  用<code>nstat</code>可以看到<code>TcpInCsumErrors</code>增大</p>
+</li>
 </ul>
 
-<h2 id="tcp协议">TCP协议</h2>
+        </section>
+    </article>
 
-<h3 id="知识学习">知识学习</h3>
+        </main>
 
-<p>这块非常复杂, 推荐如下书籍或文章:
-TCP/IP详解卷1<br />
-TCP 的那些事儿:<br />
-<a href="https://coolshell.cn/articles/11564.html">https://coolshell.cn/articles/11564.html</a><br />
-<a href="https://coolshell.cn/articles/11609.html">https://coolshell.cn/articles/11609.html</a><br />
-TCP/IP Guide:<br />
-<a href="http://www.tcpipguide.com/free/index.htm">http://www.tcpipguide.com/free/index.htm</a> 免费电子书</p>
-
-<h3 id="问题记录">问题记录</h3>
-
-<ul>
-<li><p>网卡eth1收到包, 根据路由要从网卡eth0发出去, 但从抓包上却没有看到回包<br />
-通过参数<code>net.ipv4.conf.all.rp_filter</code>空值.<br />
-默认为1, 是严格模式, 不允许回程路由和先前的不一样<br />
-具体解释看:<br />
-<a href="https://access.redhat.com/solutions/53031">https://access.redhat.com/solutions/53031</a><br />
-<a href="https://www.slashroot.in/linux-kernel-rpfilter-settings-reverse-path-filtering">https://www.slashroot.in/linux-kernel-rpfilter-settings-reverse-path-filtering</a><br />
-同时可以打开内核参数<code>net.ipv4.conf.all.log_martians</code>,将OS认为的martians报文打印到系统日志里<br />
-具体解释:<br />
-<a href="https://serverfault.com/questions/570980/what-is-the-usefulness-of-logging-of-martians-packet-e-g-net-ipv4-conf-all-lo">https://serverfault.com/questions/570980/what-is-the-usefulness-of-logging-of-martians-packet-e-g-net-ipv4-conf-all-lo</a></p></li>
-
-<li><p>NAT场景下内网机器配置所有消息转发到一台nat服务器上, 但有时通过<code>ip route get xxx</code> 会显示路由指向默认网关. 并且有<code>cache redirect</code>字样<br />
-路由分为静态路由和动态的.  动态是通过智能学的, 例如<code>icmp</code>的重定向会影响的动态路由. NAT场景下要关闭ICMP的重定向功能</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">net.ipv4.conf.all.accept_redirects</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">net.ipv4.conf.all.secure_redirects</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="">
-</span><span style="">net.ipv4.conf.all.send_redirects</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0</span></code></pre>
-</div></li>
-
-<li><p>多网卡一般配置不同的网段, 但有时会将同一网段的IP配置在两个网卡上, 这样回复消息只会从一个网卡出去. 需要通过策略路由解决:<br />
-为每一个网卡配置单独的路由表<br />
-默认任意一个网卡会对自己所有的 ip 地址在 ARP 请求上作出响应, 所有对端学到的这两个IP的mac地址可能是一样的, 解决方案如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">net.ipv4.conf.all.arp_announce </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">
-</span><span style="">net.ipv4.conf.all.arp_ignore </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span></code></pre>
-</div></li>
-
-<li><p>经常处理tcp各种超时问题, 如下文章总结了大部分tcp下的超时情况和对应的参数控制<br />
-<a href="http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/">http://blog.qiusuo.im/blog/2014/03/19/tcp-timeout/</a></p></li>
-
-<li><p>服务端收到包, 在tcp层会校验checksum, 如果错误, 则直接丢弃该包.  用<code>nstat</code>可以看到<code>TcpInCsumErrors</code>增大</p></li>
-</ul></article>
-    <footer class="post-footer">
-      
-      <ul class="post-tags">
+        <footer class="gblog-footer">
+    <nav class="container">
+        <section class="flex flex-wrap align-center">
+            
+            
+            
+            
+        </section>
+        <section class="flex flex-wrap align-center">
+            <span class="gblog-footer__item">
+                Built with <a href="https://gohugo.io/" class="gblog-footer__link">Hugo</a> and
+                <svg class="icon heart"><use xlink:href="#heart"></use></svg>
+            </span>
+        </section>
         
-          <li><a href="https://xixiliguo.github.io/tags/network"><span class="tag">NetWork</span></a></li>
-        
-      </ul>
-      
-      <p class="post-copyright">
-        © This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International LicenseThis post was published <strong>779</strong> days ago, content in the post may be inaccurate, even wrong now, please take risk yourself.
-      </p>
-    </footer>
-    
-      
-    
-  </section>
-  <footer class="site-footer">
-  <p>© 2017-2020 个人网站</p>
-  <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/laozhu/hugo-nuo" target="_blank">Nuo</a>.</p>
-  
+    </nav>
 </footer>
 
+    </div>
 
-
-<script src="https://xixiliguo.github.io/js/bundle.js"></script>
-
-
+    
+<script defer src="/js/clipboard-f06c52bfdd.min.js"></script>
 <script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-107151468-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?5b1cfb34145cf94f920ed2b28a6b6c1c";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var clipboard = new ClipboardJS('.clip');
+    });
 </script>
 
 
-
-  </body>
+</body>
 </html>

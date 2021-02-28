@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Boot on 个人网站</title>
+    <title>boot on My personal Blog</title>
     <link>https://xixiliguo.github.io/tags/boot/</link>
-    <description>Recent content in Boot on 个人网站</description>
+    <description>Recent content in boot on My personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>© This post is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License</copyright>
     <lastBuildDate>Sun, 19 Apr 2020 15:17:50 +0800</lastBuildDate>
     
 	<atom:link href="https://xixiliguo.github.io/tags/boot/index.xml" rel="self" type="application/rss+xml" />
@@ -18,9 +16,7 @@
       <pubDate>Sun, 19 Apr 2020 15:17:50 +0800</pubDate>
       
       <guid>https://xixiliguo.github.io/post/linux-boot/</guid>
-      <description>&lt;p&gt;记录linux启动过程的总结&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录linux启动过程的总结&lt;/p&gt;</description>
     </item>
     
   </channel>
