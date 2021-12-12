@@ -91,7 +91,8 @@ export default defineUserConfig<DefaultThemeOptions>({
         {
           text: '内核分析',
           children: [
-            '/kernel/linux-trap.md',
+            '/kernel/kernel-syscall-sched.md',
+            '/kernel/linux-trap.md'
           ],
         },        
       ],
