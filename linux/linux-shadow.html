@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <link rel="icon" type="image/jpg" href="/img/coast.jpg"><title>Linux /etc/shadow 文件学习笔记 | xixiliguo</title><meta name="description" content="stay hungry stay foolish"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="VuePress 2.0.0-beta.22">
+    <link rel="preload" href="/assets/js/runtime~app.443127ae.js" as="script"><link rel="preload" href="/assets/css/styles.d5a7f181.css" as="style"><link rel="preload" href="/assets/js/838.91c535db.js" as="script"><link rel="preload" href="/assets/js/app.1ace75fc.js" as="script">
+    <link rel="stylesheet" href="/assets/css/styles.d5a7f181.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><header class="navbar"><div class="toggle-sidebar-button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div><span><a href="/" class=""><!----><span class="site-name">xixiliguo</span></a></span><div class="navbar-links-wrapper" style=""><!--[--><!--]--><nav class="navbar-links can-hide"><!--[--><div class="navbar-links-item"><a href="/linux/atop.md" class="nav-link" aria-label="Linux运维"><!--[--><!--]--> Linux运维 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/network/tcpdump-wireshark.md" class="nav-link" aria-label="网络协议"><!--[--><!--]--> 网络协议 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/golang/golang-exec.md" class="nav-link" aria-label="Golang笔记"><!--[--><!--]--> Golang笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/k8s/runc.md" class="nav-link" aria-label="容器与k8s"><!--[--><!--]--> 容器与k8s <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/algorithm/radix-tree.md" class="nav-link" aria-label="算法笔记"><!--[--><!--]--> 算法笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/kernel/linux-trap.md" class="nav-link" aria-label="内核分析"><!--[--><!--]--> 内核分析 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/others/lua-implemention-gc.md" class="nav-link" aria-label="杂项"><!--[--><!--]--> 杂项 <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><button class="toggle-dark-button"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><div id="docsearch-container"></div></div></header><div class="sidebar-mask"></div><aside class="sidebar"><nav class="navbar-links"><!--[--><div class="navbar-links-item"><a href="/linux/atop.md" class="nav-link" aria-label="Linux运维"><!--[--><!--]--> Linux运维 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/network/tcpdump-wireshark.md" class="nav-link" aria-label="网络协议"><!--[--><!--]--> 网络协议 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/golang/golang-exec.md" class="nav-link" aria-label="Golang笔记"><!--[--><!--]--> Golang笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/k8s/runc.md" class="nav-link" aria-label="容器与k8s"><!--[--><!--]--> 容器与k8s <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/algorithm/radix-tree.md" class="nav-link" aria-label="算法笔记"><!--[--><!--]--> 算法笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/kernel/linux-trap.md" class="nav-link" aria-label="内核分析"><!--[--><!--]--> 内核分析 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/others/lua-implemention-gc.md" class="nav-link" aria-label="杂项"><!--[--><!--]--> 杂项 <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><ul class="sidebar-links"><!--[--><!--[--><p class="sidebar-heading sidebar-item active">Linux运维</p><ul class=""><li><!--[--><a href="/linux/atop.html" class="nav-link sidebar-item" aria-label="ATOP工作原理总结"><!--[--><!--]--> ATOP工作原理总结 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/cloud-init.html" class="nav-link sidebar-item" aria-label="cloud-init学习笔记"><!--[--><!--]--> cloud-init学习笔记 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/linux-shadow.html" class="router-link-active router-link-exact-active nav-link router-link-active sidebar-item active" aria-label="Linux /etc/shadow 文件学习笔记"><!--[--><!--]--> Linux /etc/shadow 文件学习笔记 <!--[--><!--]--></a><ul class="sidebar-sub-items"><li><!--[--><a aria-current="page" href="/linux/linux-shadow.html#字段介绍" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="字段介绍"><!--[--><!--]--> 字段介绍 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/linux-shadow.html#自己写代码实现加密-c-和-python实现" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="自己写代码实现加密(C 和 Python实现)"><!--[--><!--]--> 自己写代码实现加密(C 和 Python实现) <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/linux-shadow.html#密码相关一些配置" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="密码相关一些配置"><!--[--><!--]--> 密码相关一些配置 <!--[--><!--]--></a><!----><!--]--></li></ul><!--]--></li><li><!--[--><a href="/linux/bandersnatch-pypi.html" class="nav-link sidebar-item" aria-label="使用Bandersnatch搭建私有Pypi源"><!--[--><!--]--> 使用Bandersnatch搭建私有Pypi源 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/ntp.html" class="nav-link sidebar-item" aria-label="理解NTP协议"><!--[--><!--]--> 理解NTP协议 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/dns.html" class="nav-link sidebar-item" aria-label="DNS学习总结"><!--[--><!--]--> DNS学习总结 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/multi-queue.html" class="nav-link sidebar-item" aria-label="Linux 网卡多队列介绍"><!--[--><!--]--> Linux 网卡多队列介绍 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/linux-boot.html" class="nav-link sidebar-item" aria-label="Linux Boot过程总结"><!--[--><!--]--> Linux Boot过程总结 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/yum-update.html" class="nav-link sidebar-item" aria-label="使用Yum 升级OS"><!--[--><!--]--> 使用Yum 升级OS <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/linux-common-commands.html" class="nav-link sidebar-item" aria-label="Linux 下常用命令与技巧汇总"><!--[--><!--]--> Linux 下常用命令与技巧汇总 <!--[--><!--]--></a><!----><!--]--></li></ul><!--]--><!--]--></ul><!--[--><!--]--></aside><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><p>Linux系统下，创建的用户信息如ID，家目录，默认shell保存在/etc/passwd下，该文件每行的第二位（以冒号分隔）表示密码。但真正的密码其实被加密后放在/etc/shadow里，/etc/passwd里只显示为x。本文主要介绍shadow文件各字段含义和相关的密码生命周期配置。</p><p>本文内使用的Linux环境是centos7.3, 操作时间是2017年10月12号</p><h3 id="字段介绍" tabindex="-1"><a class="header-anchor" href="#字段介绍" aria-hidden="true">#</a> 字段介绍</h3><p>/etc/shadow每行和/etc/passwd一一对应，命令<code>pwconv</code>根据/etc/passwd生成。每行由9个字段（以冒号分隔）组成，如下是每个字段的含义：</p><h5 id="_1-登录名" tabindex="-1"><a class="header-anchor" href="#_1-登录名" aria-hidden="true">#</a> 1. 登录名:</h5><p>如 root， 通过它，唯一匹配/etc/passwd中的一行</p><h5 id="_2-加密后的密码" tabindex="-1"><a class="header-anchor" href="#_2-加密后的密码" aria-hidden="true">#</a> 2. 加密后的密码：</h5><p>通常的格式为: $X$ZZZZZZ<br> X为数字，表示不同的加密算法，具体如下：</p><table><thead><tr><th style="text-align:left;">ID</th><th style="text-align:left;">Method</th></tr></thead><tbody><tr><td style="text-align:left;">1</td><td style="text-align:left;">MD5</td></tr><tr><td style="text-align:left;">2a</td><td style="text-align:left;">Blowfish</td></tr><tr><td style="text-align:left;">5</td><td style="text-align:left;">SHA-256</td></tr><tr><td style="text-align:left;">6</td><td style="text-align:left;">SHA-512</td></tr></tbody></table><p>第二个星号后面的ZZZZ为加密后的密文, 具体是通过glibc里的crypt函数来实现加密。文章最后会提供一段程序，通过盐值来加密明文。可以通过<code>man 3 crypt</code>了解函数使用方法</p><p>如果该字段 是 ! 或者 *， 表示该用户无法用密码登录系统.但可以通过其他方式登录。<br> 如果该字段以感叹号!开头，其余是通常的格式，则系统认为密码被锁， ssh登录时即使输入正确的密码，也会拒绝登录. <code>usermod -L username</code> 就是使用该原理。<code>usermod -U username</code> 功能是解锁</p><h5 id="_3-密码最后修改时间" tabindex="-1"><a class="header-anchor" href="#_3-密码最后修改时间" aria-hidden="true">#</a> 3. 密码最后修改时间：</h5><p>通过<code>chage -d XX user</code>可以设置该字段<br> 值为从1970 1月1号至改密码时的天数。<br> 0表示用户需要在下次登录时修改密码<br> 空值表示关闭密码有效期功能，即密码永远有效<br> 如下是设置为0时的系统行为</p><div class="language-text ext-text"><pre class="language-text"><code>[root@linux /root]# grep test /etc/shadow
+test:$6$IFqUZWcW$lEDn9cLw:17450:0:99999:7:::
+[root@linux /root]# chage -d 0 test
+[root@linux /root]# grep test /etc/shadow
+test:$6$IFqUZWcW$lEDn9cLw:0:0:99999:7:::
+
+$ ssh test@XX.XX.XX.XX
+test@XX.XX.XX.XX&#39;s password:
+You are required to change your password immediately (root enforced)
+Last login: Wed Oct 11 23:09:07 2017 from XX.XX.XX.XX
+WARNING: Your password has expired.
+You must change your password now and login again!
+Changing password for user test.
+Changing password for test.
+(current) UNIX password:
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+Connection to XX.XX.XX.XX closed.
+$
+然后用新密码就可以登录了， 这个可以用于管理员强制普通用户修改密码
+</code></pre></div><h5 id="_4-最小时间间隔" tabindex="-1"><a class="header-anchor" href="#_4-最小时间间隔" aria-hidden="true">#</a> 4. 最小时间间隔：</h5><p>通过<code>chage -m XXX user</code>可以设置该字段<br> 两次修改口令之间所需的最小天数。<br> 空或者0表示没有限制</p><h5 id="_5-最大时间间隔" tabindex="-1"><a class="header-anchor" href="#_5-最大时间间隔" aria-hidden="true">#</a> 5. 最大时间间隔：</h5><p>通过<code>chage -M XXX user</code>可以设置该字段<br> 两次修改口令之间所需的最大天数。一旦超过，意味着密码过期.<br> 空表示没有限制.</p><p>如果该值小于最小时间间隔，则用户无法修改密码,如下演示其行为:</p><div class="language-text ext-text"><pre class="language-text"><code>[root@linux /root]# grep test /etc/shadow
+test:$6$xxFzM1X0$GzIbWsFIqhhcJ:17450:5:4:7:::
+[root@linux /root]#
+
+[test@linux ~]$ passwd
+Changing password for user test.
+Changing password for test.
+(current) UNIX password:
+You must wait longer to change your password
+passwd: Authentication token manipulation error
+</code></pre></div><h5 id="_6-警告天数" tabindex="-1"><a class="header-anchor" href="#_6-警告天数" aria-hidden="true">#</a> 6. 警告天数：</h5><p>通过<code>chage -W XXX user</code>可以设置该字段<br> 在密码过期前（即 密码最后修改时间 + 最大时间间隔），提前多少天通知用户. 此时仍可以正常登陆，只是多了一行提示<br> 空或者0表示无警告.<br> 如下演示告警信息:</p><div class="language-text ext-text"><pre class="language-text"><code>[root@linux /root]# grep test /etc/shadow
+test:$6$xxFzM1X0$GzIbWsFIqhh:17450:0:6:7:::
+[root@linux /root]#
+$ ssh test@XX.XX.XX.XX
+test@XX.XX.XX.XX&#39;s password:
+Warning: your password will expire in 6 days
+Last login: Wed Oct 11 23:36:04 2017 from XX.XX.XX.XX
+[test@linux ~]$
+</code></pre></div><h5 id="_7-非活动周期" tabindex="-1"><a class="header-anchor" href="#_7-非活动周期" aria-hidden="true">#</a> 7. 非活动周期:</h5><p>通过<code>chage -I XXX user</code>可以设置该字段<br> 表示密码过期后，多少天内用户仍可以正常登陆，但要求立即修改密码。 一旦超过该天数，系统会拒绝用户登陆<br> 空值或者0表示没有非活动期，一旦密码过期直接拒绝登陆</p><p>如下演示进入非活动期</p><div class="language-text ext-text"><pre class="language-text"><code>[root@linux /root]# chage -l test
+Last password change					: Oct 01, 2017
+Password expires					: Oct 02, 2017
+Password inactive					: Nov 01, 2017
+Account expires						: never
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 1
+Number of days of warning before password expires	: 7
+[root@linux /root]# grep test /etc/shadow
+test:$6$xxFzM1X0$GzIbWsFIqhhcJ:17440:0:1:7:30::
+$ ssh test@XX.XX.XX.XX
+test@XX.XX.XX.XX&#39;s password:
+You are required to change your password immediately (password aged)
+Last login: Wed Oct 11 23:51:05 2017 from XX.XX.XX.XX
+WARNING: Your password has expired.
+You must change your password now and login again!
+Changing password for user test.
+Changing password for test.
+(current) UNIX password:
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+Connection to XX.XX.XX.XX closed.
+</code></pre></div><p>如下演示超过非活动期:</p><div class="language-text ext-text"><pre class="language-text"><code>[root@linux /root]# chage -l test
+Last password change					: Oct 01, 2017
+Password expires					: Oct 02, 2017
+Password inactive					: Oct 02, 2017
+Account expires						: never
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 1
+Number of days of warning before password expires	: 7
+[root@linux /root]# grep test /etc/shadow
+test:$6$wODB1.oE$39TBytc.5y0OkKn:17440:0:1:7:0::
+$ ssh test@10.211.55.9
+test@10.211.55.9&#39;s password:
+Your account has expired; please contact your system administrator
+Connection closed by 10.211.55.9
+</code></pre></div><h5 id="_8-用户过期时间" tabindex="-1"><a class="header-anchor" href="#_8-用户过期时间" aria-hidden="true">#</a> 8. 用户过期时间：</h5><p>通过<code>chage -E XXX user</code>可以设置该字段<br> 用户过期时间，值表示为自19701月1号起的天数.<br> 密码过期后，用户只是无法使用密码登陆，还可以用其他方式。 一旦用户过期，任何方式都无法用该用户登陆<br> 空值表示永远不会过期<br> 0值不建议使用。解释取决于程序本身</p><h5 id="_9-其他为保留字段-为将来扩展功能用" tabindex="-1"><a class="header-anchor" href="#_9-其他为保留字段-为将来扩展功能用" aria-hidden="true">#</a> 9. 其他为保留字段，为将来扩展功能用</h5><h3 id="自己写代码实现加密-c-和-python实现" tabindex="-1"><a class="header-anchor" href="#自己写代码实现加密-c-和-python实现" aria-hidden="true">#</a> 自己写代码实现加密(C 和 Python实现)</h3><div class="language-c ext-c"><pre class="language-c"><code><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;crypt.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>argc<span class="token operator">!=</span><span class="token number">3</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">char</span> <span class="token operator">*</span>buf <span class="token operator">=</span> <span class="token function">crypt</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span>argv<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;salt: %s, crypt: %s\n&quot;</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span> buf<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><div class="language-text ext-text"><pre class="language-text"><code>#gcc -g a.c -lcrypt  
+#grep root /etc/shadow  
+root:$6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.:17450:0:99999:7:::  
+#./a.out abc \$6\$DEgVEU0T  
+salt: $6$DEgVEU0T, crypt: $6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.  
+</code></pre></div><p>Python 2.7 自带crypt模块，它是C库 crypt的binding， 实现更简单。代码如下：</p><div class="language-text ext-text"><pre class="language-text"><code>[root@abc ~]# python
+Python 2.7.5 (default, Nov  6 2016, 00:28:07)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-11)] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; import crypt
+&gt;&gt;&gt; crypt.crypt(&quot;abc&quot;, &quot;$6$DEgVEU0T&quot;)
+&#39;$6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.&#39;
+</code></pre></div><h3 id="密码相关一些配置" tabindex="-1"><a class="header-anchor" href="#密码相关一些配置" aria-hidden="true">#</a> 密码相关一些配置</h3><p>/etc/login.defs 用来存放一些与创建用户和密码相关的配置信息<br> 当使用useradd创建新用户时，系统会读取该文件，然后写入/etc/shadows.<br> 和密码相关的只要是 PASS_MAX_DAYS，PASS_MIN_DAYS，PASS_MIN_LEN，PASS_WARN_AGE，ENCRYPT_METHOD 这几个参数<br> UMASK用来定义默认的新建文件权限</p><div class="language-text ext-text"><pre class="language-text"><code>[root@linux /root]# grep ^[^#] /etc/login.defs
+MAIL_DIR	/var/spool/mail
+PASS_MAX_DAYS	99999
+PASS_MIN_DAYS	0
+PASS_MIN_LEN	5
+PASS_WARN_AGE	7
+UID_MIN                  1000
+UID_MAX                 60000
+SYS_UID_MIN               201
+SYS_UID_MAX               999
+GID_MIN                  1000
+GID_MAX                 60000
+SYS_GID_MIN               201
+SYS_GID_MAX               999
+CREATE_HOME	yes
+UMASK           077
+USERGROUPS_ENAB yes
+ENCRYPT_METHOD SHA512
+</code></pre></div><blockquote><p>参考：<br> man 8 pwconv<br> man 5 shadow<br> man 3 crypt</p></blockquote><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">Last Updated: </span><span class="meta-item-info">7/18/2021, 6:56:35 AM</span></div><!----></footer><nav class="page-nav"><p class="inner"><span class="prev"> ← <a href="/linux/cloud-init.html" class="nav-link" aria-label="cloud-init学习笔记"><!--[--><!--]--> cloud-init学习笔记 <!--[--><!--]--></a></span><span class="next"><a href="/linux/bandersnatch-pypi.html" class="nav-link" aria-label="使用Bandersnatch搭建私有Pypi源"><!--[--><!--]--> 使用Bandersnatch搭建私有Pypi源 <!--[--><!--]--></a> → </span></p></nav><!--[--><!--]--></main></div><!----><!--]--></div>
+    <script src="/assets/js/runtime~app.443127ae.js" defer></script><script src="/assets/js/838.91c535db.js" defer></script><script src="/assets/js/app.1ace75fc.js" defer></script>
+  </body>
+</html>

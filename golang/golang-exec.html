@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <link rel="icon" type="image/jpg" href="/img/coast.jpg"><title>Golang os/exec 实现 | xixiliguo</title><meta name="description" content="stay hungry stay foolish"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="VuePress 2.0.0-beta.22">
+    <link rel="preload" href="/assets/js/runtime~app.443127ae.js" as="script"><link rel="preload" href="/assets/css/styles.d5a7f181.css" as="style"><link rel="preload" href="/assets/js/838.91c535db.js" as="script"><link rel="preload" href="/assets/js/app.1ace75fc.js" as="script">
+    <link rel="stylesheet" href="/assets/css/styles.d5a7f181.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><header class="navbar"><div class="toggle-sidebar-button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div><span><a href="/" class=""><!----><span class="site-name">xixiliguo</span></a></span><div class="navbar-links-wrapper" style=""><!--[--><!--]--><nav class="navbar-links can-hide"><!--[--><div class="navbar-links-item"><a href="/linux/atop.md" class="nav-link" aria-label="Linux运维"><!--[--><!--]--> Linux运维 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/network/tcpdump-wireshark.md" class="nav-link" aria-label="网络协议"><!--[--><!--]--> 网络协议 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/golang/golang-exec.md" class="nav-link" aria-label="Golang笔记"><!--[--><!--]--> Golang笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/k8s/runc.md" class="nav-link" aria-label="容器与k8s"><!--[--><!--]--> 容器与k8s <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/algorithm/radix-tree.md" class="nav-link" aria-label="算法笔记"><!--[--><!--]--> 算法笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/kernel/linux-trap.md" class="nav-link" aria-label="内核分析"><!--[--><!--]--> 内核分析 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/others/lua-implemention-gc.md" class="nav-link" aria-label="杂项"><!--[--><!--]--> 杂项 <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><button class="toggle-dark-button"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><div id="docsearch-container"></div></div></header><div class="sidebar-mask"></div><aside class="sidebar"><nav class="navbar-links"><!--[--><div class="navbar-links-item"><a href="/linux/atop.md" class="nav-link" aria-label="Linux运维"><!--[--><!--]--> Linux运维 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/network/tcpdump-wireshark.md" class="nav-link" aria-label="网络协议"><!--[--><!--]--> 网络协议 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/golang/golang-exec.md" class="nav-link" aria-label="Golang笔记"><!--[--><!--]--> Golang笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/k8s/runc.md" class="nav-link" aria-label="容器与k8s"><!--[--><!--]--> 容器与k8s <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/algorithm/radix-tree.md" class="nav-link" aria-label="算法笔记"><!--[--><!--]--> 算法笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/kernel/linux-trap.md" class="nav-link" aria-label="内核分析"><!--[--><!--]--> 内核分析 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/others/lua-implemention-gc.md" class="nav-link" aria-label="杂项"><!--[--><!--]--> 杂项 <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><ul class="sidebar-links"><!--[--><!--[--><p class="sidebar-heading sidebar-item active">Golang笔记</p><ul class=""><li><!--[--><a aria-current="page" href="/golang/golang-exec.html" class="router-link-active router-link-exact-active nav-link router-link-active sidebar-item active" aria-label="Golang os/exec 实现"><!--[--><!--]--> Golang os/exec 实现 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/golang/strings-algorithm-golang.html" class="nav-link sidebar-item" aria-label="从Go标准库看字符串匹配算法"><!--[--><!--]--> 从Go标准库看字符串匹配算法 <!--[--><!--]--></a><!----><!--]--></li></ul><!--]--><!--]--></ul><!--[--><!--]--></aside><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><p>os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 本文主要是阅读内部实现后的一些总结.</p><h1 id="基本使用" tabindex="-1"><a class="header-anchor" href="#基本使用" aria-hidden="true">#</a> 基本使用</h1><p>一. 如果要运行<code>ls -rlt</code>,代码如下:</p><div class="language-golang ext-golang"><pre class="language-golang"><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;log&quot;
+	&quot;os/exec&quot;
+)
+
+func main() {
+
+	cmd := exec.Command(&quot;ls&quot;, &quot;-rlt&quot;)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf(&quot;%s\n&quot;, stdoutStderr)
+}
+</code></pre></div><p>如果要运行<code>ls -rlt /root/*.go</code>, 使用<code>cmd := exec.Command(&quot;ls&quot;, &quot;-rlt&quot;, &quot;/root/*.go&quot;)</code>是错误的.<br> 因为底层是直接使用系统调用<code>execve</code>的.它并不会向Shell那样解析通配符. 变通方案为golang执行bash命令, 如:</p><div class="language-golang ext-golang"><pre class="language-golang"><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;log&quot;
+	&quot;os/exec&quot;
+)
+
+func main() {
+
+	cmd := exec.Command(&quot;bash&quot;, &quot;-c&quot;,&quot;ls -rlt /root/*.go&quot;)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf(&quot;%s\n&quot;, stdoutStderr)
+}
+</code></pre></div><p>二. 新进程默认继承父进程的环境变量, 要单独指定, 可以使用将类型为<code>[]string</code>的值赋给<code>cmd.Env</code>. 其行为不是增加, 是覆盖父进程的环境变量.<br> 三. 新进程的标准输入,标准输出,标准错误是可以指定随意配置的, 可以是文件, 也可以是<code>bytes.Buffer</code>这种满足<code>io.reader</code>或者<code>io.writer</code>的数据结构<br> 四. 默认新进程只有0,1,2三个文件描述符, 如果新进程想继承其他已打开的文件, 可以将它放入<code>cmd.ExtraFiles</code>. 该字段的英文解释如下:</p><div class="language-golang ext-golang"><pre class="language-golang"><code>// ExtraFiles specifies additional open files to be inherited by the
+// new process. It does not include standard input, standard output, or
+// standard error. If non-nil, entry i becomes file descriptor 3+i.
+//
+</code></pre></div><p>这里有例外, 如果golang程序时从其他进程拉起的, 那么父进程本身可能从父父进程继承了一些没有标记为close-exec的文件, 这个在<code>execve</code>时是无法close的.子进程仍然会继承.</p><h1 id="源码分析" tabindex="-1"><a class="header-anchor" href="#源码分析" aria-hidden="true">#</a> 源码分析</h1><p>一. os/exec是高阶库,大概的调用关系如下:</p><div class="language-text ext-text"><pre class="language-text"><code>                                                                 
+                         +----------------+                      
+                         | (*Cmd).Start() |                      
+                         +----------------+                      
+                                 |                               
+                                 v                               
+  +-------------------------------------------------------------+
+  | os.StartProcess(name string, argv []string, attr *ProcAttr) |
+  +-------------------------------------------------------------+
+                                 |                               
+                                 v                               
+          +-------------------------------------------+          
+          | syscall.StartProcess(name, argv, sysattr) |          
+          +-------------------------------------------+          
+</code></pre></div><p>二. (*Cmd).Start()主要处理如何与创建后的通信. 比如如何将一个文件内容作为子进程的标准输入, 如何获取子进程的标准输出. 具体创建进程在<code>os.StartProcess</code>里实现<br> 如下是处理子进程标准输入的具体代码注释.</p><div class="language-golang ext-golang"><pre class="language-golang"><code>// 该函数返回子进程标准输入对应的文件信息. 在fork/exec后子进程里面将其对应的文件描述符设置为0
+func (c *Cmd) stdin() (f *os.File, err error) {
+    // 如果没有定义的标准输入来源, 则默认是/dev/null
+	if c.Stdin == nil {
+		f, err = os.Open(os.DevNull)
+		if err != nil {
+			return
+		}
+		c.closeAfterStart = append(c.closeAfterStart, f)
+		return
+	}
+
+    // 如果定义子进程的标准输入为父进程已打开的文件, 则直接返回
+	if f, ok := c.Stdin.(*os.File); ok {
+		return f, nil
+	}
+
+    // 如果是其他的,比如实现了io.Reader的一段字符串, 则通过pipe从父进程传入子进程
+    // 创建pipe, 成功execve后,在父进程里关闭读. 从父进程写, 从子进程读.
+    // 一旦父进程获取子进程的结果, 即子进程运行结束, 在父进程里关闭写.
+	pr, pw, err := os.Pipe()
+	if err != nil {
+		return
+	}
+
+	// 读端对父进程没有用,一旦子进程创建出来继承后, 父进程关闭它
+	c.closeAfterStart = append(c.closeAfterStart, pr)
+	// 父进程要等子进程运行结束后,才能将写端关闭, 因为子进程不存在了,不需要读了
+    c.closeAfterWait = append(c.closeAfterWait, pw)
+    
+    // 通过goroutine将c.Stdin的数据写入到pipe的写端
+	c.goroutine = append(c.goroutine, func() error {
+		_, err := io.Copy(pw, c.Stdin)
+		if skip := skipStdinCopyError; skip != nil &amp;&amp; skip(err) {
+			err = nil
+		}
+		if err1 := pw.Close(); err == nil {
+			err = err1
+		}
+		return err
+	})
+	return pr, nil
+}
+</code></pre></div><p>三. golang里使用<code>os.OpenFile</code>打开的文件默认是`close-on-exec&quot;<br> 除非它被指定为子进程的标准输入,标准输出或者标准错误输出, 否则在子进程里会被close掉.</p><p><code>file_unix.go</code>里是打开文件的逻辑:</p><div class="language-golang ext-golang"><pre class="language-golang"><code>// openFileNolog is the Unix implementation of OpenFile.
+// Changes here should be reflected in openFdAt, if relevant.
+func openFileNolog(name string, flag int, perm FileMode) (*File, error) {
+	setSticky := false
+	if !supportsCreateWithStickyBit &amp;&amp; flag&amp;O_CREATE != 0 &amp;&amp; perm&amp;ModeSticky != 0 {
+		if _, err := Stat(name); IsNotExist(err) {
+			setSticky = true
+		}
+	}
+
+	var r int
+	for {
+		var e error
+		r, e = syscall.Open(name, flag|syscall.O_CLOEXEC, syscallMode(perm))
+		if e == nil {
+			break
+		}
+
+</code></pre></div><p>如果要让子进程继承指定的文件, 需要使用<code>ExtraFiles</code>字段</p><div class="language-golang ext-golang"><pre class="language-golang"><code>func main() {
+	a, _ := os.Create(&quot;abc&quot;)
+	cmd := exec.Command(&quot;ls&quot;, &quot;-rlt&quot;, &quot;/proc/self/fd&quot;)
+	cmd.ExtraFiles = append(cmd.ExtraFiles, a)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf(&quot;%s\n&quot;, stdoutStderr)
+}
+</code></pre></div><p>关于文件描述符(the processes&#39; local file descriptor table)和系统级的文件打开表(OS&#39; open file table)的关系, 可参见文章 https://www.cnblogs.com/Orgliny/articles/5699479.html<br> 如果两个文件描述符指向同一个文件打开项, 则共享打开的标志, 偏移量. (close-exec 是进程级文件描述符里的标志)<br> 每次<code>open</code>都会创建一个新的文件打开项, 所以同一个进程打开同一个文件两次, 那么文件打开项是不一样的. 不共享偏移量等信息</p><p>四. 当父进程内存特别大的时候, fork/exec的性能非常差, golang使用clone系统调优并大幅优化性能. 主要思路是创建的子进程和父进程初始时共用堆栈,fork则是复制一份堆栈. 具体代码如下:</p><div class="language-golang ext-golang"><pre class="language-golang"><code>	locked = true
+	switch {
+	case runtime.GOARCH == &quot;amd64&quot; &amp;&amp; sys.Cloneflags&amp;CLONE_NEWUSER == 0:
+		r1, err1 = rawVforkSyscall(SYS_CLONE, uintptr(SIGCHLD|CLONE_VFORK|CLONE_VM)|sys.Cloneflags)
+	case runtime.GOARCH == &quot;s390x&quot;:
+		r1, _, err1 = RawSyscall6(SYS_CLONE, 0, uintptr(SIGCHLD)|sys.Cloneflags, 0, 0, 0, 0)
+	default:
+		r1, _, err1 = RawSyscall6(SYS_CLONE, uintptr(SIGCHLD)|sys.Cloneflags, 0, 0, 0, 0, 0)
+	}
+</code></pre></div><p>网上有很多关于讨论该性能的文章:<br> https://zhuanlan.zhihu.com/p/47940999<br> https://about.gitlab.com/2018/01/23/how-a-fix-in-go-19-sped-up-our-gitaly-service-by-30x/<br> https://github.com/golang/go/issues/5838<br> 如果是C语言, 可以使用<code>posix_spawn</code>代替<code>fork/exec</code>.<br><code>posix_spawn_file_actions_adddup2</code>,<code>posix_spawn_file_actions_addclose</code>,<code>posix_spawn_file_actions_addopen</code>等可以操作继承的文件描述符, 达到改变子进程0,1,2等目的. 详细的参考代码可见 https://github.com/rtomayko/posix-spawn/blob/master/ext/posix-spawn.c</p><div class="language-c ext-c"><pre class="language-c"><code><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h&gt;</span></span>
+
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;unistd.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;spawn.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;sys/wait.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;time.h&gt;</span></span>
+
+<span class="token keyword">extern</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>environ<span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token function">run_cmd_posix_spawn</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    <span class="token class-name">pid_t</span> pid<span class="token punctuation">;</span>
+    <span class="token keyword">int</span> status<span class="token punctuation">;</span>
+
+    status <span class="token operator">=</span> <span class="token function">posix_spawn</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>pid<span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> argv<span class="token punctuation">,</span> environ<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>status <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token comment">// printf(&quot;Child pid: %i\n&quot;, pid);</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">waitpid</span><span class="token punctuation">(</span>pid<span class="token punctuation">,</span> <span class="token operator">&amp;</span>status<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+            <span class="token comment">// printf(&quot;Child exited with status %i\n&quot;, status);</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">else</span>
+        <span class="token punctuation">{</span>
+            <span class="token function">perror</span><span class="token punctuation">(</span><span class="token string">&quot;waitpid&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span>
+    <span class="token punctuation">{</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;posix_spawn: %s\n&quot;</span><span class="token punctuation">,</span> <span class="token function">strerror</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">run_cmd_fork_exec</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    <span class="token class-name">pid_t</span> pid<span class="token punctuation">;</span>
+    <span class="token keyword">int</span> status<span class="token punctuation">;</span>
+
+    pid <span class="token operator">=</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>pid <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token comment">// printf(&quot;Child process pid = %u\n&quot;, getpid());</span>
+        <span class="token function">execv</span><span class="token punctuation">(</span>argv<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> argv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span>
+    <span class="token punctuation">{</span>
+        <span class="token comment">// printf(&quot;Parent process\n&quot;);</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">waitpid</span><span class="token punctuation">(</span>pid<span class="token punctuation">,</span> <span class="token operator">&amp;</span>status<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">WIFEXITED</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token function">WEXITSTATUS</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">{</span>
+                <span class="token comment">// printf(&quot;program execution successfull\n&quot;);</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">WIFEXITED</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token function">WEXITSTATUS</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">{</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">WEXITSTATUS</span><span class="token punctuation">(</span>status<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">127</span><span class="token punctuation">)</span>
+                <span class="token punctuation">{</span>
+
+                    <span class="token comment">// execv failed</span>
+                    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;execv failed\n&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                <span class="token keyword">else</span>
+                    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;program terminated normally,&quot;</span>
+                           <span class="token string">&quot; but returned a non-zero status\n&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">else</span>
+                <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;program didn&#39;t terminate normally\n&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">else</span>
+        <span class="token punctuation">{</span>
+            <span class="token comment">// waitpid() failed</span>
+            <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;waitpid() failed\n&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    <span class="token keyword">int</span> i<span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;Run command: &quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> argv<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;%s &quot;</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;\n&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token class-name">clock_t</span> start<span class="token punctuation">,</span> finish<span class="token punctuation">;</span>
+    <span class="token keyword">double</span> duration<span class="token punctuation">;</span>
+
+    <span class="token keyword">int</span> loop <span class="token operator">=</span> <span class="token number">10000</span><span class="token punctuation">;</span>
+
+    start <span class="token operator">=</span> <span class="token function">clock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> loop<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token function">run_cmd_posix_spawn</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    finish <span class="token operator">=</span> <span class="token function">clock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    duration <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">double</span><span class="token punctuation">)</span><span class="token punctuation">(</span>finish <span class="token operator">-</span> start<span class="token punctuation">)</span> <span class="token operator">/</span> CLOCKS_PER_SEC <span class="token operator">/</span> loop<span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;posix_spawn:  %d times:  %f seconds per one count\n&quot;</span><span class="token punctuation">,</span> loop<span class="token punctuation">,</span> duration<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    start <span class="token operator">=</span> <span class="token function">clock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> loop<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token function">run_cmd_fork_exec</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    finish <span class="token operator">=</span> <span class="token function">clock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    duration <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">double</span><span class="token punctuation">)</span><span class="token punctuation">(</span>finish <span class="token operator">-</span> start<span class="token punctuation">)</span> <span class="token operator">/</span> CLOCKS_PER_SEC <span class="token operator">/</span> loop<span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">&quot;fork/exec:  %d times:  %f seconds per one count\n&quot;</span><span class="token punctuation">,</span> loop<span class="token punctuation">,</span> duration<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>五. 父进程使用pipe来探测在创建子进程execve时是否有异常.<br> 在 syscall/exec_unix.go中.<br> 如果execve成功,则该pipe因close-on-exec在子进程里自动关闭. 父进程从pipe读到的长度为0<br> 如果有异常, 则将错误写入pipd的写端, 父进程读到长度非0的信息, 然后进行下一步处理</p><div class="language-golang ext-golang"><pre class="language-golang"><code>	// Acquire the fork lock so that no other threads
+	// create new fds that are not yet close-on-exec
+	// before we fork.
+	ForkLock.Lock()
+
+	// Allocate child status pipe close on exec.
+	if err = forkExecPipe(p[:]); err != nil {
+		goto error
+	}
+
+	// Kick off child.
+	pid, err1 = forkAndExecInChild(argv0p, argvp, envvp, chroot, dir, attr, sys, p[1])
+	if err1 != 0 {
+		err = Errno(err1)
+		goto error
+	}
+	ForkLock.Unlock()
+
+	// Read child error status from pipe.
+	Close(p[1])
+	n, err = readlen(p[0], (*byte)(unsafe.Pointer(&amp;err1)), int(unsafe.Sizeof(err1)))
+	Close(p[0])
+	if err != nil || n != 0 {
+		if n == int(unsafe.Sizeof(err1)) {
+			err = Errno(err1)
+		}
+		if err == nil {
+			err = EPIPE
+		}
+
+		// Child failed; wait for it to exit, to make sure
+		// the zombies don&#39;t accumulate.
+		_, err1 := Wait4(pid, &amp;wstatus, 0, nil)
+		for err1 == EINTR {
+			_, err1 = Wait4(pid, &amp;wstatus, 0, nil)
+		}
+		return 0, err
+	}
+
+	// Read got EOF, so pipe closed on exec, so exec succeeded.
+	return pid, nil
+</code></pre></div><p>六. 当子进程运行完后, 使用系统调用<code>wait4</code>回收资源, 可获取<code>exit code</code>,<code>信号</code>和<code>rusage</code>使用量等信息.<br> 七. 有超时机制, 如下例子是子进程在5分钟没有运行时也返回. 不会长时间阻塞进程.</p><div class="language-golang ext-golang"><pre class="language-golang"><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;os/exec&quot;
+	&quot;time&quot;
+)
+
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	if err := exec.CommandContext(ctx, &quot;sleep&quot;, &quot;5&quot;).Run(); err != nil {
+		// This will fail after 100 milliseconds. The 5 second sleep
+		// will be interrupted.
+	}
+}
+
+</code></pre></div><p>具体是使用<code>context</code>库实现超时机制. 一旦时间达到,就给子进程发送<code>kill</code>信号,强制中止它.</p><div class="language-golang ext-golang"><pre class="language-golang"><code>	if c.ctx != nil {
+		c.waitDone = make(chan struct{})
+		go func() {
+			select {
+			case &lt;-c.ctx.Done():
+				c.Process.Kill()
+			case &lt;-c.waitDone:
+			}
+		}()
+	}
+</code></pre></div><p>八. 假设调用一个脚本A, A有会调用B. 如果此时golang程序超时kill掉A, 那么B就变为pid为1的进程的子进程.<br> 有时这并不是我们所希望的.因为真正导致长时间没返回结果的可能是B进程.所以更希望将A和B同时杀掉. 默认golang的<code>exec.CommandContext</code>无法实现.<br> 具体需要在创建子进程时使用<code>setpgid</code>,将进程组ID设置为进程ID. 子子进程会继承这个进程组ID, 最后超时kill时指定进程组ID, 会将该进程组内的所有进程都kill掉. 对应golang的代码为:</p><div class="language-golang ext-golang"><pre class="language-golang"><code>func main() {
+
+	cmd := exec.Command(&quot;/root/sleep.sh&quot;)
+	cmd.SysProcAttr = &amp;syscall.SysProcAttr{
+		Setpgid: true,
+	}
+
+	start := time.Now()
+	time.AfterFunc(30*time.Second, func() {
+		syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+	})
+
+	err := cmd.Run()
+	fmt.Printf(&quot;pid=%d duration=%s err=%s\n&quot;, cmd.Process.Pid, time.Since(start), err)
+
+}
+</code></pre></div><p>参考:<br> https://medium.com/@felixge/killing-a-child-process-and-all-of-its-children-in-go-54079af94773</p><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">Last Updated: </span><span class="meta-item-info">7/18/2021, 6:56:35 AM</span></div><!----></footer><nav class="page-nav"><p class="inner"><!----><span class="next"><a href="/golang/strings-algorithm-golang.html" class="nav-link" aria-label="从Go标准库看字符串匹配算法"><!--[--><!--]--> 从Go标准库看字符串匹配算法 <!--[--><!--]--></a> → </span></p></nav><!--[--><!--]--></main></div><!----><!--]--></div>
+    <script src="/assets/js/runtime~app.443127ae.js" defer></script><script src="/assets/js/838.91c535db.js" defer></script><script src="/assets/js/app.1ace75fc.js" defer></script>
+  </body>
+</html>

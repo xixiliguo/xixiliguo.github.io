@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <link rel="icon" type="image/jpg" href="/img/coast.jpg"><title>理解NTP协议 | xixiliguo</title><meta name="description" content="stay hungry stay foolish"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="VuePress 2.0.0-beta.22">
+    <link rel="preload" href="/assets/js/runtime~app.443127ae.js" as="script"><link rel="preload" href="/assets/css/styles.d5a7f181.css" as="style"><link rel="preload" href="/assets/js/838.91c535db.js" as="script"><link rel="preload" href="/assets/js/app.1ace75fc.js" as="script">
+    <link rel="stylesheet" href="/assets/css/styles.d5a7f181.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><header class="navbar"><div class="toggle-sidebar-button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div><span><a href="/" class=""><!----><span class="site-name">xixiliguo</span></a></span><div class="navbar-links-wrapper" style=""><!--[--><!--]--><nav class="navbar-links can-hide"><!--[--><div class="navbar-links-item"><a href="/linux/atop.md" class="nav-link" aria-label="Linux运维"><!--[--><!--]--> Linux运维 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/network/tcpdump-wireshark.md" class="nav-link" aria-label="网络协议"><!--[--><!--]--> 网络协议 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/golang/golang-exec.md" class="nav-link" aria-label="Golang笔记"><!--[--><!--]--> Golang笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/k8s/runc.md" class="nav-link" aria-label="容器与k8s"><!--[--><!--]--> 容器与k8s <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/algorithm/radix-tree.md" class="nav-link" aria-label="算法笔记"><!--[--><!--]--> 算法笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/kernel/linux-trap.md" class="nav-link" aria-label="内核分析"><!--[--><!--]--> 内核分析 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/others/lua-implemention-gc.md" class="nav-link" aria-label="杂项"><!--[--><!--]--> 杂项 <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><button class="toggle-dark-button"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><div id="docsearch-container"></div></div></header><div class="sidebar-mask"></div><aside class="sidebar"><nav class="navbar-links"><!--[--><div class="navbar-links-item"><a href="/linux/atop.md" class="nav-link" aria-label="Linux运维"><!--[--><!--]--> Linux运维 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/network/tcpdump-wireshark.md" class="nav-link" aria-label="网络协议"><!--[--><!--]--> 网络协议 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/golang/golang-exec.md" class="nav-link" aria-label="Golang笔记"><!--[--><!--]--> Golang笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/k8s/runc.md" class="nav-link" aria-label="容器与k8s"><!--[--><!--]--> 容器与k8s <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/algorithm/radix-tree.md" class="nav-link" aria-label="算法笔记"><!--[--><!--]--> 算法笔记 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/kernel/linux-trap.md" class="nav-link" aria-label="内核分析"><!--[--><!--]--> 内核分析 <!--[--><!--]--></a></div><div class="navbar-links-item"><a href="/others/lua-implemention-gc.md" class="nav-link" aria-label="杂项"><!--[--><!--]--> 杂项 <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><ul class="sidebar-links"><!--[--><!--[--><p class="sidebar-heading sidebar-item active">Linux运维</p><ul class=""><li><!--[--><a href="/linux/atop.html" class="nav-link sidebar-item" aria-label="ATOP工作原理总结"><!--[--><!--]--> ATOP工作原理总结 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/cloud-init.html" class="nav-link sidebar-item" aria-label="cloud-init学习笔记"><!--[--><!--]--> cloud-init学习笔记 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/linux-shadow.html" class="nav-link sidebar-item" aria-label="Linux /etc/shadow 文件学习笔记"><!--[--><!--]--> Linux /etc/shadow 文件学习笔记 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/bandersnatch-pypi.html" class="nav-link sidebar-item" aria-label="使用Bandersnatch搭建私有Pypi源"><!--[--><!--]--> 使用Bandersnatch搭建私有Pypi源 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/ntp.html" class="router-link-active router-link-exact-active nav-link router-link-active sidebar-item active" aria-label="理解NTP协议"><!--[--><!--]--> 理解NTP协议 <!--[--><!--]--></a><ul class="sidebar-sub-items"><li><!--[--><a aria-current="page" href="/linux/ntp.html#时钟同步的过程" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="时钟同步的过程"><!--[--><!--]--> 时钟同步的过程 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/ntp.html#ntp消息格式" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="ntp消息格式"><!--[--><!--]--> ntp消息格式 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/ntp.html#抓包实例" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="抓包实例"><!--[--><!--]--> 抓包实例 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/ntp.html#相关软件使用" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="相关软件使用"><!--[--><!--]--> 相关软件使用 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a aria-current="page" href="/linux/ntp.html#参考" class="router-link-active router-link-exact-active nav-link sidebar-item" aria-label="参考"><!--[--><!--]--> 参考 <!--[--><!--]--></a><!----><!--]--></li></ul><!--]--></li><li><!--[--><a href="/linux/dns.html" class="nav-link sidebar-item" aria-label="DNS学习总结"><!--[--><!--]--> DNS学习总结 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/multi-queue.html" class="nav-link sidebar-item" aria-label="Linux 网卡多队列介绍"><!--[--><!--]--> Linux 网卡多队列介绍 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/linux-boot.html" class="nav-link sidebar-item" aria-label="Linux Boot过程总结"><!--[--><!--]--> Linux Boot过程总结 <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/yum-update.html" class="nav-link sidebar-item" aria-label="使用Yum 升级OS"><!--[--><!--]--> 使用Yum 升级OS <!--[--><!--]--></a><!----><!--]--></li><li><!--[--><a href="/linux/linux-common-commands.html" class="nav-link sidebar-item" aria-label="Linux 下常用命令与技巧汇总"><!--[--><!--]--> Linux 下常用命令与技巧汇总 <!--[--><!--]--></a><!----><!--]--></li></ul><!--]--><!--]--></ul><!--[--><!--]--></aside><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><p>NTP协议用来校准服务器的时间. 本文详细介绍原理和协议格式</p><h2 id="时钟同步的过程" tabindex="-1"><a class="header-anchor" href="#时钟同步的过程" aria-hidden="true">#</a> 时钟同步的过程</h2><ol><li>A发送ntp消息到B, 消息里含发送时间戳 T1.</li><li>B收到ntp消息后, 将接受时间T2写入该消息体.</li><li>当B发送ntp响应消息给A时, 将发送时间T3也写入该消息体</li><li>A收到响应ntp消息的时间为T4</li></ol><p>那么<br> round-trip 为: (T4 - T1) - (T3 - T2)<br> 时间偏移为: ((T2 - T1) + (T3 - T4)) / 2</p><p>ntp请求消息和响应消息格式完全一样, 使用udp协议. 默认的ntp服务器监听端口是123<br> 如下chronyd(centos下默认的ntp软件)正在监听123端口</p><div class="language-bash ext-sh"><pre class="language-bash"><code>$ <span class="token function">lsof</span> -i:123
+COMMAND  PID   <span class="token environment constant">USER</span>   FD   TYPE DEVICE SIZE/OFF NODE NAME
+chronyd <span class="token number">2439</span> chrony    3u  IPv4  <span class="token number">23270</span>      0t0  UDP *:ntp
+</code></pre></div><h2 id="ntp消息格式" tabindex="-1"><a class="header-anchor" href="#ntp消息格式" aria-hidden="true">#</a> ntp消息格式</h2><p>ntp消息由消息头,扩展字段,可选的鉴权码组成. 在实际使用中, 一般只携带消息头. 如下是消息头的具体格式</p><div class="language-text ext-text"><pre class="language-text"><code>     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |LI | VN  |Mode |    Stratum     |     Poll      |  Precision   |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Root Delay                            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Root Dispersion                       |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                          Reference ID                         |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                     Reference Timestamp (64)                  +
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                      Origin Timestamp (64)                    +
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                      Receive Timestamp (64)                   +
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    +                      Transmit Timestamp (64)                  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div><p>时间格式有两种, 它们代表从1900年1月1号 0时 UTC时间至今的秒数</p><ul><li>NTP Timestamp Format<br> 8个字节, 前32位表示秒数, 后32位表示 <code>1/2的32次方</code> 秒</li></ul><div class="language-text ext-text"><pre class="language-text"><code>     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                            Seconds                            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                            Fraction                           |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div><ul><li>NTP Short Format<br> 4个字节, 前16位表示秒数, 后16位表示 <code>1/2的16次方</code> 秒</li></ul><div class="language-text ext-text"><pre class="language-text"><code>     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |          Seconds              |           Fraction            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div><ul><li>消息头各字段解释:</li></ul><p>LI Leap Indicator (leap): 2比特, 用来警告是否有闰秒或者未和上级同步. 具体取值和含义如下:</p><div class="language-text ext-text"><pre class="language-text"><code>    +-------+----------------------------------------+
+    | Value | Meaning                                |
+    +-------+----------------------------------------+
+    | 0     | no warning                             |
+    | 1     | last minute of the day has 61 seconds  |
+    | 2     | last minute of the day has 59 seconds  |
+    | 3     | unknown (clock unsynchronized)         |
+    +-------+----------------------------------------+
+</code></pre></div><p>VN Version Number: 3比特,指定ntp版本 Mode (mode): 3比特, 指定工作模式, 通常我们使用3,4 代表客户端-服务端模式</p><div class="language-text ext-text"><pre class="language-text"><code>    +-------+--------------------------+
+    | Value | Meaning                  |
+    +-------+--------------------------+
+    | 0     | reserved                 |
+    | 1     | symmetric active         |
+    | 2     | symmetric passive        |
+    | 3     | client                   |
+    | 4     | server                   |
+    | 5     | broadcast                |
+    | 6     | NTP control message      |
+    | 7     | reserved for private use |
+    +-------+--------------------------+
+</code></pre></div><p>Stratum (stratum): 8比特指定阶层. 通常Server更新该字段.<br> 顶层分配为数字0。一个通过阶层n同步的服务器将运行在阶层n + 1。 阶层为0的是高精度计时设备，例如原子钟（如铯、铷）、GPS时钟或其他无线电时钟。它们生成非常精确的脉冲秒信号，触发所连接计算机上的中断和时间戳。阶层0设备也称为参考（基准）时钟. 阶层1服务器连接阶层0的设备, 它们也被称为主要（primary）时间服务器。 <img src="/img/ntp.svg" alt="ntp阶层图"> 更具体的取值含义如下:</p><div class="language-text ext-text"><pre class="language-text"><code>    +--------+-----------------------------------------------------+
+    | Value  | Meaning                                             |
+    +--------+-----------------------------------------------------+
+    | 0      | unspecified or invalid                              |
+    | 1      | primary server (e.g., equipped with a GPS receiver) |
+    | 2-15   | secondary server (via NTP)                          |
+    | 16     | unsynchronized                                      |
+    | 17-255 | reserved                                            |
+    +--------+-----------------------------------------------------+
+</code></pre></div><p>Poll: 8比特符号整数, 指示与下一次ntp同步的最短时间间隔. 值为4, 则表示16(2的4次方)秒<br> Precision: 8比特符号整数, 指示时间精度. log2 秒. -18 为微妙<br> Root Delay: 总的 round-trip delay到 Primary server. 单位是 NTP Short Format<br> Root Dispersion: 单位是 NTP Short Format<br> Reference ID: 32比特指示服务端的参考时钟(即上层服务器信息). 即上层时钟源 . 当阶层为1时, 那么上层是原子钟等设备. 没IP, 所以使用ascii 字符 从阶层2开始, 表示IP地址.<br> Reference Timestamp: 指示服务端自身系统时间最后一次被设置的时间戳.通常每Poll一次更新一下<br> Origin Timestamp: 客户端发起时间<br> Receive Timestamp: 服务端接受时间<br> Transmit Timestamp: 服务端发送时间</p><h2 id="抓包实例" tabindex="-1"><a class="header-anchor" href="#抓包实例" aria-hidden="true">#</a> 抓包实例</h2><p><code>tcpdump -i eth0 port 123 -nnv</code> 抓取ntp的详细报文, 样例如下:</p><div class="language-text ext-text"><pre class="language-text"><code>17:19:18.566860 IP (tos 0x0, ttl 45, id 33978, offset 0, flags [none], proto UDP (17), length 76)
+    1.80.235.52.31681 &gt; 192.168.1.247.123: NTPv4, length 48
+	Client, Leap indicator: clock unsynchronized (192), Stratum 0 (unspecified), poll 3 (8s), precision -6
+	Root Delay: 1.000000, Root dispersion: 1.000000, Reference-ID: (unspec)
+	  Reference Timestamp:  0.000000000
+	  Originator Timestamp: 0.000000000
+	  Receive Timestamp:    0.000000000
+	  Transmit Timestamp:   3726119958.485983999 (2018/01/28 17:19:18)
+	    Originator - Receive Timestamp:  0.000000000
+	    Originator - Transmit Timestamp: 3726119958.485983999 (2018/01/28 17:19:18)
+17:19:18.566899 IP (tos 0x0, ttl 64, id 38707, offset 0, flags [DF], proto UDP (17), length 76)
+    192.168.1.247.123 &gt; 1.80.235.52.31681: NTPv4, length 48
+	Server, Leap indicator:  (0), Stratum 3 (secondary reference), poll 3 (8s), precision -24
+	Root Delay: 0.005340, Root dispersion: 0.002105, Reference-ID: 182.92.12.11
+	  Reference Timestamp:  3726119511.971055101 (2018/01/28 17:11:51)
+	  Originator Timestamp: 3726119958.485983999 (2018/01/28 17:19:18)
+	  Receive Timestamp:    3726119958.566745462 (2018/01/28 17:19:18)
+	  Transmit Timestamp:   3726119958.566777029 (2018/01/28 17:19:18)
+	    Originator - Receive Timestamp:  +0.080761462
+	    Originator - Transmit Timestamp: +0.080793029
+</code></pre></div><h2 id="相关软件使用" tabindex="-1"><a class="header-anchor" href="#相关软件使用" aria-hidden="true">#</a> 相关软件使用</h2><p>chronyd是centos7引入的新的ntp软件, 代替老的ntpd<br> 如下命令检测当前与上层ntp的同步状态</p><div class="language-bash ext-sh"><pre class="language-bash"><code>$ chronyc sources -v
+<span class="token number">210</span> Number of sources <span class="token operator">=</span> <span class="token number">2</span>
+
+  .-- Source mode  <span class="token string">&#39;^&#39;</span> <span class="token operator">=</span> server, <span class="token string">&#39;=&#39;</span> <span class="token operator">=</span> peer, <span class="token string">&#39;#&#39;</span> <span class="token operator">=</span> <span class="token builtin class-name">local</span> clock.
+ / .- Source state <span class="token string">&#39;*&#39;</span> <span class="token operator">=</span> current synced, <span class="token string">&#39;+&#39;</span> <span class="token operator">=</span> combined , <span class="token string">&#39;-&#39;</span> <span class="token operator">=</span> not combined,
+<span class="token operator">|</span> /   <span class="token string">&#39;?&#39;</span> <span class="token operator">=</span> unreachable, <span class="token string">&#39;x&#39;</span> <span class="token operator">=</span> <span class="token function">time</span> may be <span class="token keyword">in</span> error, <span class="token string">&#39;~&#39;</span> <span class="token operator">=</span> <span class="token function">time</span> too variable.
+<span class="token operator">||</span>                                                 .- xxxx <span class="token punctuation">[</span> yyyy <span class="token punctuation">]</span> +/- zzzz
+<span class="token operator">||</span>      Reachability register <span class="token punctuation">(</span>octal<span class="token punctuation">)</span> -.           <span class="token operator">|</span>  xxxx <span class="token operator">=</span> adjusted offset,
+<span class="token operator">||</span>      Log2<span class="token punctuation">(</span>Polling interval<span class="token punctuation">)</span> --.      <span class="token operator">|</span>          <span class="token operator">|</span>  yyyy <span class="token operator">=</span> measured offset,
+<span class="token operator">||</span>                                <span class="token punctuation">\</span>     <span class="token operator">|</span>          <span class="token operator">|</span>  zzzz <span class="token operator">=</span> estimated error.
+<span class="token operator">||</span>                                 <span class="token operator">|</span>    <span class="token operator">|</span>           <span class="token punctuation">\</span>
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+^* time5.aliyun.com              <span class="token number">2</span>  <span class="token number">10</span>   <span class="token number">377</span>   <span class="token number">733</span>   +165us<span class="token punctuation">[</span> +206us<span class="token punctuation">]</span> +/- 5534us
+^- <span class="token number">120.25</span>.115.19                 <span class="token number">2</span>  <span class="token number">10</span>   <span class="token number">377</span>   <span class="token number">633</span>  -1155us<span class="token punctuation">[</span>-1155us<span class="token punctuation">]</span> +/-   65ms
+</code></pre></div><p>使用ntpd软件包时检查ntp状态<br> when指多少秒后再一次同步<br> poll指下一次同步的时间间隔 单位:秒<br> reach 与上层服务器已成功连接的次数<br> delay 指RRT 单位: 毫秒<br> offset 指时间偏移值 单位: 毫秒</p><div class="language-bash ext-sh"><pre class="language-bash"><code>ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span>
++time5.aliyun.co <span class="token number">10.137</span>.38.86     <span class="token number">2</span> u   <span class="token number">11</span>   <span class="token number">64</span>    <span class="token number">1</span>   <span class="token number">25.353</span>  -113.04  <span class="token number">65.276</span>
+*203.107.6.88    <span class="token number">10.137</span>.55.181    <span class="token number">2</span> u    <span class="token number">9</span>   <span class="token number">64</span>    <span class="token number">1</span>   <span class="token number">45.441</span>  -148.44  <span class="token number">89.070</span>
+</code></pre></div><p><code>ntpdate -q XX.XX.XX.XX</code> 查询与上层ntp服务器的时间偏移量. 不会更新. <code>-d</code> 打开Debug模式</p><div class="language-bash ext-sh"><pre class="language-bash"><code>$ ntpdate -q ntp3.aliyun.com
+server <span class="token number">203.107</span>.6.88, stratum <span class="token number">2</span>, offset <span class="token number">0.797972</span>, delay <span class="token number">0.06859</span>
+<span class="token number">11</span> Feb <span class="token number">23</span>:02:36 ntpdate<span class="token punctuation">[</span><span class="token number">21763</span><span class="token punctuation">]</span>: step <span class="token function">time</span> server <span class="token number">203.107</span>.6.88 offset <span class="token number">0.797972</span> sec
+</code></pre></div><p>ntp配置最佳实践:<br> 假设ntp服务器为 ntp1.aliyun.com, 配置如下:</p><div class="language-bash ext-sh"><pre class="language-bash"><code><span class="token comment"># 上层服务器配置</span>
+server ntp1.aliyun.com iburst 
+restrict ntp1.aliyun.com nomodify notrap nopeer noquery
+
+<span class="token comment"># default 指所有IP, 首先默认显示连接无法执行任何操作</span>
+restrict default kod nomodify notrap nopeer noquery
+<span class="token comment"># 针对ipv6的配置</span>
+restrict -6 default kod nomodify notrap nopeer noquery
+<span class="token comment"># 配置内网IP可查询不可修改时间</span>
+restrict xx.xx.xx.xx mask xx.xx.xx.xx  nomodify notrap nopeer
+</code></pre></div><p><code>man ntp_acc</code> 查看 restrict 各参数含义<br><code>man ntp_clock</code> 查看 server 各参数含义</p><h2 id="参考" tabindex="-1"><a class="header-anchor" href="#参考" aria-hidden="true">#</a> 参考</h2><ul><li>NTP4 RFC: https://tools.ietf.org/html/rfc5905</li><li>NTP Best Practice: https://tools.ietf.org/id/draft-reilly-ntp-bcp-01.html</li></ul><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">Last Updated: </span><span class="meta-item-info">7/18/2021, 6:56:35 AM</span></div><!----></footer><nav class="page-nav"><p class="inner"><span class="prev"> ← <a href="/linux/bandersnatch-pypi.html" class="nav-link" aria-label="使用Bandersnatch搭建私有Pypi源"><!--[--><!--]--> 使用Bandersnatch搭建私有Pypi源 <!--[--><!--]--></a></span><span class="next"><a href="/linux/dns.html" class="nav-link" aria-label="DNS学习总结"><!--[--><!--]--> DNS学习总结 <!--[--><!--]--></a> → </span></p></nav><!--[--><!--]--></main></div><!----><!--]--></div>
+    <script src="/assets/js/runtime~app.443127ae.js" defer></script><script src="/assets/js/838.91c535db.js" defer></script><script src="/assets/js/app.1ace75fc.js" defer></script>
+  </body>
+</html>
