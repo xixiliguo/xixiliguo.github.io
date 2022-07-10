@@ -84,6 +84,9 @@ export default defineUserConfig<DefaultThemeOptions>({
           children: [
             '/algorithm/radix-tree.md',
             '/algorithm/algorithm-dfs.md',
+            '/algorithm/binary-index-tree.md',
+            '/algorithm/segment-tree.md',
+            '/algorithm/unionfind.md',
           ],
         },        
       ],
@@ -92,7 +95,8 @@ export default defineUserConfig<DefaultThemeOptions>({
           text: '内核分析',
           children: [
             '/kernel/kernel-syscall-sched.md',
-            '/kernel/linux-trap.md'
+            '/kernel/kernel-memory.md',
+            '/kernel/linux-trap.md',
           ],
         },        
       ],

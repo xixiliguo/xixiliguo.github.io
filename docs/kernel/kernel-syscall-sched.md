@@ -43,6 +43,9 @@ ok6:
 	RET
 ```
 
+系统调用返回前, 会执行`callq`, 将有符号的4字节扩展为8字节. 比如0x80000000 变为 ffffffff80000000, 0x40000000仍是40000000  
+https://stackoverflow.com/questions/6555094/what-does-cltq-do-in-assembly  
+所有系统调用的返回错误值范围为[-4095, -1], 所以可以无符号判断 RAX  小于 0xfffffffffffff001, 则为正常返回  
 ``` c
 /*
  * Kernel pointers have redundant information, so we can use a
@@ -58,9 +61,63 @@ ok6:
 
 #define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
 ```
+``` c
+ * <__x64_sys_recv>:		<-- syscall with 4 parameters
+ *	callq	<__fentry__>
+ *
+ *	mov	0x70(%rdi),%rdi	<-- decode regs->di
+ *	mov	0x68(%rdi),%rsi	<-- decode regs->si
+ *	mov	0x60(%rdi),%rdx	<-- decode regs->dx
+ *	mov	0x38(%rdi),%rcx	<-- decode regs->r10
+ *
+ *	xor	%r9d,%r9d	<-- clear %r9
+ *	xor	%r8d,%r8d	<-- clear %r8
+ *
+ *	callq	__sys_recvfrom	<-- do the actual work in __sys_recvfrom()
+ *				    which takes 6 arguments
+ *
+ *	cltq			<-- extend return value to 64-bit
+ *	retq			<-- return
+ *
+ ```
 
-64位下不是通过INT 0x80, 而是通过syscall指令触发系统调用, 对应的函数为`entry_SYSCALL_64`, 在这个函数里, 用户态的很多原始信息,比如rip,rsp都保存在`struct pt_regs`里, 然后 entry_SYSCALL_64 --> do_syscall_64
+64位下不是通过INT 0x80, 而是通过syscall指令触发系统调用, 对应的函数为`entry_SYSCALL_64`, 在这个函数里, 用户态的很多原始信息,比如rip,rsp都保存在`struct pt_regs`里, 然后 entry_SYSCALL_64 --> do_syscall_64  
+通过给`MSR_LSTAR`寄存器写入entry_SYSCALL_64地址, 那么执行syscall指令时就是切换到汇编entry_SYSCALL_64
+``` c
+	wrmsr(MSR_STAR, 0, (__USER32_CS << 16) | __KERNEL_CS);
+	wrmsrl(MSR_LSTAR, (unsigned long)entry_SYSCALL_64);
+```
+将用户态时的rsp保存到per cpu变量cpu_tss_rw里面, 切换cpu为内核模式, 然后依次将寄存器里的值push, 填充pt_regs结构体. 保存所有用户态相关的信息  
+从代码上看, 执行do_syscall_64前中断是关闭的, 在`syscall_enter_from_user_mode`里打开, 从`do_syscall_64`返回时又关闭了, 等执行了sysret后应该又打开了  
+``` c
+SYM_CODE_START(entry_SYSCALL_64)
+	UNWIND_HINT_EMPTY
 
+	swapgs
+	/* tss.sp2 is scratch space. */
+	movq	%rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
+	SWITCH_TO_KERNEL_CR3 scratch_reg=%rsp
+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+
+SYM_INNER_LABEL(entry_SYSCALL_64_safe_stack, SYM_L_GLOBAL)
+
+	/* Construct struct pt_regs on stack */
+	pushq	$__USER_DS				/* pt_regs->ss */
+	pushq	PER_CPU_VAR(cpu_tss_rw + TSS_sp2)	/* pt_regs->sp */
+	pushq	%r11					/* pt_regs->flags */
+	pushq	$__USER_CS				/* pt_regs->cs */
+	pushq	%rcx					/* pt_regs->ip */
+SYM_INNER_LABEL(entry_SYSCALL_64_after_hwframe, SYM_L_GLOBAL)
+	pushq	%rax					/* pt_regs->orig_ax */
+
+	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
+
+	/* IRQs are off. */
+	movq	%rsp, %rdi
+	/* Sign extend the lower 32bit as syscall numbers are treated as int */
+	movslq	%eax, %rsi
+	call	do_syscall_64		/* returns with IRQs disabled */
+```
 ``` c
 __visible noinstr void do_syscall_64(struct pt_regs *regs, int nr)
 {
@@ -462,8 +519,41 @@ over:
 }
 ```
 
+task_struct->stack 指向进程的内核栈, 在 dup_task_struct --> alloc_thread_stack_node 里面分配, 通常是通过vmalloc分配, 而不是slab系统
+``` c
+	/*
+	 * Allocated stacks are cached and later reused by new threads,
+	 * so memcg accounting is performed manually on assigning/releasing
+	 * stacks to tasks. Drop __GFP_ACCOUNT.
+	 */
+	stack = __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
+				     VMALLOC_START, VMALLOC_END,
+				     THREADINFO_GFP & ~__GFP_ACCOUNT,
+				     PAGE_KERNEL,
+				     0, node, __builtin_return_address(0));
 
-
+	/*
+	 * We can't call find_vm_area() in interrupt context, and
+	 * free_thread_stack() can be called in interrupt context,
+	 * so cache the vm_struct.
+	 */
+	if (stack) {
+		tsk->stack_vm_area = find_vm_area(stack);
+		tsk->stack = stack;
+	}
+```
+```
+crash> task | grep stack
+  stack = 0xffff97c5825e0000,
+  stack_canary = 2863369865746246656,
+  curr_ret_stack = -1,
+  ret_stack = 0x0,
+  stack_vm_area = 0xffff8c900af5b040,
+  stack_refcount = {
+crash> grep 0xffff97c5825e0000 /proc/vmallocinfo
+0xffff97c5825e0000-0xffff97c5825e5000   20480 dup_task_struct+0x49/0x300 pages=4 vmalloc N0=4
+crash>
+```
 ## 进程管理
 `current`永远指向当前cpu上运行的进程的task_struct, 实现方式如下
 ``` c
@@ -672,3 +762,58 @@ struct rq.clock 的单位是ns, cfs里`update_curr`用于更新进程运行时�
 			- 中断返回时,irqentry_exit --> irqentry_exit_cond_resched --> preempt_schedule_irq
 			- preempt_disable在某些路径关闭抢占后, 用preempt_enable打开时可能执行`__schedule`
 		- 正是因为主流的linux发行版不支持内核抢占,所以系统调用运行时间过长会导致应用程序处理延迟,因为一直要等到临近返回用户态时才主动调度出去
+
+无论主动还是被动, 都会通过``schedule``把进程切出去, schedule --> __schedule --> context_switch --> switch_to --> __switch_to_asm -->
+
+
+``` c
+#define switch_to(prev, next, last)					\
+do {									\
+	((last) = __switch_to_asm((prev), (next)));			\
+} while (0)
+```
+``` c
+SYM_FUNC_START(__switch_to_asm)
+	/*
+	 * Save callee-saved registers
+	 * This must match the order in inactive_task_frame
+	 */
+	pushq	%rbp
+	pushq	%rbx
+	pushq	%r12
+	pushq	%r13
+	pushq	%r14
+	pushq	%r15
+
+	/* switch stack */
+	movq	%rsp, TASK_threadsp(%rdi)
+	movq	TASK_threadsp(%rsi), %rsp    
+	/* 执行完这个命令之后, 后续操作都是在next这个进程的内核栈进行了 */
+
+#ifdef CONFIG_STACKPROTECTOR
+	movq	TASK_stack_canary(%rsi), %rbx
+	movq	%rbx, PER_CPU_VAR(fixed_percpu_data) + stack_canary_offset
+#endif
+
+#ifdef CONFIG_RETPOLINE
+	/*
+	 * When switching from a shallower to a deeper call stack
+	 * the RSB may either underflow or use entries populated
+	 * with userspace addresses. On CPUs where those concerns
+	 * exist, overwrite the RSB with entries which capture
+	 * speculative execution to prevent attack.
+	 */
+	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+#endif
+
+	/* restore callee-saved registers */
+	popq	%r15
+	popq	%r14
+	popq	%r13
+	popq	%r12
+	popq	%rbx
+	popq	%rbp
+
+	jmp	__switch_to
+SYM_FUNC_END(__switch_to_asm)
+```
