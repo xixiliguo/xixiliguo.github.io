@@ -13,7 +13,7 @@ os/exec 实现了golang调用shell或者其他OS中已存在的命令的方法. 
 
 # 基本使用
 一. 如果要运行`ls -rlt`,代码如下:
-``` golang
+``` go
 package main
 
 import (
@@ -34,7 +34,7 @@ func main() {
 ```
 如果要运行`ls -rlt /root/*.go`, 使用`cmd := exec.Command("ls", "-rlt", "/root/*.go")`是错误的.  
 因为底层是直接使用系统调用`execve`的.它并不会向Shell那样解析通配符. 变通方案为golang执行bash命令, 如:
-``` golang
+``` go
 package main
 
 import (
@@ -57,7 +57,7 @@ func main() {
 二. 新进程默认继承父进程的环境变量, 要单独指定, 可以使用将类型为`[]string`的值赋给`cmd.Env`.  其行为不是增加, 是覆盖父进程的环境变量.  
 三. 新进程的标准输入,标准输出,标准错误是可以指定随意配置的, 可以是文件, 也可以是`bytes.Buffer`这种满足`io.reader`或者`io.writer`的数据结构  
 四. 默认新进程只有0,1,2三个文件描述符, 如果新进程想继承其他已打开的文件, 可以将它放入`cmd.ExtraFiles`. 该字段的英文解释如下:  
-``` golang
+``` go
 // ExtraFiles specifies additional open files to be inherited by the
 // new process. It does not include standard input, standard output, or
 // standard error. If non-nil, entry i becomes file descriptor 3+i.
@@ -85,7 +85,7 @@ func main() {
 二. (*Cmd).Start()主要处理如何与创建后的通信. 比如如何将一个文件内容作为子进程的标准输入, 如何获取子进程的标准输出.  具体创建进程在`os.StartProcess`里实现    
 如下是处理子进程标准输入的具体代码注释.  
 
-``` golang
+``` go
 // 该函数返回子进程标准输入对应的文件信息. 在fork/exec后子进程里面将其对应的文件描述符设置为0
 func (c *Cmd) stdin() (f *os.File, err error) {
     // 如果没有定义的标准输入来源, 则默认是/dev/null
@@ -135,7 +135,7 @@ func (c *Cmd) stdin() (f *os.File, err error) {
 
 `file_unix.go`里是打开文件的逻辑:  
 
-``` golang
+``` go
 // openFileNolog is the Unix implementation of OpenFile.
 // Changes here should be reflected in openFdAt, if relevant.
 func openFileNolog(name string, flag int, perm FileMode) (*File, error) {
@@ -157,7 +157,7 @@ func openFileNolog(name string, flag int, perm FileMode) (*File, error) {
 ```
 如果要让子进程继承指定的文件, 需要使用`ExtraFiles`字段
 
-``` golang
+``` go
 func main() {
 	a, _ := os.Create("abc")
 	cmd := exec.Command("ls", "-rlt", "/proc/self/fd")
@@ -174,7 +174,7 @@ func main() {
 每次`open`都会创建一个新的文件打开项, 所以同一个进程打开同一个文件两次, 那么文件打开项是不一样的. 不共享偏移量等信息  
 
 四. 当父进程内存特别大的时候, fork/exec的性能非常差, golang使用clone系统调优并大幅优化性能. 主要思路是创建的子进程和父进程初始时共用堆栈,fork则是复制一份堆栈. 具体代码如下:  
-``` golang
+``` go
 	locked = true
 	switch {
 	case runtime.GOARCH == "amd64" && sys.Cloneflags&CLONE_NEWUSER == 0:
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 在 syscall/exec_unix.go中.  
 如果execve成功,则该pipe因close-on-exec在子进程里自动关闭. 父进程从pipe读到的长度为0  
 如果有异常, 则将错误写入pipd的写端, 父进程读到长度非0的信息, 然后进行下一步处理  
-``` golang
+``` go
 	// Acquire the fork lock so that no other threads
 	// create new fds that are not yet close-on-exec
 	// before we fork.
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
 ```
 六. 当子进程运行完后, 使用系统调用`wait4`回收资源, 可获取`exit code`,`信号`和`rusage`使用量等信息.  
 七. 有超时机制, 如下例子是子进程在5分钟没有运行时也返回.  不会长时间阻塞进程.  
-``` golang
+``` go
 package main
 
 import (
@@ -380,7 +380,7 @@ func main() {
 ```
 
 具体是使用`context`库实现超时机制.  一旦时间达到,就给子进程发送`kill`信号,强制中止它.
-``` golang
+``` go
 	if c.ctx != nil {
 		c.waitDone = make(chan struct{})
 		go func() {
@@ -395,7 +395,7 @@ func main() {
 八. 假设调用一个脚本A, A有会调用B. 如果此时golang程序超时kill掉A, 那么B就变为pid为1的进程的子进程.  
 有时这并不是我们所希望的.因为真正导致长时间没返回结果的可能是B进程.所以更希望将A和B同时杀掉.  默认golang的`exec.CommandContext`无法实现.  
 具体需要在创建子进程时使用`setpgid`,将进程组ID设置为进程ID. 子子进程会继承这个进程组ID, 最后超时kill时指定进程组ID, 会将该进程组内的所有进程都kill掉.  对应golang的代码为:   
-``` golang
+``` go
 func main() {
 
 	cmd := exec.Command("/root/sleep.sh")

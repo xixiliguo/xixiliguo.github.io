@@ -10,7 +10,7 @@ draft: false
 <!--more-->
 
 ### 使用golang实现类似ping获取网络时延
-``` golang
+``` go
 package main
 
 import (
@@ -112,7 +112,7 @@ $ go run main.go
 ```
 
 ### 使用golang打印系统调用时errorno的含义
-``` golang
+``` go
 package main
 
 import (

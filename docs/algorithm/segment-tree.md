@@ -11,7 +11,7 @@ author: "Peter Wang"
 ```
 
 # 1319. 连通网络的操作次数
-```golang
+```go
 
 ```
 

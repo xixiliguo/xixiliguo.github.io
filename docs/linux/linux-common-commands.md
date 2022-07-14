@@ -1,15 +1,12 @@
 ---
 title: "Linux 下常用命令与技巧汇总"
-author: "Peter Wang"
-tags: ["linux", "command"]
-date: 2018-01-07T18:10:50+08:00
-draft: false
 ---
+
+# Linux 下常用命令与技巧汇总
 收集自己常用到的linux命令与技巧,方便后续查找.不定期更新.
 
-<!--more-->
 
-### 1. 查询系统准确的启动时间
+## 1. 查询系统准确的启动时间
 ``` bash
 date -d "$(awk -F. '{print $1}' /proc/uptime) second ago" +"%Y-%m-%d %H:%M:%S"
 2018-01-17 22:27:55
@@ -23,7 +20,7 @@ uptime -s
 2019-09-04 00:40:58
 ```
 
-### 2. 查询所有进程的准确启动时间和运行时长
+## 2. 查询所有进程的准确启动时间和运行时长
 -e 表示查询所有进程  
 -o 表示按指定的格式输出  
 lstart 为进程启动时间  
@@ -34,7 +31,7 @@ ps -e -o pid,lstart,etime,args
 ```
 
 `ps -efL` 加 `-L` 则显示线程  
-### 3. 设置时间
+## 3. 设置时间
 ``` bash
 date -s "dd/mm/yyyy hh:mm:ss"
 ```
@@ -43,7 +40,7 @@ date -s "dd/mm/yyyy hh:mm:ss"
 timedatectl set-time "2012-10-30 18:17:16"
 ```
 
-### 4. 同步OS与硬件时间
+## 4. 同步OS与硬件时间
 将OS系统时间同步到硬件(RTC)
 ``` bash
 hwclock –-systohc
@@ -53,7 +50,7 @@ hwclock –-systohc
 hwclock --hctosys
 ```
 
-### 5. 查看硬件信息
+## 5. 查看硬件信息
 
 ``` bash
 lscpu               #查看CPU信息
@@ -64,14 +61,14 @@ lsblk               #查看块设备
 dmidecode -t memory #查内存槽位信息. 不跟 -t , 查全量processor, Memory, BIOS
 ```
 
-### 6 锁定文件,不被任何程序修改
+## 6 锁定文件,不被任何程序修改
 chattr 可以改变文件扩展属性, `chattr +i` 可以防止任何程序修改该文件. 即使有root权限.  
 常用于锁定dns配置,防止dhcp程序自动修改. `lsattr` 查看当前的扩展属性. `man chattr` 查看所有参数含义.  
 ``` bash
 chattr +i /etc/resolv.conf
 ```
 
-### 7. stat 查看文件详细元数据信息, 特别是inode
+## 7. stat 查看文件详细元数据信息, 特别是inode
 ``` bash
 $ stat messages
   File: ‘messages’
@@ -85,7 +82,7 @@ Change: 2018-01-14 21:32:01.977218590 +0800
  Birth: -
 ```
 
-### 8. xxd查看二进制文件
+## 8. xxd查看二进制文件
 -s 指定起始位置(不指定则从0开始),  -l 指定打印多少个字节
 ``` bash
 xxd  -s 1 -l 5 /etc/hosts
@@ -101,7 +98,7 @@ unsigned char a_js[] = {
 unsigned int a_js_len = 10;
 ```
 
-### 9. 批量修改文件名
+## 9. 批量修改文件名
 用法:`rename 原字符串 目标字符串 文件`  
 含义:  
 原字符串：将文件名需要替换的字符串；  
@@ -118,7 +115,7 @@ rename支持通配符
 rename .yumtx .txt yum*
 ```
 
-### 10. df 查询文件系统挂载点信息
+## 10. df 查询文件系统挂载点信息
 `-h` 使容量的大小显示更人性化
 `-T` 显示文件系统类型
 ``` bash
@@ -147,7 +144,7 @@ tmpfs                          124K    16  124K    1% /sys/fs/cgroup
 tmpfs                          124K     1  124K    1% /run/user/0
 ```
 
-### 11. du 命令
+## 11. du 命令
 单位是KB
 如下获取/tmp下所有文件的大小, 并按降序排列
 ``` bash
@@ -158,7 +155,7 @@ du -xs /tmp/* | sort -rn -k1
 4	a.tar.gz
 ```
 
-### 12. find删除查找到的文件
+## 12. find删除查找到的文件
 find命令经常会用到, `-type f`表示只返回文件, `-exec` 可将已找到的结果作为标准输入执行其他命令.
 ``` bash
 find <PATH> -type f -exec rm {} \;    # 删除查找到的文件, 将 path 改为实际要查找的目录
@@ -187,7 +184,7 @@ find . -perm 0755 # 查找当前目录中文件权限的0755的文件
 find . -size +12k # 查找当前目录中大于12KB的文件，注意c表示byte  
 ```
 
-### 13. xargs 命令
+## 13. xargs 命令
 该命令可以将一个命令的输出作为参数传递给另一个命令。  
 区别于管道符`|`是将将输出作为另一个命令的标准输入传递.
 ``` bash
@@ -200,7 +197,7 @@ ls /etc/*.conf | xargs -i cp {} /home/likegeeks/Desktop/out
 ```
 
 
-### 14. grep查询文本
+## 14. grep查询文本
 在文件中查找字符串(不区分大小写)
 ``` bash
 grep -i "the" /etc/hosts
@@ -222,7 +219,7 @@ grep -v "127" /etc/hosts
 grep -r "abc" -I /etc
 ```
 
-### 15. tail 查看文件指定行信息
+## 15. tail 查看文件指定行信息
 
 显示最后3行记录
 ``` bash
@@ -238,12 +235,12 @@ Dec 10 18:52:40 Installed: cloud-init-0.7.9-9.el7.centos.2.x86_64
 Dec 10 19:50:30 Erased: cloud-init-0.7.9-9.el7.centos.2.x86_64
 ```
 
-### 16. 批量创建目录
+## 16. 批量创建目录
 ``` bash
 mkdir -p new_folder/{folder_1,folder_2,folder_3,folder_4,folder_5}
 ```
 
-### 17. echo 相关命令
+## 17. echo 相关命令
 显示当前使用哪个shell
 ``` bash
 $ echo $0
@@ -255,7 +252,7 @@ $ echo $?
 0
 ```
 
-### 18. nohup与标准输出,标准错误输出
+## 18. nohup与标准输出,标准错误输出
 `nohup`配和`&`可以让进程在后台运行, 如果没有显示指定, 默认将标准输出和错误输出重定向到 nohup.out  
 `1>/dev/null` 首先表示标准输出重定向到空设备文件，也就是不输出任何信息到终端，不显示任何信息    
 `2>&1` 表示标准错误输出重定向等同于标准输出，因为之前标准输出已经重定向到了空设备文件，所以标准错误输出也重定向到空设备文件    
@@ -264,7 +261,7 @@ $ echo $?
 nohup COMMAND  >output.log 2>&1 &
 ```
 
-### 19. Linux模块的安装和卸载
+## 19. Linux模块的安装和卸载
 
 ``` bash
 lsmod                               #显示当前装入的内核模块
@@ -302,7 +299,7 @@ kernel/lib/crc16.ko
 kernel/lib/crc32.ko
 ```
 
-### 20. column格式化输出
+## 20. column格式化输出
 可以让一些命令的输出看起来更舒服些. 例如`blkid`,`mount`,`cat /etc/fstab`.
 ``` bash
 $ blkid
@@ -327,7 +324,7 @@ qemu  x  107  107  qemu user                /                /sbin/nologin
 
 
 
-### 21. 通过pid查看进程的环境变量信息
+## 21. 通过pid查看进程的环境变量信息
 使用strings, 可以格式化打印
 ``` bash
 $ strings /proc/1158/environ
@@ -337,17 +334,17 @@ NOTIFY_SOCKET=/run/systemd/notify
 SSH_USE_STRONG_RNG=0
 ```
 
-### 22. 通过pid查看进程对应可执行文件的绝对路径
+## 22. 通过pid查看进程对应可执行文件的绝对路径
 ``` bash
 readlink /proc/[pid]/exe
 ```
 
-### 23. 通过pid查看进程的当前工作目录
+## 23. 通过pid查看进程的当前工作目录
 ``` bash
 pwdx [pid]
 ```
 
-### 24. lsof 一切皆文件
+## 24. lsof 一切皆文件
 `-p [PID]` 只显示该进程打开的所有文件. 不带参数显示所有已打开的文件  
 `-d`  对`FD`有效, 用于筛选文件列表.  `^txt` 显示除txt 其他所有类型的文件.  `1` 显示所有fd为1的文件. 可以使用`,`逗号连接多个选择  
 `-a` 表示两个参数都必须满足 (AND)。如果没有 -a 标志，缺省的情况是显示匹配任何一个参数 (OR) 的文件  
@@ -405,7 +402,7 @@ tcpdump 17905 tcpdump    3u  pack 231120      0t0     ALL type=SOCK_RAW
 tcpdump 17905 tcpdump    4w   REG  253,1   864256 2756467 /root/abc2
 ```
 
-### 25. fuser 查找访问文件系统的进程
+## 25. fuser 查找访问文件系统的进程
 `-v` 显示具体的进程名和用户
 ``` bash
 $ fuser -v /
@@ -421,7 +418,7 @@ $ fuser -v /
 fuser -k /
 ```
 
-### 26. dd 测试磁盘或者文件读写
+## 26. dd 测试磁盘或者文件读写
 高危命令, `of`一定要指向正确的文件, 不要指 `/`, `/dev/vda`, `/dev/vda1`等系统重要设备.  
 该命令要在测试环境验证充分.  
 `if` 表示从哪个设备/文件读  
@@ -433,7 +430,7 @@ fuser -k /
 dd if=/dev/zero of=/tmp/abc.txt bs=1M count=10
 ```
 
-### 27. rpm 安装/更新/卸载软件包
+## 27. rpm 安装/更新/卸载软件包
 查询系统已安装的所有软件包
 ``` bash
 rpm -qa
@@ -547,7 +544,7 @@ rpm -Uvh abc.rpm
 ``` bash
 rpm -ql -p abc.rpm
 ```
-### 28. yum 安装/更新/卸载软件包
+## 28. yum 安装/更新/卸载软件包
 ``` bash
 yum install a            #安装软件包a   (加上-y选项，可以在安装软件包时，不弹出是否继续的提示)
 yum install xxx --downloadonly --downloaddir=/xxx  #只下载,不安装.
@@ -642,7 +639,7 @@ package: strace.x86_64 4.12-4.el7
    provider: glibc.i686 2.17-196.el7_4.2
 ```
 
-### 29. 解压缩命令
+## 29. 解压缩命令
 tar.gz
 ``` bash
 tar -xzvf abc.tar.gz               #解压缩
@@ -687,7 +684,7 @@ rpm2cpio FileName.rpm | cpio -div   #解包
 ar p FileName.deb data.tar.gz | tar -xzvf  #解包
 ```
 
-### 30. systemd 管理命令
+## 30. systemd 管理命令
 ``` bash
 systemctl    -t help            #列出所有的单元类型
 systemctl --type "unit"         #查看指定单元类型的状况, 替换 unit 为 "mount", "service", "socket"等
@@ -803,13 +800,13 @@ journalctl --since 09:00 --until "1 hour ago"
 ```
 时间格式可参考`man journalctl`或者`man 7 systemd.time`  
 
-### 31. Ubuntu/Debian 检查已经安装好的软件包的更新日志
+## 31. Ubuntu/Debian 检查已经安装好的软件包的更新日志
 ``` bash
 zless /usr/share/doc/<package -name>/changelog.Debian.gz
 zless /usr/share/doc/<package -name>/changelog.gz
 ```
 
-### 32. 搜索含有指定字符的手册页
+## 32. 搜索含有指定字符的手册页
 ``` bash
 $ man -k logrotate
 dh_installlogrotate (1) - install logrotate config files
@@ -817,7 +814,7 @@ logrotate (8) - rotates, compresses, and mails system logs
 logrotate.conf (5) - rotates, compresses, and mails system logs
 ```
 
-### 33. 快速删除大量小文件
+## 33. 快速删除大量小文件
 使用`rsync`, 速度快但占用大量IO, 业务量低时使用. 高危命令
 ``` bash
 mkdir empty_dir
@@ -828,21 +825,21 @@ rsync -a --delete empty_dir/    yourdirectory/
 find /tmp -type f -exec rm {} \;      #删除/tmp目录下所有文件
 ```
 
-### 34. sysctl 管理系统参数
+## 34. sysctl 管理系统参数
 ``` bash
 sysctl -a                                       #打印当前参数
 sysctl -w net.ipv4.tcp_fin_timeout=30           #实时更新一个系统参数, 高危. 要验证好
 sysctl -p                                       #读取/etc/sysctl.conf和 /etc/sysctl.d/下配置文件信息,使其生效  
 ```
 
-### 35. 清空文件内容
+## 35. 清空文件内容
 假设文件名为 abc.txt, 以下方法都可以清空该文件的内容
 ``` bash
 > abc.txt
 cp /dev/null abc.txt
 ```
 
-### 36. 查询系统调用
+## 36. 查询系统调用
 跟踪命令`ls -rlt`的系统调用, 将信息输出到`a.txt`
 ``` bash
 strace -ftT -o a.txt ls -rlt
@@ -861,7 +858,7 @@ strace -e trace=open ls
 strace -e trace=open,write ls
 ```
 
-### 37. 查看磁盘uuid和文件系统类型
+## 37. 查看磁盘uuid和文件系统类型
 ```bash
 $ lsblk -f
 NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
@@ -871,19 +868,19 @@ $ blkid
 /dev/vda1: UUID="32236b41-fcde-460e-8c34-ba50515b33f2" TYPE="ext3"
 ```
 
-### 38. 创建软连接
+## 38. 创建软连接
 ``` bash
 ln -s regular_file softlink          创建软连接
 ```
 
-### 39. history查看历史记录
+## 39. history查看历史记录
 如果直接执行`history`没有显示时间戳,可以使用下面的命令
 ``` bash
 HISTTIMEFORMAT="%d/%m/%y %T"
 history
 ```
 
-### 40. 查看进程的父子调用关系
+## 40. 查看进程的父子调用关系
 `-p` 显示pid信息. {}表示线程
 ``` bash
 $ pstree -p
@@ -903,7 +900,7 @@ systemd(1)─┬─agetty(1176)
            │               └─{gssproxy}(728)
 ```
 
-### 41. rsync文件
+## 41. rsync文件
 rsync [OPTION]... SRC [SRC]... DEST  
 在指定复制源时，路径是否有最后的 “/” 有不同的含义，例如：  
 /data ：表示将整个 /data 目录复制到目标目录  
@@ -922,7 +919,7 @@ rsync -azv /var/opt/installation/inventory/ /root/temp/
 rsync -avz /root/temp/ thegeekstuff@192.168.200.10:/home/thegeekstuff/temp/
 ``` 
 
-### 42. 查询的动态库链接信息
+## 42. 查询的动态库链接信息
 查询python这个程序依赖的所有动态库
 ``` bash
 $ ldd `which python`
@@ -937,13 +934,13 @@ $ ldd `which python`
 [root@linux /tmp/new_folder]#
 ``` 
 
-### 43. 查询ascii编码表
+## 43. 查询ascii编码表
 速查编码信息
 ``` bash
 man ascii
 ```
 
-### 44. iptable 内置防火墙
+## 44. iptable 内置防火墙
 
 iptables内置了4个表，即raw表、filter表、nat表和mangle表，默认操作filter表.
 
@@ -1021,7 +1018,7 @@ iptables -D INPUT 3
 https://blog.csdn.net/htmlxx/article/details/51412750    
 这里记录了一些常用的iptables规则操作  
 
-### 45. tcpdump 抓包
+## 45. tcpdump 抓包
 常用表达式:  
 非 : ! or "not" (去掉双引号)    
 且 : && or "and"     
@@ -1050,7 +1047,7 @@ $ ls -rlt abc*
 ``` bash
 tcpdump -n -i eth0 'not net 10.0.0.0/8 and not net 192.168.0.0/16 and not net 172.16.0.0/12'
 ```
-### 46. DNS查询工具
+## 46. DNS查询工具
 
 指定DNS服务器递归查
 ``` bash
@@ -1093,7 +1090,7 @@ $ dig -x 74.125.135.105
 dig +trace www.baidu.com
 ```
 
-### 47. NTP时间同步
+## 47. NTP时间同步
 
 ntpdate 手工校准时间, 加 `-q` 只查询, 不同步时间,  加 `-d` 打开Debug模式, 但不真正更新时间 
 ``` bash
@@ -1120,7 +1117,7 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 ^- 120.25.115.19                 2   6    37    40  -2559us[-2559us] +/-   67ms
 ```
 
-### 48. netstat查询网络连接信息
+## 48. netstat查询网络连接信息
 查看所有tcp下监听端口, p表示打印相应的进程
 ``` bash
 netstat -lntp
@@ -1138,7 +1135,7 @@ netstat -rn
 netstat -s
 ```
 
-### 49. ethtool 网卡查询工具
+## 49. ethtool 网卡查询工具
 
 `-i` 查网卡驱动信息
 ``` bash
@@ -1162,7 +1159,7 @@ Settings for eth0:
 	Link detected: yes
 ```
 
-### 50. ip 网络维护
+## 50. ip 网络维护
 启用接口
 ```
 ip link set <接口名> up
@@ -1309,13 +1306,13 @@ ip netns操作
 https://www.cnblogs.com/sparkdev/p/9253409.html  
 
 
-### 51. who 查看当前登录用户
+## 51. who 查看当前登录用户
 ``` bash
 $ who
 root     pts/0        2018-01-17 22:28 (10.211.55.2)
 ```
 
-### 52. 使用iftop查看主机实时网络流量
+## 52. 使用iftop查看主机实时网络流量
 类似top这样的交互式界面  
 监控网卡的实时流量,反向解析IP,同时还显示具体每个连接接受和发送的流量  
 注意显示流量的单位为b.  例如 `8Mb = 1MB`.  所有流量值都是 per second  
@@ -1334,7 +1331,7 @@ root     pts/0        2018-01-17 22:28 (10.211.55.2)
 
 ![iftop交互图](/img/iftop.png)
 
-### 53. Bash相关环境变量
+## 53. Bash相关环境变量
 
 历史信息显示时间格式  
 如下设置后, 使用`history`就会显示具体命令的具体执行时间.    
@@ -1349,19 +1346,19 @@ PS1变量
 PS1="[\e[1;31m\u@\h \e[0;34m${PWD}\e[0m]\\$ "
 ```
 
-### 54. 查本机的公网IP
+## 54. 查本机的公网IP
 通常我们的主机都在内网,  访问互联网是都是换成公网IP后去连接的  
 如下是查询我们主机的公网IP  
 1. 打开百度 www.baidu.com  
 2. 输出两个字符 `ip`, 敲回车  
 3. 新页面显示的本机IP就是公网IP  
 
-### 55. 查询linux系统的一些限制信息
+## 55. 查询linux系统的一些限制信息
 如下文章详细列举了redhat/centos各版本操作系统的重要限制信息.  
 比如ext4限制, 最大cpu, 最大Memory  
 https://access.redhat.com/articles/rhel-limits
 
-### 56. 判断虚拟化类型的N种方法
+## 56. 判断虚拟化类型的N种方法
 ``` bash
 $ dmidecode -s system-manufacturer
 OpenStack Foundation
@@ -1375,7 +1372,7 @@ $ virt-what
 kvm
 ```
 
-### 57. cpu信息解读
+## 57. cpu信息解读
 ``` bash
 $ lscpu
 Architecture:          x86_64              // 架构 
@@ -1405,7 +1402,7 @@ NUMA node0 CPU(s):     0,1
 ```
 
 
-### 58. taskset指定进程的CPU亲和性
+## 58. taskset指定进程的CPU亲和性
 返回的mask为十六进制, 3 代表 0x11 即绑定在cpu 0 和 1 上面. 最低位代表第一个cpu  
 taskset -p pid 返回pid对应进程当前的亲和性  
 ``` bash
@@ -1429,7 +1426,7 @@ pid 691's current affinity mask: 3
 进程运行时设置的亲和性并不影响其他线程, 如果要对java这样的多线程设置, 需要ps -efL 找到所有线程, 然后逐一设置  
 `taskset 1 java`启动java命令时的绑定, 会应用到所有线程, 因为cpu的亲和性具有继承性  
 
-### 59. Linux系统最大文件数量
+## 59. Linux系统最大文件数量
 
 `ulimit -n`返回当前user单进程可打开的最大进程数  
 `/proc/[pid]/limits` 查询该进程的资源限制数据  
@@ -1470,7 +1467,7 @@ $ cat /proc/sys/fs/file-nr
 `lsof -n -d0-999999 | awk '{print $2}' | sort | uniq -c | sort -k1 -n`    
 
 
-### 60. ss 查询socket连接信息
+## 60. ss 查询socket连接信息
 
 类似于`netstat`, 使用了netlink, 性能更好
 ``` bash
@@ -1518,7 +1515,7 @@ https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.htm
 https://man7.org/linux/man-pages/man8/ss.8.html  
 https://github.com/shemminger/iproute2/blob/main/misc/ssfilter.y  
 
-### 61. 消除用户被锁的错误登录记录
+## 61. 消除用户被锁的错误登录记录
 
 通常管理员会配置pam_faillock或者pam_tally2, 当用户使用错误密码满足一定条件, 就将用户锁定一段时间. 如下是即时清除错误记录的命令  
 ``` bash
@@ -1526,7 +1523,7 @@ faillock --reset
 pam_tally2 -r -u [username]
 ```
 
-### 62. 估计RSS总和的大小
+## 62. 估计RSS总和的大小
 
 ``` bash
 ps aux | awk '{sum+=$6} END {print sum / 1024}'
@@ -1546,7 +1543,7 @@ RSS=`expr $RSS \* 4`
 echo $RSS"KB"
 ```
 
-### 63. 文件系统修复
+## 63. 文件系统修复
 
 针对xfs, 使用`xfs_repair`命令:  
 `-n` 表示不修复, 只扫描并显示错误  
@@ -1564,13 +1561,13 @@ xfs_repair -v /dev/mapper/vg-home
 
 > -L是修复xfs文件系统的最后手段，慎重选择，它会清空日志，会丢失用户数据和文件。 
 
-### 64. 非交互式修改密码
+## 64. 非交互式修改密码
 
 ``` bash
 echo "Linux@123" |passwd --stdin root
 ```
 
-### 66. udev管理
+## 66. udev管理
 
 查询设备的信息, 主要是环境变量  
 ``` bash
@@ -1612,7 +1609,7 @@ xxx可以是`/sys/class/block/sda`,`/sys/class/net/eth0`, 也可以是`/sys/devi
 修改`/etc/udev/udev.conf`里的`udev_log="debug"`可以打开更详细的日志  
 使用`journalctl -u systemd-udevd`查看  
 
-### 67. 一条命令启动web服务器
+## 67. 一条命令启动web服务器
 
 查询设备的信息, 主要是环境变量  
 ``` bash
@@ -1620,7 +1617,7 @@ python -m SimpleHTTPServer 8000
 ```
 
 
-### 68. dpkg,apt-get包管理命令
+## 68. dpkg,apt-get包管理命令
 
 查询所有包
 ``` bash
@@ -1635,7 +1632,7 @@ cloud-guest-utils: /usr/bin/growpart
 ``` bash
 $ cat /var/log/apt/history.log
 ```
-### 69. 主机安全入侵盘查
+## 69. 主机安全入侵盘查
 
 检查`LD_PRELOAD`环境变量  
 使用`vi`打开`/etc/ld.so.preload`这个文件是否有内容  
@@ -1646,7 +1643,7 @@ https://www.anquanke.com/post/id/160843
 https://superuser.com/questions/1183037/what-is-does-ld-so-preload-do  
 https://www.jianshu.com/p/31e487daa79d  
 
-### 70. top命令
+## 70. top命令
 
 top默认3秒刷新一次信息, 导致一些即时启动并结束的进程无法观察到, 可以用如下参数指定间隔:  
 ``` bash
@@ -1681,7 +1678,7 @@ MiB Swap:      0.0 total,      0.0 free,      0.0 used.   6748.4 avail Mem
    4818 root      20   0 1810424 372332  14820 S   0.0   4.7   0:00.27 gopls
 ```
 
-### 71. ping命令
+## 71. ping命令
 
 `-i`指定两次ping之前的间隔, 默认是1s
 ``` bash
@@ -1695,7 +1692,7 @@ PING z163ipv6.v.bsgslb.cn (117.23.1.15) 1024(1052) bytes of data.
 1032 bytes from 117.23.1.15: icmp_seq=2 ttl=128 time=7.77 ms
 ```
 
-### 72. ping和curl常见的网络报错
+## 72. ping和curl常见的网络报错
 
 ping ip 报错：  
 `connect: Network is unreachable` 原因是OS里没有相关路由导致  
@@ -1705,7 +1702,7 @@ cur ip 一些报错:
 `curl: (7) Failed to connect to 114.114.114.114: Network is unreachable` 原因是OS里没有相关路由导致
 很快返回`curl: (7) Failed connect to 114.114.114.114:80; Connection refused` 因为Curl收到icmp 应答消息 80端口不可达， 可能是中间设备iptable发送或者收到服务端rst消息， 80端口没有处于监听状态   
 
-### 73. 一些常用的内存统计命令
+## 73. 一些常用的内存统计命令
 统计所有进程占用的物理内存
 ``` bash
 # 使用 grep 查找 Pss 指标后，再用 awk 计算累加值
@@ -1726,7 +1723,7 @@ https://unix.stackexchange.com/questions/353676/what-is-the-purpose-of-seemingly
 这篇文章详细地介绍了`/proc/meminfo`里的每一个字段的含义和一些有用的公式.  
 http://linuxperf.com/?p=142  
 
-### 74. 不同OS的文件编码
+## 74. 不同OS的文件编码
 linux显示文件内容的编码方式  
 ``` bash
 $ file -i old.txt
@@ -1742,13 +1739,13 @@ convmv -f GBk -t UTF-8 --notest -r *，这
 ```
 参考: http://kuring.me/post/windows_linux_code/  
 
-### 75. 一些shell循环命令
+## 75. 一些shell循环命令
 ``` bash
 while true; do cat /proc/stat  | grep "cpu " ; sleep 30; done
 for n in {1..1000}; do touch a$n; rm -rf a$n; done
 for file in $(ls -1 /proc/[1-9]*/status); do grep Name $file; done
 ```
-### 76. dhcp持续请求配置 
+## 76. dhcp持续请求配置 
 Network管理时, 如果要在dhcp获取ip失败后不断重试,则在`ifcfg-ethX`文件里增加`PERSISTENT_DHCLIENT=yes`  
 默认是1分钟后超时, 不重试,日志打印`no dhcpoffers received`  
 如果加参数, 1分钟超时, 然后一个随机的时间间隔后再次重试. 一直重试到成功获取ip,日志打印如下:  
@@ -1780,7 +1777,7 @@ NetworkManager管理时, 两个方法配置持久化:
 参考 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/configuring_the_dhcp_client_behavior  
  
 
-### 77. 解析/proc/[pid]/status里关于信号的字段
+## 77. 解析/proc/[pid]/status里关于信号的字段
 ``` bash
 #read -p "PID=" pid
 pid=$1
@@ -1801,21 +1798,21 @@ done
 ```
 参考链接: https://stackoverflow.com/questions/4155483/proc-pidstatus-sigign-field  
 
-### 78. 审计谁杀了进程
+## 78. 审计谁杀了进程
 ``` bash
 auditctl -a always,exit -F arch=b64 -F a1=15 -S kill -k log_kill
 auditctl -a always,exit -F arch=b64 -F a1=9 -S kill -k log_kill
 ```
 参考: https://jotdownux.wordpress.com/2016/01/23/whos-killing-that-process-whos-dumping-prelink-files-in-tmp-linux-auditd-to-the-rescue/  
 
-### 79. 修改字符集的命令
+## 79. 修改字符集的命令
 ``` bash
 localectl set-locale LANG=en_US.UTF-8
 localectl set-locale LANG=zh_CN.UTF-8
 localectl list-locales
 ```
 
-### 80. bash脚本的退出码
+## 80. bash脚本的退出码
 脚本退出码是有特殊含义的,比如常见的`127`代表脚本里的命令没找到,`130`代表用户按了`ctrl+c`导致脚本停止
 ``` bash
 $ abc
@@ -1829,7 +1826,7 @@ $ echo $?
 ```
 更详细的退出码含义请参见 https://tldp.org/LDP/abs/html/exitcodes.html  
 
-### 81. 模拟不断增加内存致使触发oom的程序
+## 81. 模拟不断增加内存致使触发oom的程序
 
 ``` c
  #include <stdio.h>
@@ -1859,7 +1856,7 @@ $ echo $?
 ```
 具体的详细测试步骤: https://access.redhat.com/solutions/47692  
 
-### 82. vi实现十六进制编辑功能
+## 82. vi实现十六进制编辑功能
 vim配合xxd对文件进行十六进制的编辑,达到类似UltraEdit的效果
 ``` bash
 vi abc.txt
@@ -1869,7 +1866,7 @@ vi abc.txt
 ```
 更详细的请看 https://www.cnblogs.com/meibenjin/archive/2012/12/06/2806396.html  
 
-### 83. iproute软件包里的一些常用命令
+## 83. iproute软件包里的一些常用命令
 
 `ifstat`打印网卡的一些统计信息,类似`ifconfig`里的输出,但每次运行时输出从上次运行之后这段时间的统计,而`ifconfig`是打印的从网卡up以来的累积值  
 `-a`则忽略历史文件,打印从网卡up后的累积值,`-j`表示输出格式是json.方便二次处理  
@@ -1960,7 +1957,7 @@ $ tc -s qdisc
 $ tc -s qdisc ls dev eth0
 ```
 
-### 84. 链接跟踪
+## 84. 链接跟踪
 
 `conntrack -L`可显示当前的所有链接信息, 需要安装`conntrack-tools`后才可以使用
 ``` bash
@@ -2006,11 +2003,11 @@ https://access.redhat.com/solutions/8721
 https://www.cnblogs.com/liushaodong/archive/2013/02/26/2933593.html  
 http://arthurchiao.art/blog/conntrack-design-and-implementation/  
 
-### 85. 一些汇编语法
+## 85. 一些汇编语法
 如下文章介绍了x86_64下许多寄存器的用途  
 http://abcdxyzk.github.io/blog/2012/11/23/assembly-args/  
 
-### 86. 使用crash分析内核coredump的一些文章
+## 86. 使用crash分析内核coredump的一些文章
 
 https://irmbor.co.rs/~dspalovic/assets/docsOracle/E41138/html/ch10s02.html  
 https://www.slideshare.net/PaulVNovarese/linux-crash-dump-capture-and-analysis  
@@ -2019,11 +2016,11 @@ https://www.redhat.com/archives/crash-utility/2012-December/msg00029.html
 
 最主要还是看crash的官方主页: https://crash-utility.github.io/  
 
-### 87. Linux内核模块相关
+## 87. Linux内核模块相关
 使用weak-modules实现外部开发的内核模块在多个内核(KABI兼容的情况下)都可以使用, 这篇文章介绍了具体的方法  
 https://www.cnblogs.com/xingmuxin/p/9092344.html  
 
-### 88. ssh连接保活配置
+## 88. ssh连接保活配置
 编辑 /etc/ssh/sshd_config, 添加如下两行, 重启sshd服务生效
 
 ``` bash
@@ -2031,7 +2028,7 @@ ClientAliveInterval 60
 ClientAliveCountMax 3 
 ```
 
-### 89. 使用auditd审计功能
+## 89. 使用auditd审计功能
 
 直接使用`systemctl restart auditd`重启auditd是失败.
 ``` bash
@@ -2165,7 +2162,7 @@ ausearch --start today -i  -f /etc/passwd
 其他一些参考资料:  
 https://cloud.tencent.com/developer/article/1359606  
 
-### 90. 分析磁盘性能
+## 90. 分析磁盘性能
 
 blktrace -d /dev/vda
 blkparse -i vda -d vda.blktrace.bin
@@ -2180,19 +2177,19 @@ https://access.redhat.com/solutions/2039133
 https://access.redhat.com/articles/524353  
 https://access.redhat.com/solutions/112613  
 
-### 91. Grub相关问题
+## 91. Grub相关问题
 
 CentOS 6 和7 如何重装grub  
 https://access.redhat.com/solutions/1521   
 
-### 92. SLAB相关的知识
+## 92. SLAB相关的知识
 
 统计slab内各项的内存占用并降序排列TOP 10  
 ``` bash
 awk '{printf "  %6i MB %s \n",$6*$15/256,$1}' /proc/slabinfo | sort -nrk1 | head -10
 ```
 
-### 93. nfs相关的知识
+## 93. nfs相关的知识
 
 nfs Debug  
 https://access.redhat.com/solutions/262213  
@@ -2205,7 +2202,7 @@ https://access.redhat.com/solutions/28211
 nfs, rpc相关的Debug开关  
 https://wiki.archlinux.org/index.php/NFS/Troubleshooting#RPC_debug_flags  
 
-### 94. fork创建进程时的几个报错说明
+## 94. fork创建进程时的几个报错说明
 有两个常见的报错:
 ``` bash
 11: Resource temporarily unavailable

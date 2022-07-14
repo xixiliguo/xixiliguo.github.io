@@ -5,7 +5,7 @@ author: "Peter Wang"
 
 # 概述
 并查集的go实现
-``` golang
+``` go
 type BinaryIndexedTree struct {
 	tree     []int
 	capacity int
@@ -40,7 +40,7 @@ func lowbit(x int) int {
 ```
 
 # 307. 区域和检索 - 数组可修改
-```golang
+```go
 type NumArray struct {
     bit BinaryIndexedTree
     nums []int

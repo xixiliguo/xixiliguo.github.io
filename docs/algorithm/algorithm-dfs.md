@@ -9,7 +9,7 @@ draft: false
 <!--more-->
 
 78: 子集
-``` golang
+``` go
 func subsets(nums []int) [][]int {
 	res := [][]int{}
 	dfs(nums, -1, []int{}, &res)
@@ -31,7 +31,7 @@ func dfs(nums []int, cur int, c []int, res *[][]int) {
 ```
 
 90: 子集II
-``` golang
+``` go
 func subsetsWithDup(nums []int) [][]int {
 	res := [][]int{}
 	sort.Ints(nums)
@@ -57,7 +57,7 @@ func dfs(nums []int, cur int, c []int, res *[][]int) {
 ```
 
 491: 递增子序列
-``` golang
+``` go
 func findSubsequences(nums []int) [][]int {
 	res := [][]int{}
 	dfs(nums, -1, []int{}, &res)
@@ -91,7 +91,7 @@ skip:
 ```
 
 39: 组合总和
-``` golang
+``` go
 func combinationSum(candidates []int, target int) [][]int {
 	res := [][]int{}
 	sort.Ints(candidates)
@@ -121,7 +121,7 @@ func dfs(candidates []int, remain int, start int, c []int, res *[][]int) {
 }
 ```
 40: 组合总和II
-``` golang
+``` go
 func combinationSum2(candidates []int, target int) [][]int {
 	res := [][]int{}
 	sort.Ints(candidates)
@@ -153,7 +153,7 @@ func dfs(candidates []int, remain int, start int, c []int, res *[][]int) {
 }
 ```
 216: 组合总和 III
-``` golang
+``` go
 func combinationSum3(k int, n int) [][]int {
 	res := [][]int{}
 	dfs([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, k, n, -1, []int{}, &res)
@@ -184,7 +184,7 @@ func dfs(candidates []int, remainNums int, remainTarget int, start int, c []int,
 ```
 
 46: 全排列
-``` golang
+``` go
 func permute(nums []int) [][]int {
 	res := [][]int{}
 	visited := make([]bool, len(nums))
@@ -212,7 +212,7 @@ func dfs(nums []int, visited []bool, remain int, c []int, res *[][]int) {
 ```
 
 47: 全排列II
-``` golang
+``` go
 func permuteUnique(nums []int) [][]int {
 	res := [][]int{}
 	sort.Ints(nums)

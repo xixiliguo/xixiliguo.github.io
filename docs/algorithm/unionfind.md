@@ -58,7 +58,7 @@ func (un *UnionFind) IsConnected(x, y int) bool {
 ```
 
 # 1319. 连通网络的操作次数
-```golang
+```go
 func makeConnected(n int, connections [][]int) int {
 	// len(connections)是现有的线缆数,如果小于机器数-1, 那么无论如何都是无法连接所有机器的
 	if len(connections) < n-1 {
@@ -72,7 +72,7 @@ func makeConnected(n int, connections [][]int) int {
 }
 ```
 # 547. 省份数量
-```golang
+```go
 func findCircleNum(isConnected [][]int) int {
 	un := NewUnionFind(len(isConnected))
 	for i := 0; i < len(isConnected); i++ {
@@ -88,7 +88,7 @@ func findCircleNum(isConnected [][]int) int {
 }
 ```
 # 990. 等式方程的可满足性
-```golang
+```go
 func equationsPossible(equations []string) bool {
 
 	un := NewUnionFind(26)
@@ -109,7 +109,7 @@ func equationsPossible(equations []string) bool {
 ```
 
 # 399. 除法求值
-```golang
+```go
 type NumUnionFind struct {
 	Parent map[string]string
 	Value  map[string]float64
@@ -190,7 +190,7 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 ```
 
 # 684. 冗余连接
-```golang
+```go
 func findRedundantConnection(edges [][]int) []int {
 	un := NewUnionFind(len(edges))
 	preCount := len(edges)

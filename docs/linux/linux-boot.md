@@ -164,7 +164,7 @@ $ ./sleep.sh
 [root@localhost ~]#
 ```
 再`set -x`的基础上,继续增加`export 'PS4=${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): '` 可打印具体的行数和函数名
-``` bah
+``` bash
 $ cat sleep.sh
 #!/usr/bin/bash
 set -x

@@ -1,25 +1,22 @@
 ---
 title: "使用Bandersnatch搭建私有Pypi源"
-author: "Peter Wang"
-tags: ["Pypi", "Bandersnatch"]
-date: 2018-01-02T22:14:04+08:00
-draft: false
 ---
 
+# 使用Bandersnatch搭建私有Pypi源
 经常使用python的公司,考虑到pypi.python.org不稳定,都会自己搭建私有的Pypi源.这里简单介绍下方法.
 
-<!--more-->
+
 
 现在流行使用Bandersnatch作为同步工具, 如下演示在centos7.4环境下通过
 
-# 安装virtualenv
+## 安装virtualenv
 virtualenv 可以为一个应用创建一套“隔离”的Python运行环境。所有依赖包在自己独立的环境,不会影响其他python程序,更不会放到系统默认的site-packages里
 
 ``` bash
 $ yum install python-virtualenv
 ```
 
-# 创建独立Python环境
+### 创建独立Python环境
 
 ``` bash
 $ virtualenv Bandersnatch
@@ -30,7 +27,7 @@ Installing Pip..................................................................
 $
 ```
 
-# 激活独立Python环境
+### 激活独立Python环境
 
 ``` bash
 [root@abc ~]$ source Bandersnatch/bin/activate
@@ -38,10 +35,10 @@ $
 ```
 当指示符前显示 `(Bandersnatch)` 字样, 意味着所有python的操作,都只限于独立环境, 系统Python环境不受任何影响
 
-# 安装Bandersnatch
+### 安装Bandersnatch
 最新版的`Bandersnatch 2.0`支持python3, 但目前的环境是python2.7.5, 所以需要下载其他版本. 这里取`1.11`版
 
-## 获取安装包
+### 获取安装包
 ``` bash
 (Bandersnatch)[root@abc ~]$ wget https://bitbucket.org/pypa/bandersnatch/get/1.11.tar.gz
 --2018-01-02 22:39:22--  https://bitbucket.org/pypa/bandersnatch/get/1.11.tar.gz
@@ -56,7 +53,7 @@ Saving to: ‘1.11.tar.gz.1’
 2018-01-02 22:39:24 (72.9 KB/s) - ‘1.11.tar.gz.1’ saved [25988/25988]
 ```
 
-## 解压缩tar包
+### 解压缩tar包
 
 ``` bash
 (Bandersnatch)[root@abc ~]$ tar -xzvf 1.11.tar.gz
@@ -76,7 +73,7 @@ pypa-bandersnatch-76b72f3ebd6c/setup.py
 pypa-bandersnatch-76b72f3ebd6c/src/bandersnatch/__init__.py
 `````````````````````````(此处省略若干字)
 ```
-## 使用pip安装
+### 使用pip安装
 
 ``` bash
 (Bandersnatch)[root@abc ~]$ pip install -r pypa-bandersnatch-76b72f3ebd6c/requirements.txt
@@ -100,9 +97,9 @@ Cleaning up...
 (Bandersnatch)[root@abc ~]$
 ```
 
-# 配置Bandersnatch并运行
+## 配置Bandersnatch并运行
 
-## 首次运行创建配置文件
+### 首次运行创建配置文件
 ```
 (Bandersnatch)[root@abc ~]$ bandersnatch mirror
 2018-01-02 22:43:37,985 WARNING: Config file '/etc/bandersnatch.conf' missing, creating default config.
@@ -111,7 +108,7 @@ Cleaning up...
 ```
 这一步,会创建默认的配置文件/etc/bandersnatch.conf.
 
-## 修改配置文件
+### 修改配置文件
 `vi /etc/bandersnatch.conf`  
 修改directory为存放文件的目标文件夹. 其他选项通常不需要修改.
 

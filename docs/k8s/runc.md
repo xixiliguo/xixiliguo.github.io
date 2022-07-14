@@ -74,7 +74,7 @@ config.json规范可参见 https://github.com/opencontainers/runtime-spec
 `init.go`里有 `_ "github.com/opencontainers/runc/libcontainer/nsenter"` 这句
 
 `nsenter.go`里的 init语句可使包被引用时自动执行 nsexec().  
-``` golang
+``` go
 // +build linux,!gccgo
 
 package nsenter
@@ -96,7 +96,7 @@ import "C"
 无论创建还是容器, 都先将容器start, 执行``(c *linuxContainer) Start()` , 创建子进程后将状态信息写入 `/run/runc/[container id]/state.json`  
 `runc create`只是创建容器, 它并不会运行 `(c *linuxContainer) exec()`. 所以容器进程一直阻塞在 `write to exec.fifo`, 无法执行execve, 也就无法真正运行容器的init进程.   
 `run start`入口在`start.go`, 就是执行`container.Exec()`, 读exec.fifo的信息, 返回的字节数大于0, 那就是收到了`0x00`, 则容器进程开始execve,正式运行起来.  如果返回的字节数<=0, 则说明容器已经处于运行状态. 
-``` golang
+``` go
 		switch status {
 		case libcontainer.Created:
 			return container.Exec()
