@@ -20,6 +20,7 @@ export default {
       '/linux/': [
         {
           text: 'Linux运维',
+          collapsed: true,
           items: [
             { text: 'ATOP工作原理总结', link: '/linux/atop' },
             { text: '使用Bandersnatch搭建私有Pypi源', link: '/linux/bandersnatch-pypi' },
