@@ -28,7 +28,7 @@ export default {
             { text: 'DNS学习总结', link: '/linux/dns' },
             { text: 'Linux Boot过程总结', link: '/linux/linux-boot' },
             { text: 'Linux 下常用命令与技巧汇总', link: '/linux/linux-common-commands' },
-            { text: 'Linux /etc/shadow 文件学习笔记', link: '/linux/shadow' },
+            { text: 'Linux /etc/shadow 文件学习笔记', link: '/linux/linux-shadow' },
             { text: 'Linux 网卡多队列介绍', link: '/linux/multi-queue' },
             { text: '理解NTP协议', link: '/linux/ntp' },
             { text: '使用Yum 升级OS', link: '/linux/yum-update' }

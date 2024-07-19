@@ -11,11 +11,11 @@ Linux系统下，创建的用户信息如ID，家目录，默认shell保存在/e
 <!--more-->
 本文内使用的Linux环境是centos7.3, 操作时间是2017年10月12号  
 
-### 字段介绍
+# 字段介绍
 /etc/shadow每行和/etc/passwd一一对应，命令`pwconv`根据/etc/passwd生成。每行由9个字段（以冒号分隔）组成，如下是每个字段的含义：
-##### 1. 登录名: 
+## 1. 登录名: 
 如 root， 通过它，唯一匹配/etc/passwd中的一行
-##### 2. 加密后的密码： 
+## 2. 加密后的密码： 
 通常的格式为: $X$ZZZZZZ  
 X为数字，表示不同的加密算法，具体如下：
 
@@ -31,7 +31,7 @@ X为数字，表示不同的加密算法，具体如下：
 如果该字段 是 ! 或者 *， 表示该用户无法用密码登录系统.但可以通过其他方式登录。  
 如果该字段以感叹号!开头，其余是通常的格式，则系统认为密码被锁， ssh登录时即使输入正确的密码，也会拒绝登录.  `usermod -L username` 就是使用该原理。`usermod  -U username` 功能是解锁
 
-##### 3. 密码最后修改时间：
+## 3. 密码最后修改时间：
 通过`chage -d XX user`可以设置该字段  
 值为从1970 1月1号至改密码时的天数。  
 0表示用户需要在下次登录时修改密码  
@@ -61,12 +61,12 @@ $
 然后用新密码就可以登录了， 这个可以用于管理员强制普通用户修改密码
 ```
 
-##### 4. 最小时间间隔：
+## 4. 最小时间间隔：
 通过`chage -m XXX user`可以设置该字段  
 两次修改口令之间所需的最小天数。  
 空或者0表示没有限制  
 
-##### 5. 最大时间间隔：
+## 5. 最大时间间隔：
 通过`chage -M XXX user`可以设置该字段  
 两次修改口令之间所需的最大天数。一旦超过，意味着密码过期.   
 空表示没有限制.  
@@ -84,7 +84,7 @@ Changing password for test.
 You must wait longer to change your password
 passwd: Authentication token manipulation error
 ```
-##### 6. 警告天数：
+## 6. 警告天数：
 通过`chage -W XXX user`可以设置该字段  
 在密码过期前（即 密码最后修改时间 + 最大时间间隔），提前多少天通知用户. 此时仍可以正常登陆，只是多了一行提示  
 空或者0表示无警告.  
@@ -100,7 +100,7 @@ Last login: Wed Oct 11 23:36:04 2017 from XX.XX.XX.XX
 [test@linux ~]$
 ```
 
-##### 7. 非活动周期:
+## 7. 非活动周期:
 通过`chage -I XXX user`可以设置该字段  
 表示密码过期后，多少天内用户仍可以正常登陆，但要求立即修改密码。 一旦超过该天数，系统会拒绝用户登陆  
 空值或者0表示没有非活动期，一旦密码过期直接拒绝登陆  
@@ -150,7 +150,7 @@ Your account has expired; please contact your system administrator
 Connection closed by 10.211.55.9
 ```
 
-##### 8. 用户过期时间：
+## 8. 用户过期时间：
 通过`chage -E XXX user`可以设置该字段  
 用户过期时间，值表示为自19701月1号起的天数.  
 密码过期后，用户只是无法使用密码登陆，还可以用其他方式。 一旦用户过期，任何方式都无法用该用户登陆  
@@ -158,9 +158,9 @@ Connection closed by 10.211.55.9
 0值不建议使用。解释取决于程序本身  
 
 
-##### 9. 其他为保留字段，为将来扩展功能用
+## 9. 其他为保留字段，为将来扩展功能用
 
-### 自己写代码实现加密(C 和 Python实现)
+## 自己写代码实现加密(C 和 Python实现)
 ``` c
 #include <crypt.h>
 #include <stdio.h>
@@ -193,7 +193,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '$6$DEgVEU0T$mwlTGb/nTtvpIJcoIy2t9xNMgv0.IT34WLvQ7VmbWJP9rU8Ysp9JyJ8I8PxEleGPWoirdbk4VKbhtCg6P.sm1.'
 ```
 
-### 密码相关一些配置
+## 密码相关一些配置
 
 /etc/login.defs 用来存放一些与创建用户和密码相关的配置信息  
 当使用useradd创建新用户时，系统会读取该文件，然后写入/etc/shadows.  
