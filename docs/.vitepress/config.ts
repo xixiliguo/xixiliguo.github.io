@@ -20,7 +20,7 @@ export default {
       '/linux/': [
         {
           text: 'Linux运维',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'ATOP工作原理总结', link: '/linux/atop' },
             { text: '使用Bandersnatch搭建私有Pypi源', link: '/linux/bandersnatch-pypi' },
@@ -38,10 +38,12 @@ export default {
       '/network/': [
         {
           text: '网络协议',
+          collapsed: false,
           items: [
             { text: 'Libvirt Network 笔记', link: '/network/libvirt-network' },
             { text: 'TCP协议栈笔记', link: '/network/tcp' },
-            { text: 'Tcpdump与Wireshark点滴记录', link: '/network/tcpdump-wireshark' }
+            { text: 'Tcpdump与Wireshark点滴记录', link: '/network/tcpdump-wireshark' },
+            { text: 'ss命令指南', link: '/network/ss' }
           ]
         }
       ],
