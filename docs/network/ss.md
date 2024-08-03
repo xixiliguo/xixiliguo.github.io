@@ -83,6 +83,43 @@ state后面支持的TCP状态如下:
 	};
 ```
 
+## --memory输出解释
+```
+ skmem:(r<rmem_alloc>,rb<rcv_buf>,t<wmem_alloc>,tb<snd_buf>,
+                            f<fwd_alloc>,w<wmem_queued>,o<opt_mem>,
+                            bl<back_log>,d<sock_drop>)
+```
+接收过程中,如果当前socket正处于进程上下文,那么包放到backlog算到back_log里,
+否则放到receive_queue里,算到 rmem_alloc里,同时fwd_alloc减少
+
+发送过程中先计算到wmem_queued里, 如果拥塞窗口允许包传递到L3层后, 那么也会计算到wmem_alloc里, wmem_alloc最终会在kfree_skb时通过调用
+tcp_wfree减少
+发到L3层时,通过`tcp_event_new_data_sent`函数将skb从 wwrite_queue删除, 放到 rtx_queue里(这是一个红黑树, 根据seq排序)
+在接收过程中通过获取到的ack, 调用 `tcp_clean_rtx_queue` 清理已被对方Ack的skb, 最终 wmem_queued的值做相应的减少
+
+## Recv-Q 与 Send-Q
+```
+State          Recv-Q          Send-Q    Local Address:Port     Peer Address:Port
+LISTEN         0               1024      xxx.xxx.xxx.xxx:xxx    xxx.xxx.xxx.xxx:*
+ESTAB          0               52        xxx.xxx.xxx.xxx:xxx    xxx.xxx.xxx.xxx:xxx
+```
+处于listen状态的socket, 队列指的是已完成TCP三次握手但进程并没有通过accept取走的连接个数, recv-q 表示当前连接个数. send-q是最大连接数  
+其他状态时, recv-q 表示已到达接受队列但进程还没有取走的字节数(e.g. TCP协议的话不包括IP和TCP头), send-q表示已发送但还收到对方Ack的字节数  
+
+``` c
+	if (state == TCP_LISTEN)
+		rx_queue = READ_ONCE(sk->sk_ack_backlog);
+	else
+		/* Because we don't lock the socket,
+		 * we might find a transient negative value.
+		 */
+		rx_queue = max_t(int, READ_ONCE(tp->rcv_nxt) -
+				      READ_ONCE(tp->copied_seq), 0);
+
+	READ_ONCE(tp->write_seq) - tp->snd_una
+```
+
 ## 参考
 https://man7.org/linux/man-pages/man8/ss.8.html  
 https://github.com/shemminger/iproute2/blob/main/misc/ssfilter.y  
+https://unix.stackexchange.com/questions/33855/kernel-socket-structure-and-tcp-diag  

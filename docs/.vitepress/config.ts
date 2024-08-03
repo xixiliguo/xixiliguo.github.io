@@ -86,6 +86,7 @@ export default {
             { text: '内存管理', link: '/kernel/kernel-memory' },
             { text: '系统调用与进程调度', link: '/kernel/kernel-syscall-sched' },
             { text: 'Linux: Trap', link: '/kernel/linux-trap' },
+            { text: 'virtio驱动', link: '/kernel/virtio' },
           ]
         }
       ],
