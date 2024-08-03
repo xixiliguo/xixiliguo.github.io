@@ -93,6 +93,27 @@ crash>
 
 通常virtio_blk设备是单队列, `virtio_queue_rq`简单的将数据放入sg, 然后加入到vring里. 具体的过程如下:
 ![vring](/img/virtio-ring.png)
+下发IO如果环满,会返回`BLK_STS_DEV_RESOURCE`, block层会再次`requeue`
+``` c
+	err = virtblk_add_req(vblk->vqs[qid].vq, vbr, vbr->sg, num);
+	if (err) {
+		virtqueue_kick(vblk->vqs[qid].vq);
+		/* Don't stop the queue if -ENOMEM: we may have failed to
+		 * bounce the buffer due to global resource outage.
+		 */
+		if (err == -ENOSPC)
+			blk_mq_stop_hw_queue(hctx);
+		spin_unlock_irqrestore(&vblk->vqs[qid].lock, flags);
+		switch (err) {
+		case -ENOSPC:
+			return BLK_STS_DEV_RESOURCE;
+		case -ENOMEM:
+			return BLK_STS_RESOURCE;
+		default:
+			return BLK_STS_IOERR;
+		}
+	}
+```
 
 virtio IO设备的环是全双工的, 即这个环guestos可以读写, hostos也能读写. 但net设备是一对,只用于接收数据的环和只用于发送数据的环,
 便于提高效率.
@@ -382,6 +403,19 @@ kthread+0xe0
 ret_from_fork+0x2c
 ```
 
+如果`virtscsi_add_cmd` 返回错误, 且不是EIO, 那么都转换成`SCSI_MLQUEUE_HOST_BUSY`并向上传递, 这个会影响整个控制器下面所有的virtio-scsi
+设备短暂地停止接收文件系统层下发的IO,当前的IO会再次`requeue`.
+``` c
+	if (ret == -EIO) {
+		cmd->resp.cmd.response = VIRTIO_SCSI_S_BAD_TARGET;
+		spin_lock_irqsave(&req_vq->vq_lock, flags);
+		virtscsi_complete_cmd(vscsi, cmd);
+		spin_unlock_irqrestore(&req_vq->vq_lock, flags);
+	} else if (ret != 0) {
+		return SCSI_MLQUEUE_HOST_BUSY;
+	}
+```
+
 `virtscsi_event_done` 只是简单点将work插入到`system_freezable_wq`这个workqueue_struct里. 所以这是一个异步
 操作. 最终kworder进程里会调用`virtscsi_handle_event`处理.
 ``` c
@@ -511,3 +545,36 @@ secondary_startup_64_no_verify+0xe5
 ```
 `try_fill_recv`函数用于提前在接收队列里填充描述符(也可以理解为申请到内存区域), 这样底层就可以把数据放到指定的内存地址. 
 发送队列不存在这个问题. 因为skb已经在上层的协议栈分配好了.
+
+发送方向如果环里的空闲的描述符少于19个,说明底层取包速度太慢存在性能瓶颈,guestos会主动调用`netif_stop_subqueue`停止
+该队列. 后续的发包可能会在`tc`层丢弃.
+``` c
+static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+{
+
+	/* If running out of space, stop queue to avoid getting packets that we
+	 * are then unable to transmit.
+	 * An alternative would be to force queuing layer to requeue the skb by
+	 * returning NETDEV_TX_BUSY. However, NETDEV_TX_BUSY should not be
+	 * returned in a normal path of operation: it means that driver is not
+	 * maintaining the TX queue stop/start state properly, and causes
+	 * the stack to do a non-trivial amount of useless work.
+	 * Since most packets only take 1 or 2 ring slots, stopping the queue
+	 * early means 16 slots are typically wasted.
+	 */
+	if (sq->vq->num_free < 2+MAX_SKB_FRAGS) {
+		netif_stop_subqueue(dev, qnum);
+		if (!use_napi &&
+		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
+			/* More just got used, free them then recheck. */
+			free_old_xmit_skbs(sq, false);
+			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
+				netif_start_subqueue(dev, qnum);
+				virtqueue_disable_cb(sq->vq);
+			}
+		}
+	}
+
+	return NETDEV_TX_OK;
+}
+```
