@@ -87,6 +87,7 @@ export default {
             { text: '系统调用与进程调度', link: '/kernel/kernel-syscall-sched' },
             { text: 'Linux: Trap', link: '/kernel/linux-trap' },
             { text: 'virtio驱动', link: '/kernel/virtio' },
+            { text: '函数调用规约', link: '/kernel/function-call-conventions' },
           ]
         }
       ],
