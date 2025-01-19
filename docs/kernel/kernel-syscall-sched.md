@@ -817,3 +817,93 @@ SYM_FUNC_START(__switch_to_asm)
 	jmp	__switch_to
 SYM_FUNC_END(__switch_to_asm)
 ```
+
+## 进程退出
+
+无论是进程还是线程退出,都会进入`do_exit`这个函数, 静态跟踪器`trace_sched_process_exit`就在这里函数里. 这个函数
+执行了大量的释放资源操作, 比如释放文件,共享内存,虚拟内存等. 其中调用`exit_notify`完成以下几个动作:
+1. `forget_original_parent` 即将退出的task的子task们的父task设置为即将退出task的父task. 如果即将退出的task对应的
+线程组非空, 则从线程组里随机找个alive的作为父task.
+2. 如果即将退出的task不是线程leader, 放入dead列表会,随后通过`release_task`释放最后的资源
+3. 是线程leader的情况下, 线程组内仍有其他线程, 则不主动执行`release_task`释放资源
+4. 是线程leader的情况下, 线程组内空了, 则调用`do_notify_parent` 发送`sigchild`信号给父task.
+   a. 如果父task屏蔽或者忽略sigchild信号, 则放入dead列表会,随后通过`release_task`释放最后的资源
+   b. 否则不主动释放资源, 等待父task执行waitpid等操作来回收资源.
+5. 主动释放资源的话, task->state会置为`EXIT_DEAD`, 否则为`EXIT_ZOMBIE`
+
+``` c
+static void exit_notify(struct task_struct *tsk, int group_dead)
+{
+	bool autoreap;
+	struct task_struct *p, *n;
+	LIST_HEAD(dead);
+
+	write_lock_irq(&tasklist_lock);
+	forget_original_parent(tsk, &dead);
+
+	if (group_dead)
+		kill_orphaned_pgrp(tsk->group_leader, NULL);
+
+	tsk->exit_state = EXIT_ZOMBIE;
+	if (unlikely(tsk->ptrace)) {
+		int sig = thread_group_leader(tsk) &&
+				thread_group_empty(tsk) &&
+				!ptrace_reparented(tsk) ?
+			tsk->exit_signal : SIGCHLD;
+		autoreap = do_notify_parent(tsk, sig);
+	} else if (thread_group_leader(tsk)) {
+		autoreap = thread_group_empty(tsk) &&
+			do_notify_parent(tsk, tsk->exit_signal);
+	} else {
+		autoreap = true;
+	}
+
+	if (autoreap) {
+		tsk->exit_state = EXIT_DEAD;
+		list_add(&tsk->ptrace_entry, &dead);
+	}
+
+	/* mt-exec, de_thread() is waiting for group leader */
+	if (unlikely(tsk->signal->notify_count < 0))
+		wake_up_process(tsk->signal->group_exec_task);
+	write_unlock_irq(&tasklist_lock);
+
+	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
+		list_del_init(&p->ptrace_entry);
+		release_task(p);
+	}
+}
+```
+
+曾经遇到线程leader是Z状态, 组内有一个线程是D状态, 非常疑惑为什么父进程没有回收进程.
+通过以下链接提供的方案, 模拟场景并测试,得出以下结论:
+
+https://chrisdown.name/2024/02/05/reliably-creating-d-state-processes-on-demand.html
+
+1. task收到kill信号号, 线程leader变为Z状态,但因整个线程组非空, 所以不会发送sigchild给父task.
+说明只有整个进程全部退出,才会发sigchild给父进程.
+2. 有个线程是D状态, 信号处于pending状态.不会立即执行.
+3. 当D状态恢复后,在从内核态切为用户态前,会检查是否有pending的信号, 此时会继续调用`do_exit`把自己释放掉
+4. 在`release_task`里不仅释放自身的资源, 如果检查线程组为空切线程leader处于Z状态, 通过`do_notify_parent`
+发信号给父进程, 这样后续父进程可以通过waitpid等回收整个线程组即进程的资源.
+``` c
+	/*
+	 * If we are the last non-leader member of the thread
+	 * group, and the leader is zombie, then notify the
+	 * group leader's parent process. (if it wants notification.)
+	 */
+	zap_leader = 0;
+	leader = p->group_leader;
+	if (leader != p && thread_group_empty(leader)
+			&& leader->exit_state == EXIT_ZOMBIE) {
+		/*
+		 * If we were the last child thread and the leader has
+		 * exited already, and the leader's parent ignores SIGCHLD,
+		 * then we are the one who should release the leader.
+		 */
+		zap_leader = do_notify_parent(leader, leader->exit_signal);
+		if (zap_leader)
+			leader->exit_state = EXIT_DEAD;
+	}
+```
+

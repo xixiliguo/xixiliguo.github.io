@@ -88,6 +88,7 @@ export default {
             { text: 'Linux: Trap', link: '/kernel/linux-trap' },
             { text: 'virtio驱动', link: '/kernel/virtio' },
             { text: '函数调用规约', link: '/kernel/function-call-conventions' },
+            { text: 'eBPF', link: '/kernel/ebpf' },
           ]
         }
       ],
