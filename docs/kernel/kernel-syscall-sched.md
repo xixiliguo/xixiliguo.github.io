@@ -11,7 +11,7 @@ c语言的函数调用过程中:
 RDI, RSI, RDX, RCX, R8, R9  分别代表第一个,二个,三个... 参数, RAX代表返回值  
 RBX, RSP, RBP, and R12–R15  是调用者保存寄存器, 意思是调用者先保存原先值,在子函数返回时需要恢复,以确保该寄存器的值没变  
 
-Linux系统调用时稍微有一点不同, 第三个参数不是放到RCX, 而是R10.  RCX用于保存切换时用户态时的RIP
+Linux系统调用时稍微有一点不同, **第三个参数不是放到RCX, 而是R10.  RCX用于保存切换时用户态时的RIP**
 
 下面是golang在linux amd64的系统调用汇编
 
@@ -61,6 +61,8 @@ https://stackoverflow.com/questions/6555094/what-does-cltq-do-in-assembly
 
 #define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
 ```
+``arch/x86/include/asm/syscall_wrapper.h``有一段注释,表示每个系统调用函数(比如__x64_sys_revc)
+都取`regs->r10`赋值到`rcx`后作为第三个参数调用子函数  
 ``` c
  * <__x64_sys_recv>:		<-- syscall with 4 parameters
  *	callq	<__fentry__>
@@ -138,6 +140,24 @@ __visible noinstr void do_syscall_64(struct pt_regs *regs, int nr)
 	syscall_exit_to_user_mode(regs);
 }
 ```
+`PER_CPU_VAR(cpu_tss_rw + TSS_sp0)` 在cpu_init里已经初始化了, 定义为`trampoline stack`
+`PER_CPU_VAR(cpu_tss_rw + TSS_sp2)` 在linux中没有确定性的用途, 用于临时存放`RSP`.
+``` c
+/*
+ * cpu_init() initializes state that is per-CPU. Some data is already
+ * initialized (naturally) in the bootstrap process, such as the GDT.  We
+ * reload it nevertheless, this function acts as a 'CPU state barrier',
+ * nothing should get across.
+ */
+void cpu_init(void)
+{
+	..........
+	/*
+	 * sp0 points to the entry trampoline stack regardless of what task
+	 * is running.
+	 */
+	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
+```
 
 所有的系统调用的具体实现函数, 汇总到`sys_call_table`,同时`arch/x86/entry/syscalls/syscall_64.tbl` 里也可以直接查询系统调用号与具体实现函数名的对应关系
 ``` c
@@ -154,7 +174,7 @@ crash>
 如果该进程被标记为需要调度,即需要让出cpu,让其他进程执行  
 该进程收到信号需要处理, 也是在退出syscall返回用户态空间前执行的  
 
-`mov    0x38(%rdi),%ecx` 可以看到确实是将陷入内核态前的R10(代表第三个参数)赋值给RCX, 满足后续C语言的调用规约
+如下函数的反汇编 `mov    0x38(%rdi),%ecx` 可以看到确实是将陷入内核态前的R10(代表第三个参数)赋值给RCX, 满足后续C语言的调用规约
 ```
 crash> dis -l __x64_sys_recv
 /usr/src/debug/kernel-5.14.0-22.el9/linux-5.14.0-22.el9.x86_64/net/socket.c: 2111
@@ -175,7 +195,7 @@ crash> struct pt_regs -xo | grep 0x38
 crash>
 ```
 
-`sysretq`指令从RCS载入值到RIP, 返回用户态  
+`sysretq`指令从`RCX`获取到用户态的执行地址, 载入值到RIP, 即返回用户态  
 
 从代码中搜索系统调用具体函数的技巧: 以open为例, 它有三个参数, 则通过`define3(open` 就能很快找到对应的实现
 
@@ -183,6 +203,7 @@ crash>
 http://abcdxyzk.github.io/blog/2012/11/23/assembly-args/  
 https://en.wikipedia.org/wiki/X86_calling_conventions  
 https://cloud.tencent.com/developer/article/1492374  
+https://arthurchiao.art/blog/system-call-definitive-guide-zh/  
 
 
 ## task_struct部分字段的含义

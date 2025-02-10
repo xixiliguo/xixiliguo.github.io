@@ -89,6 +89,7 @@ export default {
             { text: 'virtio驱动', link: '/kernel/virtio' },
             { text: '函数调用规约', link: '/kernel/function-call-conventions' },
             { text: 'eBPF', link: '/kernel/ebpf' },
+            { text: '跟踪技术原理', link: '/kernel/trace' },
           ]
         }
       ],
