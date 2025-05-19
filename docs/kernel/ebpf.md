@@ -653,3 +653,121 @@ int test():
    3: (95) exit
        95 00 00 00 00 00 00 00
 ```
+
+## kfunc 实现
+
+用以下代码说明
+``` c
+#include <vmlinux.h>
+#include <bpf_helpers.h>
+#include <bpf_tracing.h>
+
+char __license[] SEC("license") = "Dual MIT/GPL";
+extern void bpf_task_release(struct task_struct *p) __ksym;
+extern struct task_struct *bpf_task_from_pid(s32 pid) __ksym __weak;
+
+SEC("fentry/tcp_v4_rcv")
+int hello(struct pt_regs *ctx) {
+	struct task_struct *p = bpf_task_from_pid(1);
+	if (p == NULL) {
+		return 0;
+	}
+	bpf_task_release(p);
+	return 0;
+}
+```
+生成的目标文件的反汇编
+``` bash
+[root@localhost test]# llvm-objdump -dr test.o
+
+test.o: file format elf64-bpf
+
+Disassembly of section fentry/tcp_v4_rcv:
+
+0000000000000000 <hello>:
+       0:       b7 01 00 00 01 00 00 00 r1 = 0x1
+       1:       85 10 00 00 ff ff ff ff call -0x1
+                0000000000000008:  R_BPF_64_32  bpf_task_from_pid
+       2:       15 00 02 00 00 00 00 00 if r0 == 0x0 goto +0x2 <LBB0_2>
+       3:       bf 01 00 00 00 00 00 00 r1 = r0
+       4:       85 10 00 00 ff ff ff ff call -0x1
+                0000000000000020:  R_BPF_64_32  bpf_task_release
+
+0000000000000028 <LBB0_2>:
+       5:       b7 00 00 00 00 00 00 00 r0 = 0x0
+       6:       95 00 00 00 00 00 00 00 exit
+```
+
+加载后的字节指令
+``` bash
+[root@localhost test]# bpftool prog dump xlated name hello opcodes
+int hello(struct pt_regs * ctx):
+; struct task_struct *p = bpf_task_from_pid(1);
+   0: (b7) r1 = 1
+       b7 01 00 00 01 00 00 00
+   1: (85) call bpf_task_from_pid#221808
+       85 20 00 00 70 62 03 00
+; if (p == NULL) {
+   2: (15) if r0 == 0x0 goto pc+2
+       15 00 02 00 00 00 00 00
+; bpf_task_release(p);
+   3: (bf) r1 = r0
+       bf 01 00 00 00 00 00 00
+   4: (85) call bpf_task_release#221024
+       85 20 00 00 60 5f 03 00
+; }
+   5: (b7) r0 = 0
+       b7 00 00 00 00 00 00 00
+   6: (95) exit
+       95 00 00 00 00 00 00 00
+```
+
+目标文件里的`85 10 00 00 ff ff ff ff`, 经过加载后,被修改为 `85 20 00 00 70 62 03 00`
+20里的 2 代表是 kfunc, `70 62 03 00` 即为 0x036270, 即从`__bpf_call_base`地址偏移
+0x036270就是要执行的函数地址. 
+
+```
+[root@localhost test]# grep " __bpf_call_base" /proc/kallsyms
+ffffffffaeca4cc0 T __bpf_call_base
+[root@localhost test]# grep " bpf_task_from_pid" /proc/kallsyms
+ffffffffaecdaf30 T bpf_task_from_pid
+[root@localhost test]# python
+Python 3.9.9 (main, Nov 22 2021, 00:00:00)
+[GCC 11.2.1 20211019 (Red Hat 11.2.1-6)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> hex(0xffffffffaecdaf30 - 0xffffffffaeca4cc0)
+'0x36270'
+>>> exit()
+```
+
+## bpf verify的实现
+
+### 基本流程
+```
+bpf_check
+    -> check_btf_info_early
+    -> add_subprog_and_kfunc
+    -> check_subprogs
+    -> check_btf_info
+    -> resolve_pseudo_ldimm64
+    -> check_cfg
+    -> do_check_main
+    -> optimize_bpf_loop
+    -> opt_hard_wire_dead_code_branches
+    -> opt_remove_dead_code
+    -> opt_remove_nops
+    -> sanitize_dead_code
+    -> convert_ctx_accesses
+    -> do_misc_fixups
+```
+### 日志解释
+
+### 分支校验
+
+### call校验
+
+### exit校验
+
+### ctx转换
+
+### x86 jit介绍

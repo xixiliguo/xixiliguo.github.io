@@ -82,20 +82,32 @@ state后面支持的TCP状态如下:
 		[SS_CLOSING] = "closing",
 	};
 ```
-
 ## --memory输出解释
 ```
  skmem:(r<rmem_alloc>,rb<rcv_buf>,t<wmem_alloc>,tb<snd_buf>,
                             f<fwd_alloc>,w<wmem_queued>,o<opt_mem>,
                             bl<back_log>,d<sock_drop>)
 ```
-接收过程中,如果当前socket正处于进程上下文,那么包放到backlog算到back_log里,
-否则放到receive_queue里,算到 rmem_alloc里,同时fwd_alloc减少
+`sock_drop`的单位是`tcp seg`, 其他字段的单位都是字节, 且每一次增加减少的都是`skb->truesize`,
+`rcv_buf` 指接收缓冲区大小, `snd_buf`指发送缓冲区大小.  
+`opt_mem`只在部分特殊场景下才会增加， 参见 https://access.redhat.com/solutions/2070883
 
-发送过程中先计算到wmem_queued里, 如果拥塞窗口允许包传递到L3层后, 那么也会计算到wmem_alloc里, wmem_alloc最终会在kfree_skb时通过调用
-tcp_wfree减少
-发到L3层时,通过`tcp_event_new_data_sent`函数将skb从 wwrite_queue删除, 放到 rtx_queue里(这是一个红黑树, 根据seq排序)
-在接收过程中通过获取到的ack, 调用 `tcp_clean_rtx_queue` 清理已被对方Ack的skb, 最终 wmem_queued的值做相应的减少
+接收过程中,如果当前socket正处于进程上下文,那么包放到backlog算到`back_log`里,
+否则放到receive_queue里,算到 `rmem_alloc`里,同时`fwd_alloc`减少
+
+发送过程中生成的skb先计算到`wmem_queued`里,同时`fwd_alloc`减少。如果拥塞窗口允许且包发送到L3层, 那么也会计算到`wmem_alloc`里, 然后通过`tcp_event_new_data_sent`函数将skb从write_queue删除, 放到rtx_queue里(这是一个红黑树, 根据seq排序)，表示包已发送，等待ack回复。
+
+在后续的接收过程中通过获取到的ack, 调用 `tcp_clean_rtx_queue` 清理已被对方ack的skb, 最终`wmem_queued`的值做相应的减少,紧接着在kfree_skb时通过调用`tcp_wfree`减少`wmem_alloc`。
+``` c
+tcp_clean_rtx_queue()
+  tcp_rtx_queue_unlink_and_free()
+    tcp_wmem_free_skb()
+	  sk_wmem_queued_add(sk, -skb->truesize) //减少wmem_queued
+	  sk_mem_uncharge(sk, skb->truesize)
+	  __kfree_skb(skb) //减少wmem_alloc
+```
+
+`rmem_alloc` >= `rcv_buf` 或者 `wmem_queued` >= `snd_buf` 就算缓冲区满。
 
 ## Recv-Q 与 Send-Q
 ```
@@ -103,8 +115,8 @@ State          Recv-Q          Send-Q    Local Address:Port     Peer Address:Por
 LISTEN         0               1024      xxx.xxx.xxx.xxx:xxx    xxx.xxx.xxx.xxx:*
 ESTAB          0               52        xxx.xxx.xxx.xxx:xxx    xxx.xxx.xxx.xxx:xxx
 ```
-处于listen状态的socket, 队列指的是已完成TCP三次握手但进程并没有通过accept取走的连接个数, recv-q 表示当前连接个数. send-q是最大连接数  
-其他状态时, recv-q 表示已到达接受队列但进程还没有取走的字节数(e.g. TCP协议的话不包括IP和TCP头), send-q表示已发送但还收到对方Ack的字节数  
+处于listen状态的socket, 队列指的是已完成TCP三次握手但进程还没有通过accept取走的连接个数, recv-q 表示当前连接个数. send-q是最大连接数  
+其他状态时, recv-q 表示已到达接受队列但进程还没有取走的字节数(e.g. TCP协议的话不包括IP和TCP头), send-q表示在发送队列中还未发到L3和已发送但还未收到对方ack的字节数  
 
 ``` c
 	if (state == TCP_LISTEN)
@@ -119,7 +131,115 @@ ESTAB          0               52        xxx.xxx.xxx.xxx:xxx    xxx.xxx.xxx.xxx:
 	READ_ONCE(tp->write_seq) - tp->snd_una
 ```
 
+## -i 显示tcp内部状态
+``` bash
+ESTAB            0                 0           192.168.3.21:22           192.168.3.11:53942
+         cubic wscale:8,7 rto:234 rtt:33.6/12.372 ato:40 mss:1460 pmtu:1500 rcvmss:1460 advmss:1460 cwnd:10 ssthresh:43 bytes_sent:18548977 bytes_acked:18548977 bytes_received:9093761 segs_out:46323 segs_in:44834 data_segs_out:35908 data_segs_in:29570 send 3476190bps lastsnd:2168 lastrcv:328 lastack:328 pacing_rate 6952296bps delivery_rate 152679736bps delivered:35909 app_limited busy:445323ms rcv_rtt:21.354 rcv_space:115272 rcv_ssthresh:682103 minrtt:0.094 snd_wnd:1049856
+```
+cubic 表示当前使用的拥塞算法  
+`wscale:<snd_wscale>:<rcv_wscale>` 滑动窗口扩展因子，发送方向和接受方向。发送方向的数值是对端发送syn/synack报文时传过来的，接受方向是自行计算出数值后，会通过syn/synack报文发给对端。  
+rto  重传超时时间，单位是ms  
+`rtt:<rtt>/<rttvar>`  rtt是平均rtt时间， rttvar是rtt的平均偏差。单位是ms  
+ato  ack超时时间， 单位ms, 用于延迟ack  
+mss  发送方向的mss,单位byte   rcvmss是评估的接收方的mss advmss  
+cwnd 拥塞窗口大小，单位是mss   比如 10 代表 10*mss == 10 * 1460 == 14600 bytes  
+ssthresh 慢启动阈值， 单位是mss  
+bytes_sent  bytes_acked  bytes_received  迄今为止发送的，ack的，收到的字节数（不含ip, tcp header）。send 表示已发到L3层。  
+segs_out，segs_in，data_segs_out，data_segs_in的单位都是seg。data_segs_out只统计含有数据（不算header）的包， segs_out统计
+所有发送包。data_segs_in与segs_in的区别同理。  
+lastsnd lastrcv lastack 上一次发送，接收，ack到现在的时长。 单位ms  
+send pacing_rate delivery_rate 单位是 bit/s, send是根据当前的拥塞窗口评估出来的（即想以xx的速率发送， 但其实可能受各种因素限制）。
+pacing_rate 通常是send的两倍，delivery_rate 通过在收到Ack时利用已经发送且对端已收到的包来评估速率。  
+unacked  等于tp->packets_out， 已发送未acked的包，单位：seg  
+retrans  第一个等于tp->retrans_out，当前仍在重传的包（未acked)。第二个等于tp->total_retrans，历史上重传过的包。单位seg  
+lost     等于tp->lost_out，单位：seg  
+sacked   等于tp->sacked_out，单位：seg  
+dsack_dups  收到的dsack包， 单位：seg  
+reordering  
+reord_seen  
+rcv_rtt  最近一次采样的rtt    
+rcv_space  采样时用户态最大的拷贝字节数  
+rcv_ssthresh 单位：字节数  
+not_sent  在发送队列里，但还没有发送到L3的字节数（不含IP，TCP头）  
+minrtt 最小的rtt值，单位ms  
+snd_wnd  通过对端报文里的window和snd_wscale计算出来  
+rcv_wnd  
+``` c
+static void tcp_update_pacing_rate(struct sock *sk)
+{
+	const struct tcp_sock *tp = tcp_sk(sk);
+	u64 rate;
+
+	/* set sk_pacing_rate to 200 % of current rate (mss * cwnd / srtt) */
+	rate = (u64)tp->mss_cache * ((USEC_PER_SEC / 100) << 3);
+
+	/* current rate is (cwnd * mss) / srtt
+	 * In Slow Start [1], set sk_pacing_rate to 200 % the current rate.
+	 * In Congestion Avoidance phase, set it to 120 % the current rate.
+	 *
+	 * [1] : Normal Slow Start condition is (tp->snd_cwnd < tp->snd_ssthresh)
+	 *	 If snd_cwnd >= (tp->snd_ssthresh / 2), we are approaching
+	 *	 end of slow start and should slow down.
+	 */
+	if (tcp_snd_cwnd(tp) < tp->snd_ssthresh / 2)
+		rate *= READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_pacing_ss_ratio);
+	else
+		rate *= READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_pacing_ca_ratio);
+
+	rate *= max(tcp_snd_cwnd(tp), tp->packets_out);
+
+	if (likely(tp->srtt_us))
+		do_div(rate, tp->srtt_us);
+
+	/* WRITE_ONCE() is needed because sch_fq fetches sk_pacing_rate
+	 * without any lock. We want to make sure compiler wont store
+	 * intermediate values in this location.
+	 */
+	WRITE_ONCE(sk->sk_pacing_rate, min_t(u64, rate,
+					     sk->sk_max_pacing_rate));
+}
+```
+``` c
+// iproute2/misc/ss.c
+static void tcp_show_info(const struct nlmsghdr *nlh, struct inet_diag_msg *r,
+		struct rtattr *tb[])
+{
+		if (rtt > 0 && info->tcpi_snd_mss && info->tcpi_snd_cwnd) {
+			s.send_bps = (double) info->tcpi_snd_cwnd *
+				(double)info->tcpi_snd_mss * 8000000. / rtt;
+		}
+
+		if (info->tcpi_pacing_rate &&
+				info->tcpi_pacing_rate != ~0ULL) {
+			s.pacing_rate = info->tcpi_pacing_rate * 8.;
+
+			if (info->tcpi_max_pacing_rate &&
+					info->tcpi_max_pacing_rate != ~0ULL)
+				s.pacing_rate_max = info->tcpi_max_pacing_rate * 8.;
+		}
+		s.delivery_rate = info->tcpi_delivery_rate * 8.;
+}
+```
+`ss -i`的大部分信息来自内核`tcp_get_info`函数。
+## TCP性能分析
+通过ss -i 的结果可以帮助我们判断TCP发送性能的部分受限原因。  
+busy_time 表示非空闲时间，包括发送队列一直处于忙（即发送队列一直有数据）和如下两种情况时间的总和  
+rwnd_limited 表示发送速率受对端接受窗口限制的时间/百分比      
+sndbuf_limited 表示发送速率受发送buffer大小限制的时间/百分比    
+
+[原始Patch](https://lore.kernel.org/netdev/1480191016-73210-1-git-send-email-ycheng@google.com/t/#m40b206792ed684902a723dfd1e668942485db5fd)
 ## 参考
+`struct tcp_sock` 部分字段解释：   
+write_seq	已放入到write_queue里的最后一个序列号  
+rcv_nxt	要接收的下一个序列号  
+snd_nxt  要发送到L3层的下一个序列号  
+snd_una  最后已发送未收到acked的序列号  
+packets_out  已发送但未acked的包（inflight），单位seg  
+sacked_out  单位seg  
+lost_out  单位seg  
+retrans_out  单位seg  
+delivered  发送过且已acked的包，单位seg  
+
 https://man7.org/linux/man-pages/man8/ss.8.html  
 https://github.com/shemminger/iproute2/blob/main/misc/ssfilter.y  
 https://unix.stackexchange.com/questions/33855/kernel-socket-structure-and-tcp-diag  
