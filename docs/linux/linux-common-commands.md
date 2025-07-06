@@ -29,8 +29,12 @@ args 为具体的命令行参数
 ``` bash
 ps -e -o pid,lstart,etime,args
 ```
-
 `ps -efL` 加 `-L` 则显示线程  
+
+TOP5 线程最多的进程列表
+``` bash
+ps -eL -o pid,ppid,state,command | sort | uniq -c | sort -n -k1 | tail -5
+``` 
 ## 3. 设置时间
 ``` bash
 date -s "dd/mm/yyyy hh:mm:ss"
@@ -158,7 +162,8 @@ du -xs /tmp/* | sort -rn -k1
 ## 12. find删除查找到的文件
 find命令经常会用到, `-type f`表示只返回文件, `-exec` 可将已找到的结果作为标准输入执行其他命令.
 ``` bash
-find <PATH> -type f -exec rm {} \;    # 删除查找到的文件, 将 path 改为实际要查找的目录
+find <PATH> -type f -exec rm {} \;    # 逐个删除查找到的文件, 将 path 改为实际要查找的目录
+find <PATH> -type f -exec rm {} +     # 一次性删除查找到的文件
 ```
 ``` bash
 find [PATH] [option] [action]  
@@ -217,6 +222,10 @@ grep -v "127" /etc/hosts
 递归搜索时忽略二进制文件,加参数`-I`
 ``` bash
 grep -r "abc" -I /etc
+```
+打印被搜索的文件名
+``` bash
+grep -H "abc" /etc/fstab
 ```
 
 ## 15. tail 查看文件指定行信息
@@ -881,7 +890,9 @@ history
 ```
 
 ## 40. 查看进程的父子调用关系
-`-p` 显示pid信息. {}表示线程
+`-a` 显示命令行参数  
+`-p` 显示pid信息. {}表示线程  
+`-s` 显示特定进程的所有父进程，不加该参数显示特定进程的所有子进程  
 ``` bash
 $ pstree -p
 systemd(1)─┬─agetty(1176)
@@ -898,6 +909,19 @@ systemd(1)─┬─agetty(1176)
            │               ├─{gssproxy}(726)
            │               ├─{gssproxy}(727)
            │               └─{gssproxy}(728)
+```
+
+``` bash
+# pstree -ap 3598
+bash,3598
+  └─pstree,3941 -ap 3598
+# pstree -aps 3598
+systemd,1 --switched-root --system --deserialize 30
+  └─sshd,869
+      └─sshd,3595
+          └─sshd,3597
+              └─bash,3598
+                  └─pstree,3942 -aps 3598
 ```
 
 ## 41. rsync文件

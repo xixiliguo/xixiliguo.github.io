@@ -31,7 +31,8 @@ export default {
             { text: 'Linux /etc/shadow 文件学习笔记', link: '/linux/linux-shadow' },
             { text: 'Linux 网卡多队列介绍', link: '/linux/multi-queue' },
             { text: '理解NTP协议', link: '/linux/ntp' },
-            { text: '使用Yum 升级OS', link: '/linux/yum-update' }
+            { text: '使用Yum 升级OS', link: '/linux/yum-update' },
+            { text: 'tty pts相关过程', link: '/linux/tty' }
           ]
         }
       ],
@@ -40,10 +41,12 @@ export default {
           text: '网络协议',
           collapsed: false,
           items: [
-            { text: 'Libvirt Network 笔记', link: '/network/libvirt-network' },
-            { text: 'TCP协议栈笔记', link: '/network/tcp' },
+            { text: 'Libvirt Network', link: '/network/libvirt-network' },
+            { text: 'TCP协议栈', link: '/network/tcp' },
+            { text: '邻居子系统', link: '/network/neighbour' },
             { text: 'Tcpdump与Wireshark点滴记录', link: '/network/tcpdump-wireshark' },
-            { text: 'ss命令指南', link: '/network/ss' }
+            { text: 'ss命令指南', link: '/network/ss' },
+            { text: '常用的bpftrace脚本', link: '/network/net_bpftrace' }
           ]
         }
       ],
@@ -90,6 +93,7 @@ export default {
             { text: '函数调用规约', link: '/kernel/function-call-conventions' },
             { text: 'eBPF', link: '/kernel/ebpf' },
             { text: '跟踪技术原理', link: '/kernel/trace' },
+            { text: '块设备', link: '/kernel/block' },
           ]
         }
       ],

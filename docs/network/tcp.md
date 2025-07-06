@@ -1,7 +1,4 @@
 
-记录自己对TCP协议栈的学习心得
-
-<!--more-->
 ## TCP处理与内核参数
 1. client发送`syn`报文后,tcp状态为 syn-sent. 如果对端没有返回syn+ack, 则尝试发送`net.ipv4.tcp_syn_retries`次. 每次间隔2,4,8s....  
 2. server收到`syn`后,状态变为 syn-recv, 放到半队列里,同时返回syn-ack. 这个队列的大小为 net.ipv4.tcp_max_syn_backlog. 是个全局的参数. 如果这个半队列满,则直接丢弃syc.
@@ -62,9 +59,13 @@ RTO最小是 200ms,  最大是 2分钟.   每次发起重传的间隔为  200ms,
 
 
 ## TCP reset
-reset分为主动reset和被动reset两种, 比如进程调用close关闭连接且仍有数据为读时会触发主动reset, 对端建立连接但本端
-却没有对应的监听socket时会触发被动reset.
-从代码上分析,主动reset的数据包里会带rst,ack两个标志位, 但`ack number`为0. `seq number`为下一个要发送的seq.
+reset分为主动reset和被动reset两种。
+
+主动reset的场景目前只有一种：
+1. 进程调用close关闭连接且仍有数据可读时会触发主动reset。
+
+从代码上分析,主动reset的数据包里会带rst,ack两个标志位, 其中`ack number`为`tcp_sk(sk)->rcv_nxt`，代表这个seq前的数据
+tcp协议栈已经收到， 不代表应用已收到。`seq number`为下一个要发送的seq。
 ``` c
 void tcp_send_active_reset(struct sock *sk, gfp_t priority)
 {
@@ -95,15 +96,38 @@ void tcp_send_active_reset(struct sock *sk, gfp_t priority)
 }
 ```
 
-被动reset属于收到非法包后发reset:  
-如果收到的包flag有ack,则`seq number`有值， `ack number`为0    flag只有rst  
-如果收到的包flag没有ack,则`seq number`为0， `ack number`有值   flag rst & ack   
-在被动reset场景下是通过一个全局socket发送具体的reset包, 这个包的ip层的id为0.  
+被动reset属于收到非法包后发reset，常见的场景：
+1. 收到syn报文，但目的port并没有处于监听状态， 则发reset。
+2. 报文里的ack-seq不在合理的范围内，即非法。
+3. tcp的标志为非法，比如listen socket收到的包含ack标志位。
+4. 处于TCP_FIN_WAIT1状态时，收到的报文seq不合法，可以观察`TcpExtTCPAbortOnData`这个计数器
+``` c
+static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb,
+			      enum sk_rst_reason reason)
+{
+	/* Swap the send and the receive. */
+	memset(&rep, 0, sizeof(rep));
+	rep.th.dest   = th->source;
+	rep.th.source = th->dest;
+	rep.th.doff   = sizeof(struct tcphdr) / 4;
+	rep.th.rst    = 1;
 
+	if (th->ack) {
+		rep.th.seq = th->ack_seq;
+	} else {
+		rep.th.ack = 1;
+		rep.th.ack_seq = htonl(ntohl(th->seq) + th->syn + th->fin +
+				       skb->len - (th->doff << 2));
+	}
+}
+```
+如果收到的包flag有ack,则`seq number`有值， `ack number`为0    flag有 rst  
+如果收到的包flag没有ack,则`seq number`为0， `ack number`有值   flag有 rst & ack   
+**在被动reset场景下是通过一个全局socket发送具体的reset包, 这个包的ip层的id为0**
+
+抓包上直接通过ip层的id判断，如果是0，则为被动reset, 否则为主动reset。
 trace_tcp_send_reset这个tracepoint里, 如果skb为null, 则代表主动reset, 如果非null,
-则代表导致发送reset的skb(接收到的). 如果没有对应的sk, 是无法用这个tracepoint跟踪
-到的.
-
+则代表被动reset, skb是接收到的skb.
 
 
 ## 参考
