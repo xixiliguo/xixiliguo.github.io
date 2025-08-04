@@ -24,10 +24,46 @@ FRAG      0         0         0
 如上图所示:  
 系统当前总的socket为 173  
 TCP 总共 `15`个,  等于 `倒数第三行的 total +  closed `  
-`closed = orphaned + timewait + others`  , 这块的others是指已经不在hash桶里的,但仍被进程占用的socket, 比如`刚创建的socket, 没有bind或者connect的`, 或者`处于FIN-WAIT-2状态keeptimer超时后的socket`.
+`closed = orphaned + timewait + others`  , 这块的others是指tcp状态为`tcp-close`的scoket，已经不在hash桶里的,但仍被进程占用的socket, 
+通常`others`有两个场景:
+1. 刚创建的socket, 或者bind，未connect，此时状态默认为`tcp-close`
+2. shutdown,而非close调用socket后，四次挥手后的socket,状态也为`tcp-close`
+`closed`并不是真实存在的一个计数，而且通过计算得来
+``` c
+static int print_summary(void)
+{
+	struct ssummary s;
+	int tcp_estab;
 
-处于`FIN-WAIT-1`状态的socket会算到 `orphaned`  
-处于`FIN-WAIT-2`状态和`TIME-WAIT`的socket会算到 `timewait`  
+	if (get_sockstat(&s) < 0)
+		perror("ss: get_sockstat");
+	if (get_snmp_int("Tcp:", "CurrEstab", &tcp_estab) < 0)
+		perror("ss: get_snmpstat");
+
+	printf("Total: %d\n", s.socks);
+
+	printf("TCP:   %d (estab %d, closed %d, orphaned %d, timewait %d)\n",
+	       s.tcp_total + s.tcp_tws, tcp_estab,
+	       s.tcp_total - (s.tcp4_hashed + s.tcp6_hashed - s.tcp_tws),
+	       s.tcp_orphans, s.tcp_tws);
+	printf("Transport Total     IP        IPv6\n");
+	printf("RAW	  %-9d %-9d %-9d\n", s.raw4+s.raw6, s.raw4, s.raw6);
+	printf("UDP	  %-9d %-9d %-9d\n", s.udp4+s.udp6, s.udp4, s.udp6);
+	printf("TCP	  %-9d %-9d %-9d\n", s.tcp4_hashed+s.tcp6_hashed, s.tcp4_hashed, s.tcp6_hashed);
+	return 0;
+}
+```
+
+
+使用`shutdown`关闭socket并收到ack后，socket进入`FIN-WAIT-2`状态，不受`net.ipv4.tcp_fin_timeout`的控制，不会超时自动释放，后续收到
+fin报文后，新生成一个`TIME-WAIT`的socket（统计在`ss -s`的`timewait`里, 自身进入`tcp-close`状态，统计在`ss -s`的`closed`里。   
+使用`close`关闭socket并收到ack后，socket进入`FIN-WAIT-2`状态，受`net.ipv4.tcp_fin_timeout`的控制（统计在`ss -s`的`timewait`里），
+如果没收到fin报文则超时自动释放，如果收到fin报文后，修改`tw->tw_substate` 为 `TIME-WAIT`（依旧统计在`ss -s`的`timewait`里）。    
+
+所以处于`FIN-WAIT-2`状态（close调用的）和`TIME-WAIT`的socket会算到 `timewait`  
+
+参考： https://access.redhat.com/solutions/505903  
+
 
 如下对每一种TCP状态的socket统计, 上面提到的others无法统计到
 ``` bash
@@ -37,6 +73,66 @@ TCP 总共 `15`个,  等于 `倒数第三行的 total +  closed `
       4 LISTEN
       2 TIME-WAIT
 ```
+
+
+下发close后的TCP状态，都会算到  tcp_orphan_count 里，后续在`inet_csk_destroy_sock`里减掉。
+``` c
+void __tcp_close(struct sock *sk, long timeout)
+{
+	this_cpu_inc(tcp_orphan_count);
+}
+
+``` c
+void inet_csk_destroy_sock(struct sock *sk)
+{
+	sk->sk_prot->destroy(sk);
+	sk_stream_kill_queues(sk);
+	xfrm_sk_free_policy(sk);
+	sk_refcnt_debug_release(sk)
+	this_cpu_dec(*sk->sk_prot->orphan_count);
+	sock_put(sk);
+}
+```
+`time-wait`状态的，是通过`tw_timer_handler`里的函数释放掉，不通过`inet_csk_destroy_sock`，所以
+通过`close`调用后的处于`FIN-WAIT-1`或者`LAST-ACK`状态的socket会算到 `orphaned`。   
+
+通过`shutdown`调用可能会进入`FIN-WAIT-1`，`FIN-WAIT-2`，或者`LAST-ACK`。 `FIN-WAIT-1`可能性很低，暂
+不讨论，其他两个可通过 ss -o判断， **如果有定时器，则说明是`close`调用，没有则说明是`shutdown`调用**   
+
+`LAST-ACK` 如果没收到ack, 即继续重发fin， 默认8次后自动释放。重试次数的相关代码如下：
+``` c
+static int tcp_write_timeout(struct sock *sk)
+{
+	if ((1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV)) {
+	} else {
+		retry_until = READ_ONCE(net->ipv4.sysctl_tcp_retries2);
+		if (sock_flag(sk, SOCK_DEAD)) {
+			const bool alive = icsk->icsk_rto < TCP_RTO_MAX;
+
+			retry_until = tcp_orphan_retries(sk, alive);
+		}
+	}
+}
+static int tcp_orphan_retries(struct sock *sk, bool alive)
+{
+	int retries = READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_orphan_retries); /* May be zero. */
+
+	/* We know from an ICMP that something is wrong. */
+	if (sk->sk_err_soft && !alive)
+		retries = 0;
+
+	/* However, if socket sent something recently, select some safe
+	 * number of retries. 8 corresponds to >100 seconds with minimal
+	 * RTO of 200msec. */
+	if (retries == 0 && alive)
+		retries = 8;
+	return retries;
+}
+```
+
+
+上面显示的`TCP:   15 (estab 8, closed 3, orphaned 0, timewait 3)`,除了`estab`和`timewait`外，其他都不是per-net的，
+在容器场景下数据存在不准确的情况     
 
 ## 基本操作
 
