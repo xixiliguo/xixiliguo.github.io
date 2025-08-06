@@ -26,9 +26,10 @@ FRAG      0         0         0
 TCP 总共 `15`个,  等于 `倒数第三行的 total +  closed `  
 `closed = orphaned + timewait + others`  , 这块的others是指tcp状态为`tcp-close`的scoket，已经不在hash桶里的,但仍被进程占用的socket, 
 通常`others`有两个场景:
-1. 刚创建的socket, 或者bind，未connect，此时状态默认为`tcp-close`
-2. shutdown,而非close调用socket后，四次挥手后的socket,状态也为`tcp-close`
-`closed`并不是真实存在的一个计数，而且通过计算得来
+1. 刚创建的socket, 或者bind过，未connect，此时状态默认为`tcp-close`    
+2. shutdown,而非close调用socket后，四次挥手后的socket,状态也为`tcp-close`   
+
+`closed`并不是真实存在的一个计数，而且通过计算得来。 bind系统调用不改变tcp状态， 仍算到 closed里。  
 ``` c
 static int print_summary(void)
 {
@@ -129,6 +130,37 @@ static int tcp_orphan_retries(struct sock *sk, bool alive)
 	return retries;
 }
 ```
+tcp_close状态的socket, 也会从hash桶里去掉。
+``` c
+void tcp_set_state(struct sock *sk, int state)
+{
+	int oldstate = sk->sk_state;
+	switch (state) {
+
+	case TCP_CLOSE:
+		if (oldstate == TCP_CLOSE_WAIT || oldstate == TCP_ESTABLISHED)
+			TCP_INC_STATS(sock_net(sk), TCP_MIB_ESTABRESETS);
+
+		sk->sk_prot->unhash(sk);
+		if (inet_csk(sk)->icsk_bind_hash &&
+		    !(sk->sk_userlocks & SOCK_BINDPORT_LOCK))
+			inet_put_port(sk);
+		fallthrough;
+	}
+	inet_sk_state_store(sk, state);
+}
+```
+如下代码可统计每个进程占有的socket数目， 可通过`bash closed_sock.sh | sort -n -k 4 | tail -19` 排序。
+``` bash
+#/bin/bash
+for PROC in `ls  /proc/|grep "^[0-9]"`
+do
+  num=`ls -rlt /proc/$PROC/fd | grep socket | wc -l`
+  echo proc $PROC socket $num
+done
+```
+
+
 
 
 上面显示的`TCP:   15 (estab 8, closed 3, orphaned 0, timewait 3)`,除了`estab`和`timewait`外，其他都不是per-net的，
