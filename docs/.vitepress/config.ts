@@ -32,7 +32,8 @@ export default {
             { text: 'Linux 网卡多队列介绍', link: '/linux/multi-queue' },
             { text: '理解NTP协议', link: '/linux/ntp' },
             { text: '使用Yum 升级OS', link: '/linux/yum-update' },
-            { text: 'tty pts相关过程', link: '/linux/tty' }
+            { text: 'tty pts相关过程', link: '/linux/tty' },
+            { text: '磁盘管理', link: '/linux/disk' }
           ]
         }
       ],

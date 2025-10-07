@@ -486,6 +486,31 @@ static void virtscsi_handle_transport_reset(struct virtio_scsi *vscsi,
 一个virtio_net的设备对应一个网卡, 使用一个PCI设备.常见的几个结构体的关系如下:
 ![结构体](/img/virtio-net.png)
 
+`net_device`, `virtio_device`, `pci_dev` 这些结构体都会嵌入`struct device",并通过
+它连接起来形成层次关系。举例如下：
+```
+crash> net_device.dev -xo ffff9d2250511000
+struct net_device {
+  [ffff9d2250511580] struct device dev;
+}
+crash> list device.parent -s device.kobj.name,bus,driver ffff9d2250511580
+ffff9d2250511580
+  kobj.name = 0xffff9d22a0d942d8 "eth0",
+  bus = 0x0,
+  driver = 0x0,
+ffff9d2243367010
+  kobj.name = 0xffff9d22a142bdd8 "virtio0",
+  bus = 0xffffffff836cc2c0 <virtio_bus>,
+  driver = 0xffffffffc03212e0 <virtio_net_driver>,
+ffff9d22417f20c8
+  kobj.name = 0xffff9d22418209e0 "0000:00:03.0",
+  bus = 0xffffffff836b74a0 <pci_bus_type>,
+  driver = 0xffffffff836cc508 <virtio_pci_driver+136>,
+ffff9d22417ea000
+  kobj.name = 0xffff9d2241820f20 "pci0000:00",
+  bus = 0x0,
+  driver = 0x0,
+```
 
 典型的接收流程里, `virtnet_poll` 是napi里的回调函数, 网络这块为了提高效率,当中断上报时
 暂时关闭中断, 然后使用poll机制不停地从网卡ring环里取数据, 直到无数据可取或者已取的数据包

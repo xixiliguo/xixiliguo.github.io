@@ -9,7 +9,7 @@ draft: false
 记录自己日常写的一些代码片段
 <!--more-->
 
-### 使用golang实现类似ping获取网络时延
+## 使用golang实现类似ping获取网络时延
 ``` go
 package main
 
@@ -111,7 +111,7 @@ $ go run main.go
 2020/09/30 00:12:07 after 30ms, got msg &{Type:echo reply Code:0 Checksum:38592 Body:0xc00006c060} from 114.114.114.114
 ```
 
-### 使用golang打印系统调用时errorno的含义
+## 使用golang打印系统调用时errorno的含义
 ``` go
 package main
 
@@ -144,7 +144,7 @@ Errno 11 0xb: resource temporarily unavailable
 ......
 ```
 
-### 分析两个关于超出最大文件数的错误逻辑
+## 分析两个关于超出最大文件数的错误逻辑
 
 ENFILE是指超过了系统级最大的文件句柄数.  `sysctl fs.file-max`  
 EMFILE是指超过了该进程指定的最大文件数. `cat /proc/[pid]/limits`里的`Max open files`    
@@ -254,7 +254,7 @@ errno 23: Too many open files in system
 
 dmesg里可以同时也打印类似`VFS: file-max limit 135375 reached`这样的日志. 
 
-### 分析EAGAIN的产生场景
+## 分析EAGAIN的产生场景
 ``` c
 #define	EAGAIN		11	/* Try again */
 ```
@@ -347,7 +347,7 @@ Child pid: 26668
 如果是`root`用户执行, 则不会有报错, 是因为root默认有`CAP_SYS_ADMIN`或者`CAP_SYS_RESOURCE`权限
 
 
-### 实现类似hexdump打印格式的代码
+## 实现类似hexdump打印格式的代码
 
 ``` c
 #include <stdio.h>
@@ -416,4 +416,62 @@ int main(int argc, char **argv) {
 
   return 0;
 }
+```
+
+## 句柄达到限制时dns解析在golang下面的表现
+测试代码如下：
+``` go
+package main
+
+import (
+	"fmt"
+	"net"
+	"os"
+
+	"golang.org/x/sys/unix"
+)
+
+func main() {
+
+	r := &unix.Rlimit{
+		Cur: 64,
+		Max: 64,
+	}
+	unix.Setrlimit(unix.RLIMIT_NOFILE, r)
+	for {
+		_, err := os.Open("/dev/null")
+		if err != nil {
+			break
+		}
+	}
+	addr, err := net.LookupHost("www.baidu.com")
+	fmt.Println(addr, err)
+}
+```
+使用cgo时，报错 `no such host`, 并不是 `too many open files`, 这是调用`getaddrinfo`返回的错误，其实并不准确   
+使用purego dns解析时，能正常返回`too many open files`， 错误信息显示dns server是 `[::1]:53`，是因为打开
+`/etc/resolv.conf`文件失败后默认使用`127.0.0.1`和`[::1]`作为DNS server。
+```
+# GODEBUG=netdns=cgo go run .
+[] lookup www.baidu.com: no such host
+# GODEBUG=netdns=go go run .
+[] lookup www.baidu.com on [::1]:53: dial udp [::1]:53: socket: too many open files
+```
+
+``` go
+	gerrno, err := _C_getaddrinfo((*_C_char)(unsafe.Pointer(h)), nil, &hints, &res)
+	if gerrno != 0 {
+		switch gerrno {
+		case _C_EAI_SYSTEM:
+			if err == nil {
+				// err should not be nil, but sometimes getaddrinfo returns
+				// gerrno == _C_EAI_SYSTEM with err == nil on Linux.
+				// The report claims that it happens when we have too many
+				// open files, so use syscall.EMFILE (too many open files in system).
+				// Most system calls would return ENFILE (too many open files),
+				// so at the least EMFILE should be easy to recognize if this
+				// comes up again. golang.org/issue/6232.
+				err = syscall.EMFILE
+			}
+			return nil, newDNSError(err, name, "")
 ```

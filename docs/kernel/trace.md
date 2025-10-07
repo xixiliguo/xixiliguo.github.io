@@ -1,6 +1,9 @@
 
 介绍kernel的跟踪技术原理
 
+## 日志打印
+
+
 ## kprobe实现
 使用以下命令创建一个kprobe事件,来跟踪`tcp_v4_rcv`  
 ``` bash

@@ -2186,11 +2186,20 @@ ausearch --start today -i  -f /etc/passwd
 其他一些参考资料:  
 https://cloud.tencent.com/developer/article/1359606  
 
-## 90. 分析磁盘性能
+审计修改时间动作的命令
+``` bash
+auditctl -a exit,always -F arch=b64 -S clock_settime -S adjtimex -S settimeofday -S clock_adjtime -k ADJTIME
+auditctl -a exit,always -F arch=b32 -S clock_settime -S adjtimex -S settimeofday -S clock_adjtime -k ADJTIME
+ausearch -i -k ADJTIME
+```
+参考 https://access.redhat.com/solutions/1963  
 
+## 90. 分析磁盘性能
+```
 blktrace -d /dev/vda
 blkparse -i vda -d vda.blktrace.bin
 btt -i vda.blktrace.bin -l vda.d2c_latency
+```
 
 参考:  
 https://developer.aliyun.com/article/698568  
@@ -2255,4 +2264,9 @@ linux-3.10.0-957.21.3.el7\include\linux\threads.h
  */
 #define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
 	(sizeof(long) > 4 ? 4 * 1024 * 1024 : PID_MAX_DEFAULT))
+```
+
+## 95. 判断系统加载了哪些非原生自带的模块
+``` bash
+grep "(" /proc/modules
 ```

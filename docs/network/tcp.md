@@ -129,7 +129,122 @@ static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb,
 trace_tcp_send_reset这个tracepoint里, 如果skb为null, 则代表主动reset, 如果非null,
 则代表被动reset, skb是接收到的skb.
 
+## TCP 重传
 
+`TcpRetransSegs` 约等于  `TcpExtTCPFastRetrans` + `TcpExtTCPSlowStartRetrans` + 
+`TcpExtTCPTimeouts` + 部分`TcpExtTCPLossProbes`  
+`TcpExtTCPTimeouts`单位是次数，但一次重传一个seg. 其他单位都是 seg。   
+
+`TcpExtTCPSynRetrans` 表示syn或者synack的重传seg数目。 `TcpExtTCPSynRetrans`增加时，
+`TcpExtTCPTimeouts`和 `TcpRetransSegs` 都会增加。但`TcpExtTCPSynRetrans`
+跟 `TcpExtTCPFastRetrans` 和 `TcpExtTCPSlowStartRetrans` 没有重叠。
+
+`TcpExtTCPLostRetransmit` 表示重传过的报文再次丢失的数目。  
+
+`TcpExtTCPLossProbes` 可能发重传包，也可能发queue里的第一个数据， 只有发重传包时`TcpRetransSegs`
+会增加。
+
+```
+# nstat -r -z | grep -E "Retrans|Loss|Timeout"
+IpReasmTimeout                  0                  0.0
+TcpRetransSegs                  25                 0.0
+Ip6ReasmTimeout                 0                  0.0
+TcpExtTCPLossUndo               0                  0.0
+TcpExtTCPLostRetransmit         15                 0.0
+TcpExtTCPLossFailures           0                  0.0
+TcpExtTCPFastRetrans            0                  0.0
+TcpExtTCPSlowStartRetrans       0                  0.0
+TcpExtTCPTimeouts               22                 0.0
+TcpExtTCPLossProbes             14                 0.0
+TcpExtTCPLossProbeRecovery      0                  0.0
+TcpExtTCPAbortOnTimeout         1                  0.0
+TcpExtTCPRetransFail            0                  0.0
+TcpExtTCPSynRetrans             14                 0.0
+TcpExtTcpTimeoutRehash          21                 0.0
+MPTcpExtMPTCPRetrans            0                  0.0
+```
+
+## ethtool -k 信息来源
+`ethtool -k [dev]` 可以查询网络关于offload的相关信息。数据主要来源于`struct net_device`结构体
+里如下三个字段，每个bit位代表一个功能是否on或者off。  
+`hw_features` 表示硬件提供的初始能力情况  
+`features`    表示当前的特性生效状态   
+`wanted_features`  表示期望达到的状态,通常是user触发，比如利用ethtool工具修改特性值  
+在`/sys`下面没有暴露用户态接口可查这三个字段的信息。  
+
+每个特性对应的bit位，可以查看`include/linux/netdev_features.h`文件  
+
+`ethtool -k `输出的结果里，含`[fixed]` 表示硬件没提供这个特性修改为on或者off的能力，即`hw_features`对应的bit位是0。
+`[request on xxx]`表示该特性当前值和期望值不一样， `reuest on` 里显示的是期望值。  
+
+运行`ethtool -K eth0 xxx on/off`时的函数调用如下：
+``` c
+ethnl_set_features
+  --> __netdev_update_features
+    --> dev->netdev_ops->ndo_set_features   //网卡驱动自身的设置特性函数
+```
+如果是virtio_net驱动，仅能修改`NETIF_F_GRO_HW` `NETIF_F_RXHASH`。 其他情况返回0代表设置成功，但其实
+没做任何修改。
+
+## ping发送报文常见的报错
+EINVAL "Invalid argument" 表示arp表满导致丢包 https://access.redhat.com/solutions/2985371    
+对应代码实现如下：
+``` c
+static int ip_finish_output2(struct net *net, struct sock *sk, struct sk_buff *skb)
+{
+	neigh = ip_neigh_for_gw(rt, skb, &is_v6gw);
+	if (!IS_ERR(neigh)) {
+		int res;
+
+		sock_confirm_neigh(skb, neigh);
+		/* if crossing protocols, can not use the cached header */
+		res = neigh_output(neigh, skb, is_v6gw);
+		rcu_read_unlock_bh();
+		return res;
+	}
+	net_dbg_ratelimited("%s: No header cache and no neighbour!\n",
+			    __func__);
+	kfree_skb_reason(skb, SKB_DROP_REASON_NEIGH_CREATEFAIL);
+	return -EINVAL;
+}
+```
+EPERM "Operation not permitted" 表示iptable有规则将发送方向的包drop掉 https://access.redhat.com/solutions/509223  
+下面代码显示当netfilter框架的hook函数返回`NF_DROP`时，向上层返回`-EPERM`
+``` c
+int nf_hook_slow(struct sk_buff *skb, struct nf_hook_state *state,
+		 const struct nf_hook_entries *e, unsigned int s)
+{
+	unsigned int verdict;
+	int ret;
+
+	for (; s < e->num_hook_entries; s++) {
+		verdict = nf_hook_entry_hookfn(&e->hooks[s], skb, state);
+		switch (verdict & NF_VERDICT_MASK) {
+		case NF_ACCEPT:
+			break;
+		case NF_DROP:
+			kfree_skb_reason(skb,
+					 SKB_DROP_REASON_NETFILTER_DROP);
+			ret = NF_DROP_GETERR(verdict);
+			if (ret == 0)
+				ret = -EPERM;
+			return ret;
+		case NF_QUEUE:
+			ret = nf_queue(skb, state, s, verdict);
+			if (ret == 1)
+				continue;
+			return ret;
+		case NF_STOLEN:
+			return NF_DROP_GETERR(verdict);
+		default:
+			WARN_ON_ONCE(1);
+			return 0;
+		}
+	}
+
+	return 1;
+}
+```
 ## 参考
 https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt  
 https://www.jianshu.com/p/0d6243402987  
@@ -142,3 +257,4 @@ https://loicpefferkorn.net/2016/03/linux-network-metrics-why-you-should-use-nsta
 https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt  
 https://perthcharles.github.io/2015/09/07/wiki-tcp-retries/  
 https://pracucci.com/linux-tcp-rto-min-max-and-tcp-retries2.html  
+https://arthurchiao.art/blog/tcp-retransmission-may-be-misleading  
