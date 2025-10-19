@@ -57,11 +57,136 @@ static int print_summary(void)
 
 
 使用`shutdown`关闭socket并收到ack后，socket进入`FIN-WAIT-2`状态，不受`net.ipv4.tcp_fin_timeout`的控制，不会超时自动释放，后续收到
-fin报文后，新生成一个`TIME-WAIT`的socket（统计在`ss -s`的`timewait`里, 自身进入`tcp-close`状态，统计在`ss -s`的`closed`里。   
-使用`close`关闭socket并收到ack后，socket进入`FIN-WAIT-2`状态，受`net.ipv4.tcp_fin_timeout`的控制（统计在`ss -s`的`timewait`里），
-如果没收到fin报文则超时自动释放，如果收到fin报文后，修改`tw->tw_substate` 为 `TIME-WAIT`（依旧统计在`ss -s`的`timewait`里）。    
+fin报文后，新生成一个`TIME-WAIT`的socket（统计在`ss -s`的`timewait`里, 自身socket进入`tcp-close`状态，统计在`ss -s`的`closed`里。   
+``` c
+// 系统调用shutdown会调用tcp_shutdown，只是简单的改变TCP状态，并根据变化后的状态分析是否要发fin报文。
+void tcp_shutdown(struct sock *sk, int how)
+{
+	/*	We need to grab some memory, and put together a FIN,
+	 *	and then put it into the queue to be sent.
+	 *		Tim MacKenzie(tym@dibbler.cs.monash.edu.au) 4 Dec '92.
+	 */
+	if (!(how & SEND_SHUTDOWN))
+		return;
 
+	/* If we've already sent a FIN, or it's a closed state, skip this. */
+	if ((1 << sk->sk_state) &
+	    (TCPF_ESTABLISHED | TCPF_SYN_SENT |
+	     TCPF_CLOSE_WAIT)) {
+		/* Clear out any half completed packets.  FIN if needed. */
+		if (tcp_close_state(sk))
+			tcp_send_fin(sk);
+	}
+}
+```
+
+使用`close`关闭socket并收到ack后，socket进入`FIN-WAIT-2`状态，受`net.ipv4.tcp_fin_timeout`的控制（统计在`ss -s`的`timewait`里），
+如果没收到fin报文则超时自动释放，如果收到fin报文后，修改`tw->tw_substate` 为 `TIME-WAIT`（依旧统计在`ss -s`的`timewait`里）。 
 所以处于`FIN-WAIT-2`状态（close调用的）和`TIME-WAIT`的socket会算到 `timewait`  
+``` c
+// 系统调用 close 会调用 __tcp_close
+void __tcp_close(struct sock *sk, long timeout)
+{
+
+
+	sk->sk_shutdown = SHUTDOWN_MASK;
+	while ((skb = __skb_dequeue(&sk->sk_receive_queue)) != NULL) {
+		u32 len = TCP_SKB_CB(skb)->end_seq - TCP_SKB_CB(skb)->seq;
+
+		if (TCP_SKB_CB(skb)->tcp_flags & TCPHDR_FIN)
+			len--;
+		data_was_unread += len;
+		__kfree_skb(skb);
+	}  // 清空队列
+
+	if (unlikely(tcp_sk(sk)->repair)) {
+		sk->sk_prot->disconnect(sk, 0);
+	} else if (data_was_unread) {
+		/* Unread data was tossed, zap the connection. */
+		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPABORTONCLOSE);
+		tcp_set_state(sk, TCP_CLOSE);
+		tcp_send_active_reset(sk, sk->sk_allocation,
+				      SK_RST_REASON_NOT_SPECIFIED);
+	} else if (sock_flag(sk, SOCK_LINGER) && !sk->sk_lingertime) {
+		/* Check zero linger _after_ checking for unread data. */
+		sk->sk_prot->disconnect(sk, 0);
+		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPABORTONDATA);
+	} else if (tcp_close_state(sk)) {  //修改TCP状态并根据协议规定发送fin报文
+		tcp_send_fin(sk);
+	}
+	sock_orphan(sk);                  //设置sock_dead 
+	this_cpu_inc(tcp_orphan_count);   //增加 orphan值
+
+	if (sk->sk_state == TCP_CLOSE) {  //如果已经是 TCP_CLOSE状态，则 orphan 减一，并销毁一些对应的结构体。
+		inet_csk_destroy_sock(sk);
+	}
+}
+```
+
+无论shutdown还是close执行后处于TCP_FIN_WAIT1时收到ack报文的情况：
+``` c
+tcp_v4_rcv
+    --> tcp_v4_do_rcv
+	    --> tcp_rcv_state_process {
+		    switch (sk->sk_state) {
+			case TCP_FIN_WAIT1:
+				tcp_set_state(sk, TCP_FIN_WAIT2);  //设置TCP状态为TCP_FIN_WAIT2
+				sk->sk_shutdown |= SEND_SHUTDOWN;
+				if (!sock_flag(sk, SOCK_DEAD)) {   //shutdown调用场景，提前break，不进入timewait的hash桶里。
+					/* Wake up lingering close() */
+					sk->sk_state_change(sk);
+					break;
+				}
+				tmo = tcp_fin_time(sk);
+				//进入timewait桶里，新生成tw socket, 
+				// tw->tw_state=TCP_TIME_WAIT;
+				// tw->tw_substate=TCP_FIN_WAIT2;
+				tcp_time_wait(sk, TCP_FIN_WAIT2, tmo)
+					---> tcp_done(sk);  //原来的sock在这里释放掉。
+				break;
+			}
+		}
+```
+
+
+无论shutdown还是close执行后处于TCP_FIN_WAIT2时收到fin报文的情况:  
+shutdown的sock仍在普通hash桶里， close的sock在timewait的hash桶里。
+``` c
+tcp_v4_rcv
+	--> tcp_timewait_state_process  //close的sock 修改状态tw->tw_substate= TCP_TIME_WAIT，设置定时器 60s 
+    --> tcp_v4_do_rcv
+	    --> tcp_rcv_state_process
+		    --> tcp_data_queue
+			    --> tcp_fin
+				    --> tcp_time_wait //新生成tw socket,无超时时间，原sock也不释放。
+					    --> tcp_done  //原socket状态修改为tcp_close, 从hash桶里去掉，但不释放。
+```
+
+无论shutdown还是close执行后处于last-ack时收到ack报文的情况：
+``` c
+tcp_v4_rcv
+    --> tcp_v4_do_rcv
+	    --> tcp_rcv_state_process {
+		    switch (sk->sk_state) {
+			case TCP_LAST_ACK:
+				if (tp->snd_una == tp->write_seq) {
+					tcp_update_metrics(sk);
+					--> tcp_done {
+						tcp_set_state(sk, TCP_CLOSE);  //设置状态为TCP_CLOSE,并从hash桶里剔除。
+						tcp_clear_xmit_timers(sk);
+						sk->sk_shutdown = SHUTDOWN_MASK;
+						if (!sock_flag(sk, SOCK_DEAD)) // shutdown并不会设置sock_dead, 但close会
+							sk->sk_state_change(sk);   // shutdown时执行，
+						else
+							inet_csk_destroy_sock(sk); // close时执行，释放sock相关的结构体。
+						}
+					goto consume;
+				}
+				break;
+			}
+		}
+```
+
 
 参考： https://access.redhat.com/solutions/505903  
 
@@ -95,7 +220,7 @@ void inet_csk_destroy_sock(struct sock *sk)
 }
 ```
 `time-wait`状态的，是通过`tw_timer_handler`里的函数释放掉，不通过`inet_csk_destroy_sock`，所以
-通过`close`调用后的处于`FIN-WAIT-1`或者`LAST-ACK`状态的socket会算到 `orphaned`。   
+通过**只有`close`调用后的处于`FIN-WAIT-1`或者`LAST-ACK`状态的socket会算到 `orphaned`**。   
 
 通过`shutdown`调用可能会进入`FIN-WAIT-1`，`FIN-WAIT-2`，或者`LAST-ACK`。 `FIN-WAIT-1`可能性很低，暂
 不讨论，其他两个可通过 ss -o判断， **如果有定时器，则说明是`close`调用，没有则说明是`shutdown`调用**   

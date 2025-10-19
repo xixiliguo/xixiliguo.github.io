@@ -86,7 +86,6 @@ export default {
           items: [
             { text: 'cgroup与命名空间', link: '/kernel/kernel-cgroup-namespace' },
             { text: 'crash分析', link: '/kernel/kernel-crash' },
-            { text: '中断', link: '/kernel/kernel-irq' },
             { text: '内存管理', link: '/kernel/kernel-memory' },
             { text: '系统调用与进程调度', link: '/kernel/kernel-syscall-sched' },
             { text: 'Linux: Trap', link: '/kernel/linux-trap' },
@@ -95,6 +94,7 @@ export default {
             { text: 'eBPF', link: '/kernel/ebpf' },
             { text: '跟踪技术原理', link: '/kernel/trace' },
             { text: '块设备', link: '/kernel/block' },
+            { text: '其他', link: '/kernel/kernel-others' },
           ]
         }
       ],
