@@ -249,6 +249,41 @@ struct gpt_entry {
 	uint16_t            name[GPT_PART_NAME_LEN];
 }  __attribute__ ((packed));
 ```
+
+## LVM
+lvm将每个磁盘当做pv, 然后多个pv组成vg, vg里划分lv。逻辑上看起来就像在使用一块很大size的磁盘  
+pv的lable在磁盘起始位置512时开始写入， 开头是`LABELONE` ， 后面有 pv 的uuid等信息， 从4k开始存入上层
+vg, lv等信息。PV里的被划分分多个PE， 每个PE默认是4M。
+``` 
+# xxd -s 512 -l 128 /dev/vdb
+00000200: 4c41 4245 4c4f 4e45 0100 0000 0000 0000  LABELONE........
+00000210: 4f31 c9ae 2000 0000 4c56 4d32 2030 3031  O1.. ...LVM2 001
+00000220: 7748 5163 586e 776c 4658 794f 5046 6d41  wHQcXnwlFXyOPFmA
+00000230: 4d6a 4e73 5030 444b 6475 634c 4858 5050  MjNsP0DKducLHXPP
+00000240: 0000 0080 0200 0000 0000 1000 0000 0000  ................
+00000250: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000260: 0000 0000 0000 0000 0010 0000 0000 0000  ................
+00000270: 00f0 0f00 0000 0000 0000 0000 0000 0000  ................
+```
+1st PE 显示第一个PE从1M的位置开始，通过xxd可以看到确认有文件系统相关的数据（这个lv上面创建了xfs文件系统）
+```
+# pvs -opv_all
+  Fmt  PV UUID                                DevSize PV         Maj Min PMdaFree  PMdaSize  PExtVsn 1st PE  PSize   PFree  Used  Attr Allocatable Exported   Missing    PE   Alloc PV Tags #PMda #PMdaUse BA Start BA Size PInUse Duplicate DeviceID             DeviceIDType
+  lvm2 wHQcXn-wlFX-yOPF-mAMj-NsP0-DKdu-cLHXPP  10.00g /dev/vdb   253  16   508.00k  1020.00k       2   1.00m <10.00g <5.00g 5.00g a--  allocatable                       2559  1280             1        1       0       0    used           80e5aaf7-95f3-431e-a sys_serial  
+# xxd -s 1048576 -l 32 /dev/vdb
+00100000: 5846 5342 0000 1000 0000 0000 0014 0000  XFSB............
+00100010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+```
+有时误操作将盘进行分区，这样系统就无法识别它为pv, 可用如下办法恢复：
+```
+pvcreate --uuid xxxx --restorefile /etc/lvm/backup/xxx /dev/xxx
+vgcfgrestore xxx
+```
+如果因磁盘已被识别为有分区的而无法操作设备， 可以通过`dd if=/dev/zero of=/dev/xxx bs=512 count=1` 清楚分区信息再次尝试  
+/etc/lvm/backup/  存储最新的元数据  
+/etc/lvm/archive/ 存储历史的元数据  
+
+
 ## 文件系统在磁盘上的布局
 
 ext4文件系统前1024个字节为0，后面的数据如下：
