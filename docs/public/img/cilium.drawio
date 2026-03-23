@@ -1,0 +1,617 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.4" pages="5">
+  <diagram name="pod-clusterip" id="PDkmdRAPxXo4hxgGj0DT">
+    <mxGraphModel dx="3389" dy="2377" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sK91moz6JG0EacQ6JcyC-58" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=12;fontFamily=Cascadia Mono;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;HOST" vertex="1">
+          <mxGeometry height="410" width="1172" x="840" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="lxc网卡" vertex="1">
+          <mxGeometry height="20" width="70" x="869" y="162.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-60" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;" value="主网卡 eth0" vertex="1">
+          <mxGeometry height="20" width="90" x="869" y="192.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=12;fontFamily=Cascadia Mono;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;HOST" vertex="1">
+          <mxGeometry height="410" width="1120" x="-390" y="111" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontFamily=Cascadia Mono;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;&lt;font&gt;POD&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="173" width="430" x="1150" y="-100" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontFamily=Cascadia Mono;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;&lt;font&gt;POD&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="440" x="80" y="-117" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-4" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="178" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="176" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-8" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-42">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="92" y="300" />
+              <mxPoint y="300" />
+              <mxPoint y="90" />
+              <mxPoint x="140" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="32" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-12" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="32" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="193" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="34" y="133" as="geometry" />
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-1" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="178" y="193" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-10" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="178" y="133" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-34" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="1512" y="365.5" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-33" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="1510" y="465.5" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="1362" y="365.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-29" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="1361" y="465.5" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-36" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="1368" y="221.5" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="1368" y="161.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-33" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-38" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="1512" y="221.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-32" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="1512" y="161.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-9" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="90" />
+              <mxPoint x="238" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-42" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="eth0" vertex="1">
+          <mxGeometry height="40" width="120" x="110" y="22" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-43" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="socket" vertex="1">
+          <mxGeometry height="40" width="120" x="110" y="-33" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-44" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="app" vertex="1">
+          <mxGeometry height="40" width="120" x="110" y="-88" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-45" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;" value="10.244.1.3:1234 --&amp;gt; 10.69.1.7:443&lt;div&gt;10.69.1.7:443 是ClusterIP，&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;后端为 10.244.2.5:443&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;位于其他Node&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="410" x="-390" y="-117" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-46" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="如果目的端是ClusterIP, 则替换为POD 信息&lt;div&gt;10.244.1.3:1234 --&amp;gt;&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;10.244.2.5:443&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="56" width="260" x="250" y="-43" as="geometry" />
+        </mxCell>
+        <mxCell id="gBJMQ7MSPqtio1fBqTaR-47" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="cil_from_container：&lt;div&gt;1. tuple(dst:10.244.2.5 src:10.244.1.3 dport:1234 sport:443 TUPLE_F_IN) 查CT表，结果是new&lt;div&gt;2. 因scope为bidir, swap后以&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:10.244.2.5 dport:443 sport:1234 TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;) 查CT表，结果仍是new&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. 检查policy, 通过后&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;以&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:10.244.2.5 dport:443 sport:1234 TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key,创建CT&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;4. 调用 bpf_redirect_neigh转发&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="157" width="390" x="320" y="143" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-44" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.905;exitY=0.296;exitDx=0;exitDy=0;exitPerimeter=0;curved=1;" target="gBJMQ7MSPqtio1fBqTaR-35">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="960.1499999999996" y="631.7399999999998" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-47" edge="1" parent="1" source="33JHD12F42hqdb621soH-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;curved=1;exitX=0.13;exitY=0.77;exitDx=0;exitDy=0;exitPerimeter=0;" target="gBJMQ7MSPqtio1fBqTaR-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="740" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-3" parent="1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontFamily=Cascadia Mono;fontSize=32;fontStyle=1" value="Network" vertex="1">
+          <mxGeometry height="150" width="530" x="500" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_from_netdev：&lt;div&gt;1. 目的信息不是NodePort，也不匹配snat表,则进入tail_handle_ipv4_cont_from_netdev&lt;div&gt;2. 继续调用&amp;nbsp;ipv4_local_delivery（入方向限速）--&amp;gt; cil_lxc_policy&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. &lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.2.5 src:10.244.1.3 dport:1234 sport:443 TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)查CT表，结果是New&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;4.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;因scope为bidir, swap后以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;dst:10.244.1.3 src:10.244.2.5 dport:443 sport:1234 TUPLE_F_IN&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;) 查CT表，结果仍是new&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;5.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;检查policy, 通过后&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;以&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;dst:10.244.1.3 src:10.244.2.5 dport:443 sport:1234 TUPLE_F_IN&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key创建CT，并调用bpf_redirect_peer转发&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="193.25" width="480" x="869" y="295.88" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-31" edge="1" parent="1" source="33JHD12F42hqdb621soH-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="gBJMQ7MSPqtio1fBqTaR-39">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1520" y="140" />
+              <mxPoint x="1572" y="140" />
+            </Array>
+            <mxPoint x="1552" y="50" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="eth0" vertex="1">
+          <mxGeometry height="40" width="120" x="1430" y="23" as="geometry" />
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="socket" vertex="1">
+          <mxGeometry height="40" width="120" x="1430" y="-32" as="geometry" />
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="app" vertex="1">
+          <mxGeometry height="40" width="120" x="1430" y="-87" as="geometry" />
+        </mxCell>
+        <mxCell id="33JHD12F42hqdb621soH-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;strokeColor=#6c8ebf;verticalAlign=middle;fontColor=default;fillColor=#dae8fc;" value="&lt;div&gt;socket 收到的消息来自&lt;/div&gt;&lt;div&gt;10.244.1.3:1234 --&amp;gt;&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;10.244.2.5:443&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="250" x="1160" y="-32" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="1. tuple(dst:10.244.1.3 src:10.244.2.5 dport:1234 sport:443 TUPLE_F_IN) 查CT表，结果是CT_REPLY&lt;div&gt;2. 因为是reply,跳过&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;policy检查&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. 调用 bpf_redirect_neigh转发&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="340" x="1652" y="214.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;cil_from_netdev:&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1. 目的信息不是NodePort，也不匹配snat表,则进入tail_handle_ipv4_cont_from_netdev&lt;/span&gt;&lt;/div&gt;&lt;div&gt;2. 继续调用&amp;nbsp;ipv4_local_delivery（入方向限速）--&amp;gt; cil_lxc_policy&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. &lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:10.244.2.5 dport:443 sport:1234 TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)查CT表，结果是&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;CT_REPLY&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;4. 因为是reply消息，跳过&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;policy检查&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;5. 调用bpf_redirect_peer转发&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="155" width="370" x="-370" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_to_netdev：&lt;div&gt;1. 调用edt_sched_departure检查出方向是否限速&lt;div&gt;2. 返回&amp;nbsp;CTX_ACT_OK&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="320" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Cascadia Mono;fontSize=12;" value="1" vertex="1">
+          <mxGeometry height="30" width="30" x="250" y="-73" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Cascadia Mono;fontSize=12;" value="2" vertex="1">
+          <mxGeometry height="30" width="30" x="320" y="111" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-19" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Cascadia Mono;fontSize=12;" value="3" vertex="1">
+          <mxGeometry height="30" width="30" x="320" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-26" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Cascadia Mono;fontSize=12;" value="4" vertex="1">
+          <mxGeometry height="30" width="30" x="869" y="261.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-27" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Cascadia Mono;fontSize=12;" value="5" vertex="1">
+          <mxGeometry height="30" width="30" x="1160" y="-65" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-30" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.378;entryY=0.908;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="33JHD12F42hqdb621soH-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1422" y="290" />
+              <mxPoint x="1350" y="290" />
+              <mxPoint x="1350" y="140" />
+              <mxPoint x="1475" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-46" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.96;entryY=0.7;entryDx=0;entryDy=0;entryPerimeter=0;curved=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="33JHD12F42hqdb621soH-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1572" y="655" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-48" edge="1" parent="1" source="gBJMQ7MSPqtio1fBqTaR-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;curved=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.07;entryY=0.4;entryDx=0;entryDy=0;entryPerimeter=0;" target="33JHD12F42hqdb621soH-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="238" y="610" />
+            </Array>
+            <mxPoint x="510" y="656" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-50" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Cascadia Mono;fontSize=12;" value="6" vertex="1">
+          <mxGeometry height="30" width="30" x="1652" y="184.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-51" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_to_netdev：&lt;div&gt;1. 调用edt_sched_departure检查出方向是否限速&lt;div&gt;2. 返回&amp;nbsp;CTX_ACT_OK&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="302" x="1652" y="345.5" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-52" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Cascadia Mono;fontSize=12;" value="7" vertex="1">
+          <mxGeometry height="30" width="30" x="1652" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-53" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Cascadia Mono;fontSize=12;" value="8" vertex="1">
+          <mxGeometry height="30" width="30" x="-370" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="lxc网卡" vertex="1">
+          <mxGeometry height="20" width="70" x="-300" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="sK91moz6JG0EacQ6JcyC-56" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;" value="主网卡 eth0" vertex="1">
+          <mxGeometry height="20" width="90" x="-300" y="150" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="pod-outside" id="2sysxSNC38XkjSLs-7N2">
+    <mxGraphModel dx="2962" dy="2176" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="EMI0jdho07xVhJyDclWl-0" />
+        <mxCell id="EMI0jdho07xVhJyDclWl-1" parent="EMI0jdho07xVhJyDclWl-0" />
+        <mxCell id="EMI0jdho07xVhJyDclWl-5" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=16;fontFamily=Cascadia Mono;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;HOST&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="560" width="1850" x="-750" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-7" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontFamily=Cascadia Mono;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;&lt;font&gt;POD&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="200" width="420" x="55" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-8" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Cascadia Mono;fontSize=12;" target="EMI0jdho07xVhJyDclWl-10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-9" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="180" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-10" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="178" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-11" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="EMI0jdho07xVhJyDclWl-34">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="92" y="530" />
+              <mxPoint x="92" y="370" />
+              <mxPoint y="370" />
+              <mxPoint y="180" />
+              <mxPoint x="140" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-12" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-13" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="EMI0jdho07xVhJyDclWl-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-14" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-15" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="35" y="272" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-16" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="35" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-17" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="EMI0jdho07xVhJyDclWl-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-18" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="179" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-19" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="EMI0jdho07xVhJyDclWl-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-20" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="179" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-33" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="EMI0jdho07xVhJyDclWl-20">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="180" />
+              <mxPoint x="239" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-34" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="eth0" vertex="1">
+          <mxGeometry height="40" width="120" x="110" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-35" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="socket" vertex="1">
+          <mxGeometry height="40" width="120" x="110" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-36" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="app" vertex="1">
+          <mxGeometry height="40" width="120" x="110" y="-5" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-37" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;" value="10.244.1.3:1234 --&amp;gt; 8.8.8.8:443&lt;div&gt;8.8.8.8 是集群外IP，包离开host时源信息会伪装&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="310" x="-410" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-38" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="无任何包内容修改行为" vertex="1">
+          <mxGeometry height="35" width="180" x="250" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-39" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="cil_from_container：&lt;div&gt;1. tuple(dst:8.8.8.8 src:10.244.1.3 dport:1234 sport:443 TUPLE_F_IN) 查CT表，结果是new&lt;div&gt;2. 因scope为bidir, swap后以&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:8.8.8.8&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;dport:443 sport:1234&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;) 查CT表，结果仍是new&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. 检查policy, 通过后&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;以&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:8.8.8.8&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;dport:443 sport:1234&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp;TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key,创建CT&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;4. 调用 bpf_redirect_neigh转发&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="640" x="321" y="227" as="geometry" />
+        </mxCell>
+        <mxCell id="P2pvvPzJDuPGJNEtUVnA-1" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.4;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="92" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-42" parent="EMI0jdho07xVhJyDclWl-1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontFamily=Cascadia Mono;fontSize=32;fontStyle=1" value="Network" vertex="1">
+          <mxGeometry height="160" width="480" x="-100" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-50" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_lb4里判断非nodePort， 进入&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;tail_nodeport_nat_ingress_ipv4&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;snat_v4_rev_nat里的动作：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;生成&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(dst:eth0 src:8.8.8.8 dport:random sport:443 TUPLE_F_IN)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;snat_v4_rev_nat_handle_mapping里动作：&lt;/span&gt;&lt;/div&gt;&lt;blockquote style=&quot;margin: 0 0 0 40px; border: none; padding: 0px;&quot;&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;以上述tuple查&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;cilium_snat_v4_external， 结果为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;state(to_daddr:10.244.1.3 to_dport:1234)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;根据state生成&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;otuple(dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_OUT)继续查snat表&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;如果无记录则创建。防止LRU驱逐掉。&lt;/span&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;snat_v4_rewrite_headers根据上面的state信息修改报文目的IP和端口，完成snat的反向动作&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;3.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;ctx_snat_done_set(ctx); 设置flag&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;4.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_rev_dnat_ipv4检查dnat，&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(dst:10.244.1.3 src:8.8.8.8 dport:443 sport:1234 TUPLE_F_OUT)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_ENTRY_NODEPORT 结果为&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_NEW，返回&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CTX_ACT_OK&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;5. ctx_skip_nodeport_set(ctx);&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;6.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;tail_handle_ipv4_from_netdev 因上述skip nodeport,进入目的IP为POD的流程。&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;7. 继续调用&amp;nbsp;ipv4_local_delivery（入方向限速）--&amp;gt; cil_lxc_policy&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;8.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:8.8.8.8 dport:443 sport:1234 TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)查CT表，结果是&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;CT_REPLY&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;9. 因为是reply消息，跳过&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;policy检查&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;10. 调用bpf_redirect_peer转发&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="295" width="738" x="-738" y="402.5" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-51" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_to_netdev：&lt;div&gt;1. 调用edt_sched_departure检查出方向是否限速&lt;div&gt;2. nodeport_rev_dnat_fwd_ipv4里以&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(dst:8.8.8.8 src:10.244.1.3 dport:1234 sport:443 TUPLE_F_OUT)查CT表，无结果返回NULL， 即没有dnat信息。&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. 尾调用&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;tail_handle_snat_fwd_ipv4，函数不返回上一层&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;4.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(dst:8.8.8.8 src:10.244.1.3 TUPLE_F_OUT)为参数调用&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;snat_v4_needs_masquerade ，如果不需要伪装返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;NAT_PUNT_TO_STACK&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;， 需要伪装返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;NAT_NEEDED，此时target值为{&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;min_port=NODEPORT_PORT_MIN_NAT, max_port=NODEPORT_PORT_MAX_NAT, from_local_endpoint=true, addr=eth0}&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;5.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;snat_v4_nat里修改tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_OUT)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;6. &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;snat_v4_nat_handle_mapping里&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;已上述tuple 查&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;cilium_snat_v4_external ，结果为 NULL&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;7.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;snat_v4_new_mapping里：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;random是随机生成的端口，范围在[min_port,max_port]内，优先源端口&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;rstate.to_dport&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;rtuple(dst:eth0 src:8.8.8.8 dport:random sport:443 TUPLE_F_IN)&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;rstate(to_daddr:10.244.1.3 to_dport:1234)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;已上面的信息在map&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;cilium_snat_v4_external 插入&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;RevSNAT&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;记录&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;otuple为(dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_OUT)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;ostate(to_saddr: eth0 to_sport:rtuple.dport)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;已上面的信息在map&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;cilium_snat_v4_external 插入SNAT记录&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;8. 根据ostate里的信息,修改报文里的源IP和端口，完成SNAT后返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CTX_ACT_OK&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="330" width="730" x="330" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-52" parent="EMI0jdho07xVhJyDclWl-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Cascadia Mono;fontSize=12;" value="1" vertex="1">
+          <mxGeometry height="30" width="30" x="250" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-53" parent="EMI0jdho07xVhJyDclWl-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Cascadia Mono;fontSize=12;" value="2" vertex="1">
+          <mxGeometry height="30" width="30" x="321" y="192" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-54" parent="EMI0jdho07xVhJyDclWl-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Cascadia Mono;fontSize=12;" value="3" vertex="1">
+          <mxGeometry height="30" width="30" x="330" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-63" parent="EMI0jdho07xVhJyDclWl-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Cascadia Mono;fontSize=12;" value="4" vertex="1">
+          <mxGeometry height="30" width="30" x="-738" y="372.5" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-64" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="lxc网卡" vertex="1">
+          <mxGeometry height="20" width="70" x="-610" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="EMI0jdho07xVhJyDclWl-65" parent="EMI0jdho07xVhJyDclWl-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;" value="主网卡 eth0" vertex="1">
+          <mxGeometry height="20" width="90" x="-610" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="P2pvvPzJDuPGJNEtUVnA-0" edge="1" parent="EMI0jdho07xVhJyDclWl-1" source="EMI0jdho07xVhJyDclWl-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontFamily=Cascadia Mono;fontSize=12;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="240" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="other-nodeport-local" id="dNjAvdhA6vcv-pOG-7MX">
+    <mxGraphModel dx="2798" dy="929" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-0" />
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-0" />
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-2" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=16;fontFamily=Cascadia Mono;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;HOST&lt;/div&gt;" vertex="1">
+          <mxGeometry height="610" width="1740" x="-790" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-3" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontFamily=Cascadia Mono;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;&lt;font&gt;&amp;nbsp; &amp;nbsp; POD&lt;/font&gt;&lt;/b&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="91" width="186.5" x="60" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-4" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;fontFamily=Cascadia Mono;" target="4qH0Ocg3Wkz9Kyh9P2Yr-6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-5" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="180" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-6" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="178" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="QmEw1cTGFYo6Ko9qp_cn-0" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" target="4qH0Ocg3Wkz9Kyh9P2Yr-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="94" y="370" />
+              <mxPoint x="10" y="370" />
+              <mxPoint x="10" y="190" />
+              <mxPoint x="130" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-8" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-9" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontFamily=Cascadia Mono;" target="4qH0Ocg3Wkz9Kyh9P2Yr-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-10" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-11" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="35" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-12" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="35" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-13" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Cascadia Mono;fontSize=12;" target="4qH0Ocg3Wkz9Kyh9P2Yr-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-14" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="179" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-15" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;fontFamily=Cascadia Mono;" target="4qH0Ocg3Wkz9Kyh9P2Yr-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-16" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="179" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-17" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;fontSize=12;fontFamily=Cascadia Mono;" target="4qH0Ocg3Wkz9Kyh9P2Yr-16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="190" />
+              <mxPoint x="239" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-18" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="eth0" vertex="1">
+          <mxGeometry height="40" width="120" x="100" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-21" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;" value="8.8.8.8:1234 --&amp;gt; 192.168.0.7:30007&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;8.8.8.8 是集群外IP，&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;192.168.0.7:30007 nodePort，后端 10.244&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;.1.3:443&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="490" x="-740" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-23" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="cil_from_container：&lt;div&gt;1. tuple(dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_IN) 查CT表，返回CT_REPLY&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;fib_redirect_v4里&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;调用 bpf_redirect_neigh转发&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="600" x="321" y="246" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-24" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.4;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=12;fontFamily=Cascadia Mono;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="92" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-25" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontFamily=Cascadia Mono;fontSize=24;fontStyle=1" value="&lt;font&gt;Network&lt;/font&gt;" vertex="1">
+          <mxGeometry height="162" width="409" x="-71" y="788" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-26" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_lb4生成tuple(dst: 192.168.0.7 src:8.8.8.8 dport:1234 sport:30007)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;lb4_lookup_service以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;lb4_key(address:192.168.0.7 dport:3007)查到svc&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_svc_lb4动作：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;lb4_local里的动作：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(dst: 192.168.0.7 src:8.8.8.8 dport:1234 sport:30007&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;TUPLE_F_SERVICE&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)查CT表，返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_NEW&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;随机选择后端，假设后端为本地endpoint&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;dst: 192.168.0.7 src:8.8.8.8 dport:1234 sport:30007&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;TUPLE_F_SERVICE&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;ct_state(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;rev_nat_index:非零&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;backend_id：非零)为value&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;创建CT&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;修改tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:10.244.1.3 src:8.8.8.8 dport:1234 sport:443&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;TUPLE_F_OUT)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;报文目的端修改为后端POD的IP+Port&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CTX_ACT_OK&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;swap&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;8.8.8.8&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;src:&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;10.244.1.3&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;dport:443 sport:1234&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;TUPLE_F_OUT)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_ENTRY_NODEPORT 查CT表，返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;CT_NEW&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;(dst:&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;8.8.8.8&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp;src:&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;10.244.1.3&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp;dport:443 sport:1234&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;TUPLE_F_OUT)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;ct_state(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;rev_nat_index:非零&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;node_port：1)为value&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;创建CT&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;CTX_ACT_OK&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;4.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;tail_handle_ipv4_cont_from_netdev 处理发往本地POD的流程：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div style=&quot;&quot;&gt;&lt;font&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;dst:10.244.1.3 src:8.8.8.8 dport:1234 sport:443 TUPLE_F_OUT&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)查CT表，结果是New&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; 因scope为bidir, swap后以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_IN&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;) 查CT表，结果仍是new&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; 检查policy, 通过后&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;以&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;tuple&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_IN&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key创建CT&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; 调用bpf_redirect_peer转发&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="397.5" width="750" x="-740" y="382.5" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-27" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_to_netdev：&lt;div&gt;1. 调用edt_sched_departure检查出方向是否限速&lt;div&gt;2. nodeport_rev_dnat_fwd_ipv4动作：&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; tuple(dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_OUT)查CT表，找到entry并&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;获取rev_nat_index. 不校验ct_entry_type&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; lb4_lookup_rev_nat_entry函数里通过rev_nat_index查表&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;cilium_lb4_reverse_nat，获取nat_info&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; tuple(dst:8.8.8.8 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_OUT)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_ENTRY_NODEPORT&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;查CT表，返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_REPLY&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; 修改tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:192.168.0.7 src:10.244.1.3 dport:443 sport:1234 TUPLE_F_OUT)&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; 修改报文的源端信息为NodePort&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; snat_done 设置为done&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; CTX_ACT_OK&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3. 从网卡发出去&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="240" width="599" x="321" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-29" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontFamily=Cascadia Mono;" value="2" vertex="1">
+          <mxGeometry height="30" width="30" x="321" y="211" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-30" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontFamily=Cascadia Mono;" value="3" vertex="1">
+          <mxGeometry height="30" width="30" x="321" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-31" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontFamily=Cascadia Mono;" value="1" vertex="1">
+          <mxGeometry height="30" width="30" x="-740" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-32" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#fff2cc;strokeColor=#d6b656;" value="lxc网卡" vertex="1">
+          <mxGeometry height="20" width="70" x="-540" y="246" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-33" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;" value="主网卡 eth0" vertex="1">
+          <mxGeometry height="20" width="90" x="-650" y="246" as="geometry" />
+        </mxCell>
+        <mxCell id="4qH0Ocg3Wkz9Kyh9P2Yr-34" edge="1" parent="4qH0Ocg3Wkz9Kyh9P2Yr-1" source="4qH0Ocg3Wkz9Kyh9P2Yr-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontSize=12;fontFamily=Cascadia Mono;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="240" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="other-nodeport-remote-node" id="V5CZZta1a_ta87IGOqpk">
+    <mxGraphModel dx="2798" dy="929" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="5h06fqUETW7flnTzm_xW-0" />
+        <mxCell id="5h06fqUETW7flnTzm_xW-1" parent="5h06fqUETW7flnTzm_xW-0" />
+        <mxCell id="5h06fqUETW7flnTzm_xW-2" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=16;fontFamily=Cascadia Mono;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(51, 51, 51), rgb(193, 193, 193));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;HOST&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="620" width="1480" x="-810" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-4" edge="1" parent="5h06fqUETW7flnTzm_xW-1" source="5h06fqUETW7flnTzm_xW-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;fontFamily=Cascadia Mono;" target="5h06fqUETW7flnTzm_xW-6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-5" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="180" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-6" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="178" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-8" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-9" edge="1" parent="5h06fqUETW7flnTzm_xW-1" source="5h06fqUETW7flnTzm_xW-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontFamily=Cascadia Mono;" target="5h06fqUETW7flnTzm_xW-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-10" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-19" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;" value="8.8.8.8:1234 --&amp;gt; 192.168.0.7:30007&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;8.8.8.8 是集群外IP，&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;192.168.0.7:30007 nodePort，后端 10.244&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;.1.3:443 位于remote node&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="580" x="-790" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-21" edge="1" parent="5h06fqUETW7flnTzm_xW-1" source="5h06fqUETW7flnTzm_xW-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.4;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=12;fontFamily=Cascadia Mono;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="92" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-22" parent="5h06fqUETW7flnTzm_xW-1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontFamily=Cascadia Mono;fontSize=24;fontStyle=1" value="&lt;font&gt;Network&lt;/font&gt;" vertex="1">
+          <mxGeometry height="162" width="409" x="-71" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-23" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_lb4生成tuple(dst: 192.168.0.7 src:8.8.8.8 dport:1234 sport:30007)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;lb4_lookup_service以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;lb4_key(address:192.168.0.7 dport:3007)查到svc&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_svc_lb4动作：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;lb4_local里的动作：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(dst: 192.168.0.7 src:8.8.8.8 dport:1234 sport:30007&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;TUPLE_F_SERVICE&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)查CT表，返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_NEW&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;随机选择后端，假设后端为远端endpoint&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;dst: 192.168.0.7 src:8.8.8.8 dport:1234 sport:30007&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;TUPLE_F_SERVICE&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;ct_state(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;rev_nat_index:非零&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;backend_id：非零)为value&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;创建CT&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;修改tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:10.244.1.3 src:8.8.8.8 dport:1234 sport:443&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;TUPLE_F_OUT)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;报文目的端修改为后端POD的IP+Port&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CTX_ACT_OK&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;swap&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;8.8.8.8&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;src:&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;10.244.1.3&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;dport:443 sport:1234&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;TUPLE_F_OUT)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_ENTRY_NODEPORT 查CT表，返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;CT_NEW&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;(dst:&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;8.8.8.8&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp;src:&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;10.244.1.3&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp;dport:443 sport:1234&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;TUPLE_F_OUT)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;为key&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;ct_state(&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;rev_nat_index:非零&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;node_port：1)为value&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;创建CT&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;CTX_ACT_OK， 调用&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;edt_set_aggregate(ctx, 0); 确保tx方向不限速&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;4.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;tail_nodeport_nat_egress_ipv4 (tail call)：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div style=&quot;&quot;&gt;&lt;font&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;__snat_v4_nat动作：&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple为&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(dst:&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;10.244.1.3&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;src:8.8.8.8&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;dport:443 sport:1234&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;TUPLE_F_OUT)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;查&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;cilium_snat_v4_external返回&lt;font&gt;NULL&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;rtuple(dst:eth0 src:10.244.1.3 dport:random sport:443 TUPLE_F_IN)&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;rstate(to_daddr:8.8.8.8 to_dport:1234)&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;已上面的信息在map cilium_snat_v4_external 插入RevSNAT记录&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;otuple为(dst:10.244.1.3 src:8.8.8.8 dport:443 sport:1234 TUPLE_F_OUT)&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;ostate(to_saddr:eth0 to_sport:rtuple.dport)&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;已上面的信息在map cilium_snat_v4_external 插入SNAT记录&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;ctx_snat_done_set(ctx);&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;fib_redirect 到 eth0 tc egress方向&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="470" width="810" x="-790" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-24" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_to_netdev：&lt;div&gt;1. ctx-&amp;gt;queue_mapping为0，不会限速&lt;br&gt;&lt;div&gt;2. &lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;因为ctx-&amp;gt;mark里已经设置了snat_done, 直接发出去&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="329" x="321" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-26" parent="5h06fqUETW7flnTzm_xW-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontFamily=Cascadia Mono;" value="2" vertex="1">
+          <mxGeometry height="30" width="30" x="321" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-27" parent="5h06fqUETW7flnTzm_xW-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontFamily=Cascadia Mono;" value="1" vertex="1">
+          <mxGeometry height="30" width="30" x="-790" y="352.5" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-29" parent="5h06fqUETW7flnTzm_xW-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;" value="主网卡 eth0" vertex="1">
+          <mxGeometry height="20" width="90" x="-670" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="5h06fqUETW7flnTzm_xW-30" edge="1" parent="5h06fqUETW7flnTzm_xW-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontSize=12;fontFamily=Cascadia Mono;entryX=0.762;entryY=0.198;entryDx=0;entryDy=0;entryPerimeter=0;" target="5h06fqUETW7flnTzm_xW-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="240" y="675" as="sourcePoint" />
+            <mxPoint x="240" y="810" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="49zhq256BZ7OeMgac1-k-1" edge="1" parent="5h06fqUETW7flnTzm_xW-1" source="5h06fqUETW7flnTzm_xW-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="94" y="420" />
+              <mxPoint x="239" y="420" />
+            </Array>
+            <mxPoint x="239" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="other-nodeport-remote-node-reply" id="t6-IKXb768lgdrPQK1yV">
+    <mxGraphModel dx="2428" dy="755" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-0" />
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-1" parent="JZcJMzXCPlZCQ7uC9dkk-0" />
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-2" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=16;fontFamily=Cascadia Mono;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" value="&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(51, 51, 51), rgb(193, 193, 193));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;HOST&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="440" width="1460" x="-790" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-3" edge="1" parent="JZcJMzXCPlZCQ7uC9dkk-1" source="JZcJMzXCPlZCQ7uC9dkk-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;fontFamily=Cascadia Mono;" target="JZcJMzXCPlZCQ7uC9dkk-5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-4" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc egress" vertex="1">
+          <mxGeometry height="40" width="120" x="180" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-5" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="124" x="178" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-6" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="tc ingress" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-7" edge="1" parent="JZcJMzXCPlZCQ7uC9dkk-1" source="JZcJMzXCPlZCQ7uC9dkk-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;fontFamily=Cascadia Mono;" target="JZcJMzXCPlZCQ7uC9dkk-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-8" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;" value="tcpdump hook" vertex="1">
+          <mxGeometry height="40" width="120" x="34" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-9" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;" value="8.8.8.8:1234 --&amp;gt; 192.168.0.7:30007&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;8.8.8.8 是集群外IP，&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;192.168.0.7:30007 nodePort，后端 10.244&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;.1.3:443 位于remote node&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="580" x="-770" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-10" edge="1" parent="JZcJMzXCPlZCQ7uC9dkk-1" source="JZcJMzXCPlZCQ7uC9dkk-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.4;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=12;fontFamily=Cascadia Mono;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="92" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-11" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontFamily=Cascadia Mono;fontSize=24;fontStyle=1" value="&lt;font&gt;Network&lt;/font&gt;" vertex="1">
+          <mxGeometry height="162" width="409" x="-71" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-12" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_lb4生成tuple(dst: eth0 src:10.244.1.3 dport:443 sport:random)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;lb4_lookup_service以&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;lb4_key(address:eth0 dport:random)，返回NULL&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;3.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;tail_nodeport_nat_ingress_ipv4 (tail call)：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;snat_v4_rev_nat里的动作：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;dst: eth0 src:10.244.1.3 dport:random sport:443&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;TUPLE_F_IN)查&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;cilium_snat_v4_external&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;表&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;根据查到的state,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;修改报文的目的IP+Port&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;ctx_snat_done_set(ctx)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;nodeport_rev_dnat_ipv4里的动作:&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tuple(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;dst: 8.8.8.8 src:10.244.1.3 dport:443 sport:1234&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;TUPLE_F_OUT)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_ENTRY_NODEPORT&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;查CT表，返回&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;CT_REPLY&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;利用得到的&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;rev_nat_index查&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;cilium_lb4_reverse_nat，获取ip+port, 修改报文的源端ip+port&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;ctx_snat_done_set(ctx);&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;fib_redirect 到 eth0 tc egress方向&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;edt_set_aggregate(ctx, 0)&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="220" width="790" x="-770" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-13" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;" value="cil_to_netdev：&lt;div&gt;1. ctx-&amp;gt;queue_mapping为0，不会限速&lt;br&gt;&lt;div&gt;2.&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;因为ctx-&amp;gt;mark里已经设置了snat_done, 直接发出去&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="329" x="321" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-14" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontFamily=Cascadia Mono;" value="2" vertex="1">
+          <mxGeometry height="30" width="30" x="321" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-15" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontFamily=Cascadia Mono;" value="1" vertex="1">
+          <mxGeometry height="30" width="30" x="-770" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-16" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Cascadia Mono;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;" value="主网卡 eth0" vertex="1">
+          <mxGeometry height="20" width="90" x="-650" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-17" edge="1" parent="JZcJMzXCPlZCQ7uC9dkk-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontSize=12;fontFamily=Cascadia Mono;entryX=0.762;entryY=0.198;entryDx=0;entryDy=0;entryPerimeter=0;" target="JZcJMzXCPlZCQ7uC9dkk-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="240" y="675" as="sourcePoint" />
+            <mxPoint x="240" y="810" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="JZcJMzXCPlZCQ7uC9dkk-18" edge="1" parent="JZcJMzXCPlZCQ7uC9dkk-1" source="JZcJMzXCPlZCQ7uC9dkk-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="94" y="420" />
+              <mxPoint x="239" y="420" />
+            </Array>
+            <mxPoint x="239" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

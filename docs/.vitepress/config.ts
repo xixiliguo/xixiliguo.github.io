@@ -5,6 +5,9 @@ export default {
   lastUpdated: true,
   themeConfig: {
     logo: '/img/coast.jpg',
+    outline: {
+      level: [2, 3],
+    },
     nav: [
       { text: 'Linux运维', link: '/linux/linux-common-commands' },
       { text: '网络协议', link: '/network/tcp' },
@@ -14,8 +17,6 @@ export default {
       { text: '内核分析', link: '/kernel/kernel-syscall-sched' },
       { text: '杂项', link: '/others/code_segment' }
     ],
-
-
     sidebar: {
       '/linux/': [
         {
@@ -23,12 +24,12 @@ export default {
           collapsed: false,
           items: [
             { text: 'ATOP工作原理总结', link: '/linux/atop' },
-            { text: '使用Bandersnatch搭建私有Pypi源', link: '/linux/bandersnatch-pypi' },
+            { text: 'Bandersnatch搭建Pypi源', link: '/linux/bandersnatch-pypi' },
             { text: 'cloud-init学习笔记', link: '/linux/cloud-init' },
             { text: 'DNS学习总结', link: '/linux/dns' },
             { text: 'Linux Boot过程总结', link: '/linux/linux-boot' },
             { text: 'Linux 下常用命令与技巧汇总', link: '/linux/linux-common-commands' },
-            { text: 'Linux /etc/shadow 文件学习笔记', link: '/linux/linux-shadow' },
+            { text: 'Linux /etc/shadow 文件', link: '/linux/linux-shadow' },
             { text: 'Linux 网卡多队列介绍', link: '/linux/multi-queue' },
             { text: '理解NTP协议', link: '/linux/ntp' },
             { text: '使用Yum 升级OS', link: '/linux/yum-update' },
@@ -45,7 +46,7 @@ export default {
             { text: 'Libvirt Network', link: '/network/libvirt-network' },
             { text: 'TCP协议栈', link: '/network/tcp' },
             { text: '邻居子系统', link: '/network/neighbour' },
-            { text: 'Tcpdump与Wireshark点滴记录', link: '/network/tcpdump-wireshark' },
+            { text: 'Tcpdump与Wireshark记录', link: '/network/tcpdump-wireshark' },
             { text: 'ss命令指南', link: '/network/ss' },
             { text: '常用的bpftrace脚本', link: '/network/net_bpftrace' }
           ]
@@ -64,7 +65,8 @@ export default {
         {
           text: '容器与k8s',
           items: [
-            { text: 'runc 容器运行时学习笔记', link: '/k8s/runc' }
+            { text: 'runc 容器运行时学习笔记', link: '/k8s/runc' },
+            { text: 'cilium 原理', link: '/k8s/cilium' }
           ]
         }
       ],
@@ -74,7 +76,7 @@ export default {
           items: [
             { text: '力扣: DFS相关题解', link: '/algorithm/algorithm-dfs' },
             { text: '树状数组和相关题解', link: '/algorithm/binary-index-tree' },
-            { text: 'Radix Tree介绍与httprouter源码笔记', link: '/algorithm/radix-tree' },
+            { text: 'Radix Tree与httprouter', link: '/algorithm/radix-tree' },
             { text: '线段树相关题解', link: '/algorithm/segment-tree' },
             { text: 'UnionFind并查集和相关题解', link: '/algorithm/unionfind' },
           ]
