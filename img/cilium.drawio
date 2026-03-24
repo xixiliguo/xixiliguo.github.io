@@ -473,7 +473,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="other-nodeport-remote-node" id="V5CZZta1a_ta87IGOqpk">
-    <mxGraphModel dx="2798" dy="929" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+    <mxGraphModel dx="2535" dy="805" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="5h06fqUETW7flnTzm_xW-0" />
         <mxCell id="5h06fqUETW7flnTzm_xW-1" parent="5h06fqUETW7flnTzm_xW-0" />
@@ -544,7 +544,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="other-nodeport-remote-node-reply" id="t6-IKXb768lgdrPQK1yV">
-    <mxGraphModel dx="2428" dy="755" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+    <mxGraphModel dx="2334" dy="711" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="JZcJMzXCPlZCQ7uC9dkk-0" />
         <mxCell id="JZcJMzXCPlZCQ7uC9dkk-1" parent="JZcJMzXCPlZCQ7uC9dkk-0" />
