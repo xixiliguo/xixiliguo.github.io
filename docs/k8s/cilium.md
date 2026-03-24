@@ -770,7 +770,7 @@ out:
 
 POD访问clusterIP或者POD的整体网络路径图。 这里介绍目标POD在其他node节点。如果LB选择的后端POD就在
 本地，那么就不需要将消息发到主网卡eth0, 直接在内核里完成转发。
-![POD访问ClusterIP网络路径图](/img/cilium-pod-clusterip.png)  
+![POD访问ClusterIP网络路径图](/img/cilium-pod-clusterip.svg)  
 
 
 代码分析前，先介绍常见的变量名称：
@@ -861,7 +861,7 @@ cil_from_netdev()
 
 和POD--> ClusterIP/POD 的区别在于，当离开node时，需要Masquerading（伪装）。
 
-![POD访问集群外网络路径图](/img/cilium-pod-outside.png)  
+![POD访问集群外网络路径图](/img/cilium-pod-outside.svg)  
 
 
 ``` c
@@ -922,7 +922,7 @@ cil_from_netdev()                    // hook在主网卡的ingress
 
 #### 外部流量--> NodePort(选择的后端在本地)
 
-![POD访问NodePort网络路径图](/img/cilium-other-nodeport-local.png)  
+![POD访问NodePort网络路径图](/img/cilium-other-nodeport-local.svg)  
 
 网卡eth0收到消息后的处理流程如下：
 ``` c
@@ -961,7 +961,7 @@ cil_to_netdev()           // hook在主网卡的egress
 #### 外部流量--> NodePort(选择的后端不在本地)
 
 
-![POD访问NodePort网络路径图](/img/cilium-other-nodeport-remote-node.png)  
+![POD访问NodePort网络路径图](/img/cilium-other-nodeport-remote-node.svg)  
 
 网卡eth0收到消息后的处理流程如下：
 ``` c
@@ -986,7 +986,7 @@ cil_from_netdev()                    // hook在主网卡的ingress
 ```
 
 
-![POD访问NodePort网络路径图](/img/cilium-other-nodeport-remote-node-reply.png)  
+![POD访问NodePort网络路径图](/img/cilium-other-nodeport-remote-node-reply.svg)  
 
 网卡eth0收到回程消息后的处理流程如下：
 
