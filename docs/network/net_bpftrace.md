@@ -6,6 +6,27 @@
 tracepoint:skb:kfree_skb {
     $skb = (struct sk_buff *)args->skbaddr;
     $iph = (struct iphdr *)($skb->head + $skb->network_header);
+
+    // printf("skb: %p protocol: 0x%x location: %s reason: %s\n", $skb, args->protocol, ksym(args->location), args->reason);
+    // printf("head: %p mac_header: 0x%x network_header: 0x%x\n", $skb->head, $skb->mac_header, $skb->network_header);
+
+    if (args->protocol != 0x800) {
+        // printf("%s", kstack);
+        return;
+    }
+
+    if ($skb->network_header == 0xffff) {
+        printf("no available network header\n\n");
+        // printf("%s", kstack);
+        return;
+    }
+
+    if ($skb->transport_header == 0xffff) {
+        printf("no available transport header: %s->%s \n\n", ntop($iph->saddr), ntop($iph->daddr));
+        // printf("%s", kstack);
+        return;
+    }
+
     if ($iph->protocol == IPPROTO_ICMP) {
         $icmph = (struct icmphdr *)($skb->head + $skb->transport_header);
         printf("TIME:%s PID/TID: %d/%d ", strftime("%H:%M:%S:%f", nsecs), pid, tid);
@@ -42,6 +63,22 @@ tracepoint:skb:kfree_skb {
         printf("SEQ: %ld ACK: %ld ", $seq, $ack);
         printf("\n\n");
         // printf("%s", kstack);
+    } else if ($iph->protocol == IPPROTO_UDP) {
+        $udph = (struct udphdr *)($skb->head + $skb->transport_header);
+        printf("TIME:%s PID/TID: %d/%d ", strftime("%H:%M:%S:%f", nsecs), pid, tid);
+        printf("COMM: %s DEV: %s \n", comm, $skb->dev->name);
+        printf("UDP %s:%d", ntop($iph->saddr), bswap($udph->source));
+        printf(" -> %s:%d ", ntop($iph->daddr), bswap($udph->dest));
+        if (bswap($udph->source) == 4789 || bswap($udph->dest) == 4789) {
+            printf(" vxlan ");
+        }
+        printf("\n\n");
+        // printf("%s", kstack);
+    } else {
+        // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+        printf("ip version %d unkonw protocol: %s", $iph->version, $iph->protocol);
+        printf("\n\n");
+        printf("%s", kstack);
     }
 }
 ``` 

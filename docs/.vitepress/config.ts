@@ -34,7 +34,9 @@ export default {
             { text: '理解NTP协议', link: '/linux/ntp' },
             { text: '使用Yum 升级OS', link: '/linux/yum-update' },
             { text: 'tty pts相关过程', link: '/linux/tty' },
-            { text: '磁盘管理', link: '/linux/disk' }
+            { text: '磁盘管理', link: '/linux/disk' },
+            { text: '性能分析指南', link: '/linux/perf' },
+            { text: '看懂cpu硬件知识', link: '/linux/cpu-topology' },
           ]
         }
       ],
@@ -66,7 +68,8 @@ export default {
           text: '容器与k8s',
           items: [
             { text: 'runc 容器运行时学习笔记', link: '/k8s/runc' },
-            { text: 'cilium 原理', link: '/k8s/cilium' }
+            { text: 'containerd原理', link: '/k8s/containerd' },
+            { text: 'cilium 原理', link: '/k8s/cilium' },
           ]
         }
       ],

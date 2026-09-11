@@ -37,16 +37,59 @@ docker image pull quay.m.daocloud.io/cilium/operator-generic:v1.18.6
 ### 生成kind配置文件并启动集群
 
 config.yaml 配置文件如下，默认关闭cni插件和不启动kubeproxy, 并指定使用 v1.33.7 版本
-```
+``` yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
   image: kindest/node:v1.33.7@sha256:d26ef333bdb2cbe9862a0f7c3803ecc7b4303d8cea8e814b481b09949d353040
+  kubeadmConfigPatches:
+  - |
+    kind: ClusterConfiguration
+    apiServer:
+        # enable auditing flags on the API server
+        extraArgs:
+          audit-log-path: /var/log/kubernetes/kube-apiserver-audit.log
+          audit-policy-file: /etc/kubernetes/policies/audit-policy.yaml
+        # mount new files / directories on the control plane
+        extraVolumes:
+          - name: audit-policies
+            hostPath: /etc/kubernetes/policies
+            mountPath: /etc/kubernetes/policies
+            readOnly: true
+            pathType: "DirectoryOrCreate"
+          - name: "audit-logs"
+            hostPath: "/var/log/kubernetes"
+            mountPath: "/var/log/kubernetes"
+            readOnly: false
+            pathType: DirectoryOrCreate
+  - |
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    kind: KubeletConfiguration
+    cgroupDriver: systemd
+    cgroupRoot: /
+    logging:
+      verbosity: 4
+  # mount the local file on the control plane
+  extraMounts:
+  - hostPath: ./audit-policy.yaml
+    containerPath: /etc/kubernetes/policies/audit-policy.yaml
+    readOnly: true
+  - hostPath: /etc/localtime
+    containerPath: /etc/localtime
+    readOnly: true
 - role: worker
   image: kindest/node:v1.33.7@sha256:d26ef333bdb2cbe9862a0f7c3803ecc7b4303d8cea8e814b481b09949d353040
+  extraMounts:
+  - hostPath: /etc/localtime
+    containerPath: /etc/localtime
+    readOnly: true
 - role: worker
   image: kindest/node:v1.33.7@sha256:d26ef333bdb2cbe9862a0f7c3803ecc7b4303d8cea8e814b481b09949d353040
+  extraMounts:
+  - hostPath: /etc/localtime
+    containerPath: /etc/localtime
+    readOnly: true
 networking:
   disableDefaultCNI: true
   kubeProxyMode: "none"
@@ -54,6 +97,24 @@ containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry]
     config_path = "/etc/containerd/certs.d"
+```
+audit-policy.yaml的内容如下：
+``` yaml
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+  - level: Metadata
+    verbs: ["create", "update", "patch", "delete", "deletecollection"]
+    resources:
+    - group: ""
+      resources: ["configmaps"]
+  - level: Request
+    verbs: ["create", "update", "patch", "delete", "deletecollection"]
+    resources:
+      - group: ""
+        resources: ["nodes", "nodes/status", "nodes/proxy"]
+  # Default logging level for all other requests to log metadata only
+  - level: None
 ```
 
 主机重启后，然后再重启 kind cluster, k8s api server的IP会变，所以简单地使用删除并新建的方式。 适用用任何场景。
@@ -65,10 +126,14 @@ kind load docker-image quay.m.daocloud.io/cilium/cilium:v1.18.6
 kind load docker-image quay.m.daocloud.io/cilium/operator-generic:v1.18.6
 ```
 
-运行下面命令，修改kind内部containerd的配置用于加速
+运行下面命令，安装常见的软件包和修改kind内部containerd的配置用于加速
 ```
 REGISTRY_DIR="/etc/containerd/certs.d/quay.io"
 for node in $(kind get nodes); do
+  docker exec "${node}" sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources
+  docker exec "${node}" sed -i "s@http://security.debian.org@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list.d/debian.sources
+  docker exec "${node}" apt-get update
+  docker exec "${node}" apt-get install -y vim less tcpdump psmisc file
   docker exec "${node}" mkdir -p "${REGISTRY_DIR}"
   cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/hosts.toml"
 server = "https://quay.io"
@@ -128,6 +193,8 @@ Image versions         cilium             quay.io/cilium/cilium:v1.18.6@sha256:4
 ```
 
 `cilium uninstall` 卸载cilium相关的资源
+
+<a href="/scripts/dexec.sh" download>dexec.sh</a> 是一个方便登录docker内node节点的脚本，支持模糊匹配。  
 
 ## cilium基本概念
 
